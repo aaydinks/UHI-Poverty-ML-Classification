@@ -1,0 +1,4 @@
+label,rule,cut,n,positives,negatives,share_positive
+High_UHI,UHI_annual_day >= median,1.447570926,54243,27122,27121,0.5000092177792527
+High_Pov,pov_rate >= median,0.10499683744465528,54243,27122,27121,0.5000092177792527
+High_Pov_LPI,LPI < median (low index = poorer),55.0,54237,26916,27321,0.49626638641517784

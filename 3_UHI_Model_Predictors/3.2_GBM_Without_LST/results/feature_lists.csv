@@ -1,0 +1,320 @@
+config,n_features,order,feature,family,config_description
+A-full,63,1,LST_rur_day,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,2,LST_rur_day_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,3,LST_rur_day_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,4,LST_rur_night,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,5,LST_rur_night_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,6,LST_rur_night_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,7,LST_urb_day_CT,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,8,LST_urb_day_CT_act,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,9,LST_urb_day_CT_act_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,10,LST_urb_day_CT_act_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,11,LST_urb_day_CT_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,12,LST_urb_day_CT_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,13,LST_urb_day_all,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,14,LST_urb_day_all_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,15,LST_urb_day_all_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,16,LST_urb_night_CT,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,17,LST_urb_night_CT_act,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,18,LST_urb_night_CT_act_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,19,LST_urb_night_CT_act_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,20,LST_urb_night_CT_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,21,LST_urb_night_CT_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,22,LST_urb_night_all,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,23,LST_urb_night_all_summer,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,24,LST_urb_night_all_winter,LST,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,25,UHI_annual_night,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,26,UHI_summer_day,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,27,UHI_summer_night,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,28,UHI_winter_day,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,29,UHI_winter_night,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,30,UHI_annual_day_city,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,31,UHI_annual_night_city,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,32,UHI_summer_day_city,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,33,UHI_summer_night_city,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,34,UHI_winter_day_city,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,35,UHI_winter_night_city,SUHI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,36,NDVI_rur,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,37,NDVI_rur_summer,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,38,NDVI_rur_winter,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,39,NDVI_urb_CT,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,40,NDVI_urb_CT_act,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,41,NDVI_urb_CT_act_summer,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,42,NDVI_urb_CT_act_winter,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,43,NDVI_urb_CT_summer,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,44,NDVI_urb_CT_winter,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,45,NDVI_urb_all,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,46,NDVI_urb_all_summer,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,47,NDVI_urb_all_winter,NDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,48,DelNDVI_annual,DeltaNDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,49,DelNDVI_summer,DeltaNDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,50,DelNDVI_winter,DeltaNDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,51,DelNDVI_annual_city,DeltaNDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,52,DelNDVI_summer_city,DeltaNDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,53,DelNDVI_winter_city,DeltaNDVI,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,54,DEM_rur,DEM,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,55,DEM_urb_CT,DEM,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,56,DEM_urb_CT_act,DEM,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,57,DEM_urb_all,DEM,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,58,DelDEM,DEM,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,59,Area,Morphology,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,60,Total_Count,Morphology,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,61,Urban_Count,Morphology,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,62,water_frac,Geometry,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-full,63,63,log_aland,Geometry,All 61 non-target SUHI columns + geometry (reference; contains the target's terms)
+A-narrow,61,1,LST_rur_day_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,2,LST_rur_day_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,3,LST_rur_night,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,4,LST_rur_night_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,5,LST_rur_night_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,6,LST_urb_day_CT_act,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,7,LST_urb_day_CT_act_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,8,LST_urb_day_CT_act_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,9,LST_urb_day_CT_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,10,LST_urb_day_CT_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,11,LST_urb_day_all,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,12,LST_urb_day_all_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,13,LST_urb_day_all_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,14,LST_urb_night_CT,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,15,LST_urb_night_CT_act,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,16,LST_urb_night_CT_act_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,17,LST_urb_night_CT_act_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,18,LST_urb_night_CT_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,19,LST_urb_night_CT_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,20,LST_urb_night_all,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,21,LST_urb_night_all_summer,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,22,LST_urb_night_all_winter,LST,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,23,UHI_annual_night,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,24,UHI_summer_day,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,25,UHI_summer_night,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,26,UHI_winter_day,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,27,UHI_winter_night,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,28,UHI_annual_day_city,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,29,UHI_annual_night_city,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,30,UHI_summer_day_city,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,31,UHI_summer_night_city,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,32,UHI_winter_day_city,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,33,UHI_winter_night_city,SUHI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,34,NDVI_rur,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,35,NDVI_rur_summer,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,36,NDVI_rur_winter,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,37,NDVI_urb_CT,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,38,NDVI_urb_CT_act,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,39,NDVI_urb_CT_act_summer,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,40,NDVI_urb_CT_act_winter,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,41,NDVI_urb_CT_summer,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,42,NDVI_urb_CT_winter,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,43,NDVI_urb_all,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,44,NDVI_urb_all_summer,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,45,NDVI_urb_all_winter,NDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,46,DelNDVI_annual,DeltaNDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,47,DelNDVI_summer,DeltaNDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,48,DelNDVI_winter,DeltaNDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,49,DelNDVI_annual_city,DeltaNDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,50,DelNDVI_summer_city,DeltaNDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,51,DelNDVI_winter_city,DeltaNDVI,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,52,DEM_rur,DEM,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,53,DEM_urb_CT,DEM,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,54,DEM_urb_CT_act,DEM,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,55,DEM_urb_all,DEM,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,56,DelDEM,DEM,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,57,Area,Morphology,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,58,Total_Count,Morphology,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,59,Urban_Count,Morphology,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,60,water_frac,Geometry,A-full minus LST_urb_day_CT and LST_rur_day
+A-narrow,61,61,log_aland,Geometry,A-full minus LST_urb_day_CT and LST_rur_day
+A-noLST-keepUHI,39,1,UHI_annual_night,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,2,UHI_summer_day,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,3,UHI_summer_night,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,4,UHI_winter_day,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,5,UHI_winter_night,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,6,UHI_annual_day_city,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,7,UHI_annual_night_city,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,8,UHI_summer_day_city,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,9,UHI_summer_night_city,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,10,UHI_winter_day_city,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,11,UHI_winter_night_city,SUHI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,12,NDVI_rur,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,13,NDVI_rur_summer,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,14,NDVI_rur_winter,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,15,NDVI_urb_CT,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,16,NDVI_urb_CT_act,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,17,NDVI_urb_CT_act_summer,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,18,NDVI_urb_CT_act_winter,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,19,NDVI_urb_CT_summer,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,20,NDVI_urb_CT_winter,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,21,NDVI_urb_all,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,22,NDVI_urb_all_summer,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,23,NDVI_urb_all_winter,NDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,24,DelNDVI_annual,DeltaNDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,25,DelNDVI_summer,DeltaNDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,26,DelNDVI_winter,DeltaNDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,27,DelNDVI_annual_city,DeltaNDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,28,DelNDVI_summer_city,DeltaNDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,29,DelNDVI_winter_city,DeltaNDVI,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,30,DEM_rur,DEM,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,31,DEM_urb_CT,DEM,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,32,DEM_urb_CT_act,DEM,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,33,DEM_urb_all,DEM,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,34,DelDEM,DEM,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,35,Area,Morphology,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,36,Total_Count,Morphology,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,37,Urban_Count,Morphology,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,38,water_frac,Geometry,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST-keepUHI,39,39,log_aland,Geometry,A-full minus all 24 LST_* columns (UHI_* still present)
+A-noLST,28,1,NDVI_rur,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,2,NDVI_rur_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,3,NDVI_rur_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,4,NDVI_urb_CT,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,5,NDVI_urb_CT_act,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,6,NDVI_urb_CT_act_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,7,NDVI_urb_CT_act_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,8,NDVI_urb_CT_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,9,NDVI_urb_CT_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,10,NDVI_urb_all,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,11,NDVI_urb_all_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,12,NDVI_urb_all_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,13,DelNDVI_annual,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,14,DelNDVI_summer,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,15,DelNDVI_winter,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,16,DelNDVI_annual_city,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,17,DelNDVI_summer_city,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,18,DelNDVI_winter_city,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,19,DEM_rur,DEM,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,20,DEM_urb_CT,DEM,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,21,DEM_urb_CT_act,DEM,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,22,DEM_urb_all,DEM,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,23,DelDEM,DEM,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,24,Area,Morphology,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,25,Total_Count,Morphology,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,26,Urban_Count,Morphology,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,27,water_frac,Geometry,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST,28,28,log_aland,Geometry,"NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)"
+A-noLST+pov,29,1,NDVI_rur,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,2,NDVI_rur_summer,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,3,NDVI_rur_winter,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,4,NDVI_urb_CT,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,5,NDVI_urb_CT_act,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,6,NDVI_urb_CT_act_summer,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,7,NDVI_urb_CT_act_winter,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,8,NDVI_urb_CT_summer,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,9,NDVI_urb_CT_winter,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,10,NDVI_urb_all,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,11,NDVI_urb_all_summer,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,12,NDVI_urb_all_winter,NDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,13,DelNDVI_annual,DeltaNDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,14,DelNDVI_summer,DeltaNDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,15,DelNDVI_winter,DeltaNDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,16,DelNDVI_annual_city,DeltaNDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,17,DelNDVI_summer_city,DeltaNDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,18,DelNDVI_winter_city,DeltaNDVI,A-noLST + ACS poverty rate
+A-noLST+pov,29,19,DEM_rur,DEM,A-noLST + ACS poverty rate
+A-noLST+pov,29,20,DEM_urb_CT,DEM,A-noLST + ACS poverty rate
+A-noLST+pov,29,21,DEM_urb_CT_act,DEM,A-noLST + ACS poverty rate
+A-noLST+pov,29,22,DEM_urb_all,DEM,A-noLST + ACS poverty rate
+A-noLST+pov,29,23,DelDEM,DEM,A-noLST + ACS poverty rate
+A-noLST+pov,29,24,Area,Morphology,A-noLST + ACS poverty rate
+A-noLST+pov,29,25,Total_Count,Morphology,A-noLST + ACS poverty rate
+A-noLST+pov,29,26,Urban_Count,Morphology,A-noLST + ACS poverty rate
+A-noLST+pov,29,27,water_frac,Geometry,A-noLST + ACS poverty rate
+A-noLST+pov,29,28,log_aland,Geometry,A-noLST + ACS poverty rate
+A-noLST+pov,29,29,pov_rate,Poverty,A-noLST + ACS poverty rate
+A-lst-only,1,1,LST_urb_day_CT,LST,LST_urb_day_CT alone (LST-only baseline)
+B-env,64,1,LST_rur_day,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,2,LST_rur_day_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,3,LST_rur_day_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,4,LST_rur_night,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,5,LST_rur_night_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,6,LST_rur_night_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,7,LST_urb_day_CT,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,8,LST_urb_day_CT_act,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,9,LST_urb_day_CT_act_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,10,LST_urb_day_CT_act_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,11,LST_urb_day_CT_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,12,LST_urb_day_CT_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,13,LST_urb_day_all,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,14,LST_urb_day_all_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,15,LST_urb_day_all_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,16,LST_urb_night_CT,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,17,LST_urb_night_CT_act,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,18,LST_urb_night_CT_act_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,19,LST_urb_night_CT_act_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,20,LST_urb_night_CT_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,21,LST_urb_night_CT_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,22,LST_urb_night_all,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,23,LST_urb_night_all_summer,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,24,LST_urb_night_all_winter,LST,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,25,UHI_annual_day,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,26,UHI_annual_night,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,27,UHI_summer_day,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,28,UHI_summer_night,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,29,UHI_winter_day,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,30,UHI_winter_night,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,31,UHI_annual_day_city,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,32,UHI_annual_night_city,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,33,UHI_summer_day_city,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,34,UHI_summer_night_city,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,35,UHI_winter_day_city,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,36,UHI_winter_night_city,SUHI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,37,NDVI_rur,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,38,NDVI_rur_summer,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,39,NDVI_rur_winter,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,40,NDVI_urb_CT,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,41,NDVI_urb_CT_act,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,42,NDVI_urb_CT_act_summer,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,43,NDVI_urb_CT_act_winter,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,44,NDVI_urb_CT_summer,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,45,NDVI_urb_CT_winter,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,46,NDVI_urb_all,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,47,NDVI_urb_all_summer,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,48,NDVI_urb_all_winter,NDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,49,DelNDVI_annual,DeltaNDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,50,DelNDVI_summer,DeltaNDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,51,DelNDVI_winter,DeltaNDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,52,DelNDVI_annual_city,DeltaNDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,53,DelNDVI_summer_city,DeltaNDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,54,DelNDVI_winter_city,DeltaNDVI,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,55,DEM_rur,DEM,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,56,DEM_urb_CT,DEM,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,57,DEM_urb_CT_act,DEM,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,58,DEM_urb_all,DEM,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,59,DelDEM,DEM,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,60,Area,Morphology,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,61,Total_Count,Morphology,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,62,Urban_Count,Morphology,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,63,water_frac,Geometry,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-env,64,64,log_aland,Geometry,"All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)"
+B-nonthermal,28,1,NDVI_rur,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,2,NDVI_rur_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,3,NDVI_rur_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,4,NDVI_urb_CT,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,5,NDVI_urb_CT_act,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,6,NDVI_urb_CT_act_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,7,NDVI_urb_CT_act_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,8,NDVI_urb_CT_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,9,NDVI_urb_CT_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,10,NDVI_urb_all,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,11,NDVI_urb_all_summer,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,12,NDVI_urb_all_winter,NDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,13,DelNDVI_annual,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,14,DelNDVI_summer,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,15,DelNDVI_winter,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,16,DelNDVI_annual_city,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,17,DelNDVI_summer_city,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,18,DelNDVI_winter_city,DeltaNDVI,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,19,DEM_rur,DEM,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,20,DEM_urb_CT,DEM,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,21,DEM_urb_CT_act,DEM,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,22,DEM_urb_all,DEM,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,23,DelDEM,DEM,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,24,Area,Morphology,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,25,Total_Count,Morphology,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,26,Urban_Count,Morphology,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,27,water_frac,Geometry,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+B-nonthermal,28,28,log_aland,Geometry,"NDVI, dNDVI, DEM, morphology, geometry (no heat)"
+geo-only,6,1,lat,Location,Centroid latitude/longitude + Census region (location baseline)
+geo-only,6,2,lon,Location,Centroid latitude/longitude + Census region (location baseline)
+geo-only,6,3,region_Northeast,Location,Centroid latitude/longitude + Census region (location baseline)
+geo-only,6,4,region_Midwest,Location,Centroid latitude/longitude + Census region (location baseline)
+geo-only,6,5,region_South,Location,Centroid latitude/longitude + Census region (location baseline)
+geo-only,6,6,region_West,Location,Centroid latitude/longitude + Census region (location baseline)

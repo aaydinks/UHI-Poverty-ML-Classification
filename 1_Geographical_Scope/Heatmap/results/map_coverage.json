@@ -1,0 +1,55 @@
+{
+  "suhi_tracts_with_value": 55649,
+  "matched_to_cb2019_geometry": 55629,
+  "unmatched": [
+    "04019002701",
+    "04019002903",
+    "04019410501",
+    "04019410502",
+    "04019410503",
+    "04019470500",
+    "06037930401",
+    "09001990000",
+    "09009990000",
+    "09011990100",
+    "18089990000",
+    "25001990000",
+    "33015990000",
+    "34025990000",
+    "36053940401",
+    "36085008900",
+    "36085990100",
+    "39035990000",
+    "55117990000",
+    "72115990000"
+  ],
+  "colour_limit_degC": 5.29725925564,
+  "share_negative_suhi": 0.2295459037898255,
+  "n_uas": 497,
+  "metro_panels": [
+    {
+      "region": "Northeast",
+      "ua": "63217",
+      "ua_name": "New York--Newark, NY--NJ--CT",
+      "n_tracts": 4283
+    },
+    {
+      "region": "Midwest",
+      "ua": "16264",
+      "ua_name": "Chicago, IL--IN",
+      "n_tracts": 2069
+    },
+    {
+      "region": "South",
+      "ua": "56602",
+      "ua_name": "Miami, FL",
+      "n_tracts": 1205
+    },
+    {
+      "region": "West",
+      "ua": "51445",
+      "ua_name": "Los Angeles--Long Beach--Anaheim, CA",
+      "n_tracts": 2788
+    }
+  ]
+}

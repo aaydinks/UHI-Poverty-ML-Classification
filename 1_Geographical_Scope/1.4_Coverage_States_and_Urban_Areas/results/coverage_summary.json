@@ -1,0 +1,10 @@
+{
+  "tract_status_counts_cb2019": {
+    "Analysis sample": 54243,
+    "Puerto Rico (sensitivity frame)": 872,
+    "Excluded: missing data": 728,
+    "Not urban (no SUHI value)": 17896
+  },
+  "n_included_uas": 486,
+  "n_states": 51
+}

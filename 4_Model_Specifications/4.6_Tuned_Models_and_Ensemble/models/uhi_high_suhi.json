@@ -1,0 +1,253 @@
+{
+  "task": "A",
+  "target": "High_UHI",
+  "config": "A-noLST",
+  "model": "ens_weighted",
+  "label": "Soft-voting ensemble, tuned weights",
+  "n_train": 54243,
+  "positives": 27122,
+  "inner_roc_auc": 0.9178755933505053,
+  "tau_acc": 0.45,
+  "tau_f1": 0.38,
+  "settings": {
+    "lgbm": {
+      "prep": {
+        "engineer": true,
+        "variance": false,
+        "corr": false,
+        "scaler": "none",
+        "pca": "none",
+        "smote": false
+      },
+      "params": {
+        "n_estimators": 392,
+        "learning_rate": 0.03625857389103078,
+        "num_leaves": 17,
+        "min_child_samples": 200,
+        "subsample": 0.6907648872480532,
+        "colsample_bytree": 0.47048499010608413,
+        "reg_lambda": 0.7113290315611678,
+        "reg_alpha": 0.005405897507164087
+      }
+    },
+    "xgb": {
+      "prep": {
+        "engineer": true,
+        "variance": false,
+        "corr": true,
+        "scaler": "minmax",
+        "pca": "0.99",
+        "smote": false
+      },
+      "params": {
+        "n_estimators": 320,
+        "learning_rate": 0.055702967761870996,
+        "max_depth": 6,
+        "min_child_weight": 14.068427086939462,
+        "subsample": 0.9071612543203448,
+        "colsample_bytree": 0.6129328284219732,
+        "reg_lambda": 0.005801570976265248,
+        "reg_alpha": 5.765740145083288,
+        "gamma": 1.1930112306663108
+      }
+    },
+    "catboost": {
+      "prep": {
+        "engineer": true,
+        "variance": false,
+        "corr": false,
+        "scaler": "none",
+        "pca": "none",
+        "smote": false
+      },
+      "params": {
+        "iterations": 643,
+        "learning_rate": 0.12567280071400086,
+        "depth": 6,
+        "l2_leaf_reg": 10.371026695257443,
+        "random_strength": 4.161035773092143,
+        "bagging_temperature": 0.11722149825475874
+      }
+    },
+    "weights": {
+      "lgbm": 0.55,
+      "xgb": 0.4,
+      "catboost": 0.04999999999999993
+    }
+  },
+  "versions": {
+    "sklearn": "1.9.1",
+    "lightgbm": "4.7.0",
+    "xgboost": "3.4.1",
+    "catboost": "1.2.10",
+    "optuna": "5.0.0",
+    "imblearn": "0.14.2"
+  },
+  "tuning_version": 1,
+  "selection": [
+    {
+      "model": "ens_weighted",
+      "mean_inner_roc_auc": 0.917113280679728
+    },
+    {
+      "model": "ens_equal",
+      "mean_inner_roc_auc": 0.9167155938806042
+    },
+    {
+      "model": "lgbm",
+      "mean_inner_roc_auc": 0.9140131510474457
+    },
+    {
+      "model": "xgb",
+      "mean_inner_roc_auc": 0.9136909392302387
+    },
+    {
+      "model": "catboost",
+      "mean_inner_roc_auc": 0.9120231163685043
+    },
+    {
+      "model": "logistic",
+      "mean_inner_roc_auc": 0.9006891444980809
+    }
+  ],
+  "nested_performance": {
+    "loco_tau_acc": {
+      "accuracy": [
+        0.8350386224950684,
+        0.8076615922379426,
+        0.8564798332874523
+      ],
+      "f1": [
+        0.8368403778126253,
+        0.8066833419658757,
+        0.8622213461902041
+      ],
+      "roc_auc": [
+        0.9126212250044204,
+        0.8947986159763774,
+        0.9297649445087446
+      ],
+      "mcc": [
+        0.6702400510594045,
+        0.615426030451854,
+        0.7140400137307874
+      ],
+      "balanced_accuracy": [
+        0.8350384191968523,
+        0.8073894304177506,
+        0.8567997349104155
+      ]
+    },
+    "loco_tau_f1": {
+      "accuracy": [
+        0.8355179470162049,
+        0.8177833669005671,
+        0.8521190484452236
+      ],
+      "f1": [
+        0.8436492359456049,
+        0.8199126992020629,
+        0.862417147162915
+      ],
+      "roc_auc": [
+        0.9126212250044204,
+        0.8947986159763774,
+        0.9297649445087446
+      ],
+      "mcc": [
+        0.6746922789214462,
+        0.635092597213,
+        0.708009761412764
+      ],
+      "balanced_accuracy": [
+        0.835516988527417,
+        0.8167311261342048,
+        0.853525443017878
+      ]
+    },
+    "ua5_tau_acc": {
+      "accuracy": [
+        0.8372140183986874,
+        0.8172848456936328,
+        0.8544824224982124
+      ],
+      "f1": [
+        0.8395595610146086,
+        0.8139083754898017,
+        0.8603733472154819
+      ],
+      "roc_auc": [
+        0.9123588101588371,
+        0.8951042255090097,
+        0.9288673361514624
+      ],
+      "mcc": [
+        0.674715605758098,
+        0.6344175789314271,
+        0.7092806441238655
+      ],
+      "balanced_accuracy": [
+        0.8372137491664658,
+        0.8172858393007296,
+        0.8546467139180949
+      ]
+    },
+    "ua5_tau_f1": {
+      "accuracy": [
+        0.8379514407388972,
+        0.823269224562419,
+        0.8517283084297641
+      ],
+      "f1": [
+        0.8465647255969837,
+        0.8248686528790111,
+        0.8636318900885249
+      ],
+      "roc_auc": [
+        0.9123588101588371,
+        0.8951042255090097,
+        0.9288673361514624
+      ],
+      "mcc": [
+        0.6801999940158584,
+        0.650892697178343,
+        0.7072933615045841
+      ],
+      "balanced_accuracy": [
+        0.8379504061200973,
+        0.8226799477641129,
+        0.8527784958732073
+      ]
+    }
+  },
+  "inputs": [
+    "NDVI_rur",
+    "NDVI_rur_summer",
+    "NDVI_rur_winter",
+    "NDVI_urb_CT",
+    "NDVI_urb_CT_act",
+    "NDVI_urb_CT_act_summer",
+    "NDVI_urb_CT_act_winter",
+    "NDVI_urb_CT_summer",
+    "NDVI_urb_CT_winter",
+    "NDVI_urb_all",
+    "NDVI_urb_all_summer",
+    "NDVI_urb_all_winter",
+    "DelNDVI_annual",
+    "DelNDVI_summer",
+    "DelNDVI_winter",
+    "DelNDVI_annual_city",
+    "DelNDVI_summer_city",
+    "DelNDVI_winter_city",
+    "DEM_rur",
+    "DEM_urb_CT",
+    "DEM_urb_CT_act",
+    "DEM_urb_all",
+    "DelDEM",
+    "Area",
+    "Total_Count",
+    "Urban_Count",
+    "water_frac",
+    "log_aland"
+  ]
+}

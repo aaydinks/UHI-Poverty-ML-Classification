@@ -1,0 +1,93 @@
+task,rank,feature,group,mean_abs_shap
+A,1,DelNDVI_summer,Vegetation: summer,1.3904689636721619
+A,2,Area,Tract size,0.5378215757121761
+A,3,Total_Count,Tract size,0.45229360007451425
+A,4,water_frac,Water share,0.44750729373583265
+A,5,Urban_Count,Tract size,0.25992229090887076
+A,6,DelDEM,Elevation,0.1795631741138725
+A,7,DelNDVI_annual,Vegetation: annual,0.15931637273575855
+A,8,NDVI_urb_CT,Vegetation: annual,0.153701768749405
+A,9,DEM_urb_CT_act,Elevation,0.13067848985170377
+A,10,NDVI_urb_CT_summer,Vegetation: summer,0.1305309979031246
+A,11,NDVI_urb_CT_act_summer,Vegetation: summer,0.12847104320175912
+A,12,DEM_urb_all,Elevation,0.12164061891221174
+A,13,log_aland,Tract size,0.10610002647729959
+A,14,NDVI_urb_CT_act,Vegetation: annual,0.09930053799104772
+A,15,DEM_urb_CT,Elevation,0.0953715595422169
+A,16,DelNDVI_winter,Vegetation: winter,0.09209865761355167
+A,17,NDVI_urb_all_winter,Vegetation: winter,0.09157884254742818
+A,18,NDVI_urb_all_summer,Vegetation: summer,0.0910328329842306
+A,19,NDVI_rur_summer,Vegetation: summer,0.08550775727499534
+A,20,NDVI_rur,Vegetation: annual,0.08434732176208187
+A,21,DelNDVI_summer_city,Vegetation: summer,0.08190306746351755
+A,22,NDVI_rur_winter,Vegetation: winter,0.08069190802236183
+A,23,NDVI_urb_all,Vegetation: annual,0.07732686440422672
+A,24,DelNDVI_winter_city,Vegetation: winter,0.06838500008381498
+A,25,DelNDVI_annual_city,Vegetation: annual,0.06751692791036469
+A,26,NDVI_urb_CT_act_winter,Vegetation: winter,0.050159429868024984
+A,27,NDVI_urb_CT_winter,Vegetation: winter,0.04408750591365839
+A,28,DEM_rur,Elevation,0.04291835305823298
+B,1,DelNDVI_winter,Vegetation: winter,0.22624909381504577
+B,2,DelNDVI_annual_city,Vegetation: annual,0.19130866464287663
+B,3,Total_Count,Tract size,0.1881942120858095
+B,4,Area,Tract size,0.18647866209502875
+B,5,DelDEM,Elevation,0.17167157235225303
+B,6,UHI_winter_day_city,Heat: winter day,0.13494573225794487
+B,7,DelNDVI_annual,Vegetation: annual,0.13078721083472902
+B,8,NDVI_urb_CT_summer,Vegetation: summer,0.12415979164501204
+B,9,Urban_Count,Tract size,0.09243798058888239
+B,10,NDVI_rur_summer,Vegetation: summer,0.09239224321202456
+B,11,UHI_summer_night,Heat: summer night,0.07862138779890612
+B,12,DelNDVI_summer,Vegetation: summer,0.07785411876010546
+B,13,NDVI_urb_CT_winter,Vegetation: winter,0.0771631802238412
+B,14,NDVI_urb_CT,Vegetation: annual,0.072120745076146
+B,15,DelNDVI_winter_city,Vegetation: winter,0.06879358447834964
+B,16,UHI_winter_day,Heat: winter day,0.06839002626904252
+B,17,water_frac,Water share,0.06410072721395907
+B,18,LST_urb_night_CT_summer,Heat: summer night,0.05935553977165132
+B,19,NDVI_urb_CT_act_winter,Vegetation: winter,0.053228493791347586
+B,20,UHI_summer_night_city,Heat: summer night,0.051061070233201625
+B,21,UHI_annual_day,Heat: annual day,0.05005635962563076
+B,22,DelNDVI_summer_city,Vegetation: summer,0.04786781145245518
+B,23,UHI_annual_night,Heat: annual night,0.045522031746302795
+B,24,UHI_summer_day,Heat: summer day,0.045227547411060554
+B,25,DEM_rur,Elevation,0.044738114826014454
+B,26,DEM_urb_all,Elevation,0.04350108736581703
+B,27,LST_urb_night_CT_act_summer,Heat: summer night,0.042015079007366125
+B,28,LST_urb_day_CT,Heat: annual day,0.04135815239739391
+B,29,UHI_annual_day_city,Heat: annual day,0.040457392807887675
+B,30,DEM_urb_CT,Elevation,0.036515055997748895
+B,31,NDVI_urb_all_summer,Vegetation: summer,0.03619865235679585
+B,32,NDVI_rur_winter,Vegetation: winter,0.03588502902652912
+B,33,UHI_winter_night,Heat: winter night,0.03482452998539326
+B,34,UHI_annual_night_city,Heat: annual night,0.03478799362601637
+B,35,UHI_summer_day_city,Heat: summer day,0.033923838679443694
+B,36,LST_rur_night_summer,Heat: summer night,0.03239835350787763
+B,37,LST_urb_day_CT_summer,Heat: summer day,0.03105839599714913
+B,38,log_aland,Tract size,0.0310058505342047
+B,39,NDVI_urb_all,Vegetation: annual,0.030845333085285448
+B,40,LST_urb_day_CT_act_summer,Heat: summer day,0.030802247103491213
+B,41,LST_urb_night_CT_act_winter,Heat: winter night,0.029423320130425167
+B,42,DEM_urb_CT_act,Elevation,0.02935488413066894
+B,43,UHI_winter_night_city,Heat: winter night,0.02832408895452814
+B,44,LST_urb_night_CT_winter,Heat: winter night,0.027477010260483967
+B,45,NDVI_urb_CT_act,Vegetation: annual,0.02733499807624715
+B,46,LST_urb_night_all_summer,Heat: summer night,0.027311646934154957
+B,47,NDVI_rur,Vegetation: annual,0.027157686178369396
+B,48,LST_urb_day_CT_winter,Heat: winter day,0.026862640951150523
+B,49,LST_urb_day_all_winter,Heat: winter day,0.02618254862595556
+B,50,NDVI_urb_CT_act_summer,Vegetation: summer,0.02561922325528187
+B,51,LST_urb_day_CT_act,Heat: annual day,0.02306453220058544
+B,52,LST_rur_day,Heat: annual day,0.022132851737367364
+B,53,LST_urb_day_all_summer,Heat: summer day,0.021877319216199786
+B,54,LST_urb_night_CT_act,Heat: annual night,0.02148504098439123
+B,55,LST_urb_night_CT,Heat: annual night,0.02095572148903758
+B,56,LST_rur_day_summer,Heat: summer day,0.020718176053387855
+B,57,LST_rur_night,Heat: annual night,0.019964614272918915
+B,58,LST_rur_day_winter,Heat: winter day,0.019823839263943245
+B,59,LST_urb_day_CT_act_winter,Heat: winter day,0.019753473516616542
+B,60,LST_rur_night_winter,Heat: winter night,0.018349074404341168
+B,61,LST_urb_night_all,Heat: annual night,0.0162788001488315
+B,62,NDVI_urb_all_winter,Vegetation: winter,0.015786209748437616
+B,63,LST_urb_day_all,Heat: annual day,0.011923411071480186
+B,64,LST_urb_night_all_winter,Heat: winter night,0.009031187535119032

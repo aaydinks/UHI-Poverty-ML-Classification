@@ -1,0 +1,487 @@
+ua,ua_name,n_tracts
+63217,"New York--Newark, NY--NJ--CT",4217
+51445,"Los Angeles--Long Beach--Anaheim, CA",2758
+16264,"Chicago, IL--IN",2059
+69076,"Philadelphia, PA--NJ--DE--MD",1395
+56602,"Miami, FL",1188
+23824,"Detroit, MI",1148
+92242,"Washington, DC--VA--MD",1142
+22042,"Dallas--Fort Worth--Arlington, TX",1118
+09271,"Boston, MA--NH--RI",970
+40429,"Houston, TX",903
+69184,"Phoenix--Mesa, AZ",887
+03817,"Atlanta, GA",880
+78904,"San Francisco--Oakland, CA",785
+57628,"Minneapolis--St. Paul, MN--WI",678
+80389,"Seattle, WA",660
+86599,"Tampa--St. Petersburg, FL",648
+78661,"San Diego, CA",604
+69697,"Pittsburgh, PA",585
+23527,"Denver--Aurora, CO",576
+17668,"Cleveland, OH",576
+04843,"Baltimore, MD",569
+77770,"St. Louis, MO--IL",508
+47995,"Las Vegas--Henderson, NV",469
+71317,"Portland, OR--WA",430
+43912,"Kansas City, MO--KS",425
+16885,"Cincinnati, OH--KY--IN",414
+57466,"Milwaukee, WI",406
+77068,"Sacramento, CA",395
+78580,"San Antonio, TX",392
+90892,"Virginia Beach, VA",368
+75340,"Riverside--San Bernardino, CA",367
+19234,"Columbus, OH",338
+79039,"San Jose, CA",337
+62677,"New Orleans, LA",336
+41212,"Indianapolis, IN",323
+15670,"Charlotte, NC--SC",320
+04384,"Austin, TX",299
+65863,"Orlando, FL",298
+65080,"Oklahoma City, OK",289
+72505,"Providence, RI--MA",278
+56116,"Memphis, TN--MS--AR",265
+51755,"Louisville/Jefferson County, KY--IN",263
+11350,"Buffalo, NY",261
+74746,"Richmond, VA",253
+61273,"Nashville-Davidson, TN",250
+37243,"Hartford, CT",237
+65269,"Omaha, NE--IA",225
+42346,"Jacksonville, FL",214
+88948,"Tulsa, OK",212
+88732,"Tucson, AZ",212
+78499,"Salt Lake City--West Valley City, UT",211
+07786,"Birmingham, AL",208
+22528,"Dayton, OH",205
+10162,"Bridgeport--Stamford, CT--NY",203
+73261,"Raleigh, NC",203
+75664,"Rochester, NY",201
+89770,"Urban Honolulu, HI",192
+01171,"Albuquerque, NM",173
+79606,"Sarasota--Bradenton, FL",173
+45640,"Knoxville, TN",167
+01495,"Allentown, PA--NJ",167
+00970,"Albany--Schenectady, NY",165
+27253,"El Paso, TX--NM",165
+83926,"Springfield, MA--CT",159
+87868,"Toledo, OH--MI",156
+18964,"Columbia, SC",155
+31843,"Fresno, CA",154
+13510,"Cape Coral, FL",152
+62407,"New Haven, CT",150
+00766,"Akron, OH",147
+86302,"Syracuse, NY",141
+15508,"Charleston--North Charleston, SC",139
+80227,"Scranton, PA",138
+34300,"Grand Rapids, MI",137
+19504,"Concord, CA",132
+97831,"Youngstown, OH--PA",131
+18856,"Colorado Springs, CO",128
+35461,"Greenville, SC",127
+05680,"Baton Rouge, LA",126
+29872,"Flint, MI",126
+95077,"Wichita, KS",122
+72559,"Provo--Orem, UT",122
+50392,"Little Rock, AR",119
+37081,"Harrisburg, PA",119
+96670,"Winston-Salem, NC",118
+71803,"Poughkeepsie--Newburgh, NY--NJ",117
+97291,"Worcester, MA--CT",116
+64945,"Ogden--Layton, UT",110
+52390,"McAllen, TX",110
+57709,"Mission Viejo--Lake Forest--San Clemente, CA",109
+23743,"Des Moines, IA",108
+57925,"Mobile, AL",108
+42211,"Jackson, MS",101
+47530,"Lancaster, PA",101
+74179,"Reno, NV--CA",101
+15832,"Chattanooga, TN--GA",98
+83764,"Spokane, WA",97
+53200,"Madison, WI",96
+03358,"Asheville, NC",95
+04681,"Bakersfield, CA",95
+47719,"Lansing, MI",94
+31087,"Fort Wayne, IN",93
+04222,"Augusta-Richmond County, GA--SC",93
+67105,"Palm Bay--Melbourne, FL",93
+67134,"Palm Coast--Daytona Beach--Port Orange, FL",92
+41347,"Indio--Cathedral City, CA",92
+02602,"Ann Arbor, MI",88
+22366,"Davenport, IA--IL",87
+49582,"Lexington-Fayette, KY",86
+68482,"Pensacola, FL--AL",85
+85087,"Stockton, CA",84
+66673,"Oxnard, CA",83
+25228,"Durham, NC",83
+83116,"South Bend, IN--MI",82
+13375,"Canton, OH",80
+20287,"Corpus Christi, TX",80
+81739,"Shreveport, LA",79
+58600,"Montgomery, AL",77
+60799,"Murrieta--Temecula--Menifee, CA",76
+58006,"Modesto, CA",76
+35164,"Greensboro, NC",76
+08974,"Bonita Springs, FL",76
+03898,"Atlantic City, NJ",75
+29440,"Fayetteville, NC",75
+60895,"Myrtle Beach--Socastee, SC--NC",75
+79768,"Savannah, GA",75
+75718,"Rockford, IL",75
+68509,"Peoria, IL",75
+23500,"Denton--Lewisville, TX",74
+40753,"Huntington, WV--KY--OH",74
+30628,"Fort Collins, CO",73
+19099,"Columbus, GA--AL",72
+40780,"Huntsville, AL",72
+47611,"Lancaster--Palmdale, CA",72
+83953,"Springfield, MO",71
+86464,"Tallahassee, FL",70
+19558,"Concord, NC",70
+29494,"Fayetteville--Springdale--Rogers, AR--MO",70
+49933,"Lincoln, NE",69
+28333,"Evansville, IN--KY",68
+73693,"Reading, PA",68
+46828,"Lakeland, FL",67
+79498,"Santa Rosa, CA",67
+71479,"Port St. Lucie, FL",67
+28117,"Eugene, OR",66
+32653,"Gastonia, NC--SC",64
+64135,"Norwich--New London, CT--RI",64
+96697,"Winter Haven, FL",64
+46045,"Lafayette, LA",63
+05167,"Barnstable Town, MA",63
+51877,"Lubbock, TX",62
+71263,"Portland, ME",62
+38647,"Hickory, NC",61
+88462,"Trenton, NJ",61
+79309,"Santa Clarita, CA",60
+47854,"Laredo, TX",59
+08785,"Boise City, ID",59
+38809,"High Point, NC",58
+01927,"Amarillo, TX",58
+15481,"Charleston, WV",58
+02764,"Appleton, WI",58
+76474,"Round Lake Beach--McHenry--Grayslake, IL--WI",57
+97750,"York, PA",56
+75421,"Roanoke, VA",56
+43723,"Kalamazoo, MI",56
+27766,"Erie, PA",55
+83332,"South Lyon--Howell, MI",55
+83548,"Spartanburg, SC",55
+35920,"Gulfport, MS",54
+07732,"Binghamton, NY--PA",54
+95833,"Wilmington, NC",53
+00199,"Aberdeen--Bel Air South--Bel Air North, MD",53
+34813,"Green Bay, WI",52
+09946,"Bremerton, WA",52
+84024,"Spring Hill, FL",51
+72613,"Pueblo, CO",51
+32167,"Gainesville, FL",50
+70993,"Port Arthur, TX",50
+83899,"Springfield, IL",50
+87490,"Thousand Oaks, CA",50
+90541,"Victorville--Hesperia, CA",50
+61786,"New Bedford, MA",49
+61165,"Nashua, NH--MA",49
+19755,"Conroe--The Woodlands, TX",49
+22096,"Danbury, CT--NY",49
+24850,"Duluth, MN--WI",49
+60841,"Muskegon, MI",49
+51364,"Lorain--Elyria, OH",48
+52822,"Macon, GA",48
+02305,"Anchorage, AK",48
+10972,"Brownsville, TX",47
+44992,"Killeen, TX",46
+31060,"Fort Walton Beach--Navarre--Wright, FL",46
+31519,"Frederick, MD",46
+89785,"Utica, NY",45
+36190,"Hagerstown, MD--WV--PA",45
+02683,"Antioch, CA",45
+78229,"Salem, OR",45
+48799,"Leesburg--Eustis--Tavares, FL",44
+94726,"Wheeling, WV--OH",44
+90028,"Vallejo, CA",44
+44479,"Kennewick--Pasco, WA",44
+79282,"Santa Barbara, CA",44
+77149,"Saginaw, MI",43
+45451,"Kissimmee, FL",43
+67294,"Panama City, FL",43
+98020,"Yuma, AZ--CA",43
+90946,"Visalia, CA",43
+88084,"Topeka, KS",43
+89110,"Tuscaloosa, AL",43
+40375,"Houma, LA",42
+91027,"Waco, TX",42
+17317,"Clarksville, TN--KY",41
+65242,"Olympia--Lacey, WA",41
+38215,"Hemet, CA",41
+06058,"Beaumont, TX",41
+79336,"Santa Cruz, CA",41
+78310,"Salinas, CA",41
+92485,"Waterbury, CT",40
+29089,"Fargo, ND--MN",40
+82252,"Sioux Falls, SD",40
+31600,"Fredericksburg, VA",40
+14752,"Cedar Rapids, IA",40
+43210,"Johnson City, TN",40
+55333,"Marysville, WA",40
+18748,"College Station--Bryan, TX",39
+23311,"Deltona, FL",39
+73774,"Redding, CA",39
+03763,"Athens-Clarke County, GA",39
+80400,"Sebastian--Vero Beach South--Florida Ridge, FL",38
+34786,"Greeley, CO",38
+52201,"Lynchburg, VA",38
+53740,"Manchester, NH",38
+63838,"North Port--Port Charlotte, FL",37
+26794,"Elkhart, IN--MI",37
+46531,"Lake Charles, LA",37
+92593,"Waterloo, IA",37
+89326,"Tyler, TX",36
+58330,"Monroe, LA",36
+00280,"Abilene, TX",36
+11728,"Burlington, NC",36
+55981,"Medford, OR",36
+08407,"Bloomington--Normal, IL",35
+79363,"Santa Fe, NM",35
+80362,"Seaside--Monterey, CA",35
+46018,"Lafayette, IN",35
+73153,"Racine, WI",34
+71155,"Port Huron, MI",34
+15211,"Champaign, IL",34
+30925,"Fort Smith, AR--OK",34
+64567,"Ocala, FL",34
+36892,"Harlingen, TX",34
+83980,"Springfield, OH",33
+43669,"Kailua (Honolulu County)--Kaneohe, HI",33
+45235,"Kingsport, TN--VA",33
+22717,"Decatur, IL",32
+02386,"Anderson, IN",32
+28657,"Fairfield, CA",32
+49096,"Leominster--Fitchburg, MA",32
+95104,"Wichita Falls, TX",32
+04549,"Avondale--Goodyear, AZ",32
+87139,"Terre Haute, IN",32
+56251,"Merced, CA",32
+71749,"Pottstown, PA",31
+93592,"Weirton--Steubenville, WV--OH--PA",31
+97507,"Yakima, WA",31
+78364,"Salisbury, MD--DE",31
+98182,"Zephyrhills, FL",31
+09298,"Boulder, CO",31
+01279,"Alexandria, LA",31
+75637,"Rochester, MN",30
+87220,"Texas City, TX",30
+00901,"Albany, GA",30
+58168,"Monessen--California, PA",30
+52687,"McKinney, TX",30
+60733,"Murfreesboro, TN",30
+15724,"Charlottesville, VA",30
+08380,"Bloomington, IN",29
+63433,"Norman, OK",29
+43291,"Johnstown, PA",29
+32194,"Gainesville, GA",29
+64864,"Odessa, TX",29
+11755,"Burlington, VT",29
+07705,"Billings, MT",29
+34273,"Grand Junction, CO",28
+05707,"Battle Creek, MI",28
+51256,"Longview, TX",28
+30061,"Florence, SC",28
+94294,"Westminster--Eldersburg, MD",28
+75745,"Rock Hill, SC",28
+49852,"Lima, OH",28
+47935,"Las Cruces, NM",28
+35380,"Greenville, NC",28
+24580,"Dover, DE",28
+42157,"Jackson, MI",28
+45910,"La Crosse, WI--MN",28
+60625,"Muncie, IN",28
+82225,"Sioux City, IA--NE--SD",27
+48394,"Lawton, OK",27
+77338,"St. Cloud, MN",27
+77743,"St. Joseph, MO--KS",27
+45262,"Kingston, NY",27
+10351,"Bristol--Bristol, TN--VA",27
+18937,"Columbia, MO",27
+32113,"Gadsden, AL",27
+01792,"Altoona, PA",27
+56926,"Middletown, OH",27
+91261,"Waldorf, MD",27
+97939,"Yuba City, CA",27
+42265,"Jackson, TN",26
+67672,"Parkersburg, WV--OH",26
+29953,"Florence, AL",26
+39758,"Homosassa Springs--Beverly Hills--Citrus Springs, FL",26
+91783,"Warner Robins, GA",26
+48826,"Lee's Summit, MO",26
+61057,"Napa, CA",26
+51175,"Longmont, CO",26
+22069,"Dalton, GA",26
+26038,"Eau Claire, WI",26
+56656,"Michigan City--La Porte, IN--MI",26
+24607,"Dover--Rochester, NH--ME",26
+60976,"Nampa, ID",26
+79417,"Santa Maria, CA",26
+16318,"Chico, CA",26
+01765,"Alton, IL--MO",25
+07138,"Benton Harbor--St. Joseph--Fair Plain, MI",25
+57007,"Midland, TX",25
+02629,"Anniston--Oxford, AL",25
+90730,"Vineland, NJ",25
+87058,"Temple, TX",25
+55603,"Mauldin--Simpsonville, SC",24
+22690,"Decatur, AL",24
+87193,"Texarkana--Texarkana, TX--AR",24
+24823,"Dubuque, IA--IL",24
+50959,"Logan, UT",24
+54091,"Mansfield, OH",24
+61705,"Newark, OH",24
+89974,"Valdosta, GA",24
+42400,"Jacksonville, NC",24
+06652,"Bellingham, WA",23
+78553,"San Angelo, TX",23
+33328,"Gilroy--Morgan Hill, CA",23
+21745,"Cumberland, MD--WV--PA",23
+26750,"Elizabethtown--Radcliff, KY",23
+71506,"Portsmouth, NH--ME",23
+37594,"Hattiesburg, MS",23
+04951,"Bangor, ME",23
+06139,"Beckley, WV",23
+44506,"Kenosha, WI--IL",23
+59275,"Morgantown, WV",23
+02413,"Anderson, SC",23
+41590,"Iowa City, IA",23
+48664,"Lebanon, PA",23
+43885,"Kankakee, IL",23
+49339,"Lewiston, ME",22
+66160,"Oshkosh, WI",22
+24472,"Dothan, AL",22
+95455,"Williamsport, PA",22
+89650,"Uniontown--Connellsville, PA",22
+13591,"Carbondale, IL",22
+05869,"Bay City, MI",22
+70426,"Pocatello, ID",22
+18451,"Coeur d'Alene, ID",22
+39430,"Holland, MI",22
+33814,"Goldsboro, NC",22
+09379,"Bowling Green, KY",22
+82468,"Slidell, LA",21
+22204,"Danville, IL",21
+82144,"Simi Valley, CA",21
+58357,"Monroe, MI",21
+46126,"Lafayette--Louisville--Erie, CO",21
+51283,"Longview, WA--OR",21
+45694,"Kokomo, IN",21
+27118,"Elmira, NY",21
+90514,"Victoria, TX",21
+85708,"Sumter, SC",21
+89083,"Turlock, CA",21
+37945,"Hazleton, PA",21
+40996,"Idaho Falls, ID",21
+69454,"Pine Bluff, AR",21
+77230,"St. Augustine, FL",21
+36784,"Hanover, PA",21
+43399,"Joplin, MO",21
+72112,"Prescott Valley--Prescott, AZ",21
+06760,"Beloit, WI--IL",21
+69778,"Pittsfield, MA",21
+73396,"Rapid City, SD",21
+33598,"Glens Falls, NY",20
+81631,"Sherman, TX",20
+80416,"Sebring--Avon Park, FL",20
+93025,"Wausau, WI",20
+17722,"Cleveland, TN",20
+16237,"Cheyenne, WY",20
+37162,"Harrisonburg, VA",20
+34759,"Great Falls, MT",20
+25849,"East Stroudsburg, PA--NJ",20
+66484,"Owensboro, KY",20
+75988,"Rocky Mount, NC",20
+07921,"Bismarck, ND",20
+39079,"Hilton Head Island, SC",20
+48232,"Lawrence, KS",20
+93916,"West Bend, WI",20
+45937,"Lady Lake--The Villages, FL",20
+19801,"Conway, AR",19
+08002,"Blacksburg, VA",19
+04033,"Auburn, AL",19
+57736,"Missoula, MT",19
+84493,"State College, PA",19
+46801,"Lake Jackson--Angleton, TX",19
+96103,"Winchester, VA",19
+53794,"Mandeville--Covington, LA",19
+40213,"Hot Springs, AR",19
+76204,"Rome, GA",19
+08434,"Bloomsburg--Berwick, PA",19
+14482,"Casper, WY",18
+51499,"Los Lunas, NM",18
+56899,"Middletown, NY",18
+79633,"Saratoga Springs, NY",18
+50851,"Lodi, CA",18
+41914,"Ithaca, NY",18
+89866,"Vacaville, CA",18
+81118,"Sheboygan, WI",18
+60490,"Mount Vernon, WA",18
+92674,"Watertown, NY",18
+95411,"Williamsburg, VA",17
+90658,"Villas, NJ",17
+29818,"Flagstaff, AZ",17
+14158,"Carson City, NV",17
+29278,"Farmington, NM",17
+22420,"Davis, CA",17
+26416,"El Centro--Calexico, CA",17
+59410,"Morristown, TN",17
+28549,"Fairbanks, AK",17
+19126,"Columbus, IN",17
+77446,"St. George, UT",17
+67807,"Pascagoula, MS",17
+56980,"Midland, MI",17
+34219,"Grand Forks, ND--MN",17
+36514,"Hammond, LA",17
+84630,"Staunton--Waynesboro, VA",17
+53983,"Mankato, MN",17
+42967,"Jefferson City, MO",16
+27261,"El Paso de Robles (Paso Robles)--Atascadero, CA",16
+42562,"Janesville, WI",16
+36703,"Hanford, CA",16
+61840,"New Bern, NC",16
+20422,"Corvallis, OR",16
+54145,"Manteca, CA",16
+93862,"Wenatchee, WA",15
+49594,"Lexington Park--California--Chesapeake Ranch Estates, MD",15
+02062,"Ames, IA",15
+06868,"Bend, OR",15
+34246,"Grand Island, NE",15
+68887,"Petaluma, CA",15
+13537,"Cape Girardeau, MO--IL",15
+43345,"Jonesboro, AR",15
+39133,"Hinesville, GA",14
+49312,"Lewiston, ID--WA",14
+50527,"Livermore, CA",14
+71074,"Porterville, CA",14
+34516,"Grants Pass, OR",14
+88273,"Tracy, CA",14
+30223,"Fond du Lac, WI",14
+79147,"San Luis Obispo, CA",14
+81901,"Sierra Vista, AZ",14
+22285,"Daphne--Fairhope, AL",13
+53848,"Manhattan, KS",13
+22960,"DeKalb, IL",13
+87787,"Titusville, FL",13
+15184,"Chambersburg, PA",13
+14401,"Casa Grande, AZ",12
+00955,"Albany, OR",12
+51040,"Lompoc, CA",12
+12754,"Camarillo, CA",12
+96994,"Woodland, CA",12
+91405,"Walla Walla, WA--OR",12
+46747,"Lake Havasu City, AZ",12
+79201,"San Marcos, TX",12
+92890,"Watsonville, CA",12
+11026,"Brunswick, GA",11
+43615,"Kahului, HI",11
+52984,"Madera, CA",11
+14185,"Cartersville, GA",10
+89263,"Twin Rivers--Hightstown, NJ",10
+03196,"Arroyo Grande--Grover Beach, CA",9
+22987,"Delano, CA",7

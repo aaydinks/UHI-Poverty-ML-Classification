@@ -1,0 +1,96 @@
+{
+  "primary_n": 54243,
+  "cuts": {
+    "High_UHI": {
+      "column": "UHI_annual_day",
+      "rule": ">= median",
+      "value": 1.447570926,
+      "unit": "degC",
+      "frame": "primary"
+    },
+    "High_Pov": {
+      "column": "pov_rate",
+      "rule": ">= median",
+      "value": 0.10499683744465528,
+      "unit": "proportion",
+      "frame": "primary"
+    },
+    "High_Pov_LPI": {
+      "column": "LPI",
+      "rule": "< median (low index = poorer)",
+      "value": 55.0,
+      "unit": "index 0-99",
+      "frame": "lpi (5a)"
+    }
+  },
+  "class_counts": {
+    "High_UHI": {
+      "n": 54243,
+      "n_pos": 27122,
+      "n_neg": 27121,
+      "share_pos": 0.5000092177792527
+    },
+    "High_Pov": {
+      "n": 54243,
+      "n_pos": 27122,
+      "n_neg": 27121,
+      "share_pos": 0.5000092177792527
+    },
+    "High_Pov_LPI": {
+      "n": 54237,
+      "n_pos": 26916,
+      "n_neg": 27321,
+      "share_pos": 0.49626638641517784
+    }
+  },
+  "percentile_sensitivity": {
+    "p50": {
+      "UHI_annual_day_cut": 1.447570926,
+      "High_UHI": {
+        "n": 54243,
+        "n_pos": 27122,
+        "n_neg": 27121,
+        "share_pos": 0.5000092177792527
+      },
+      "pov_rate_cut": 0.10499683744465528,
+      "High_Pov": {
+        "n": 54243,
+        "n_pos": 27122,
+        "n_neg": 27121,
+        "share_pos": 0.5000092177792527
+      }
+    },
+    "p66": {
+      "UHI_annual_day_cut": 2.31446618756,
+      "High_UHI": {
+        "n": 54243,
+        "n_pos": 18443,
+        "n_neg": 35800,
+        "share_pos": 0.340007005512232
+      },
+      "pov_rate_cut": 0.1558760138248848,
+      "High_Pov": {
+        "n": 54243,
+        "n_pos": 18443,
+        "n_neg": 35800,
+        "share_pos": 0.340007005512232
+      }
+    },
+    "p75": {
+      "UHI_annual_day_cut": 2.843159922,
+      "High_UHI": {
+        "n": 54243,
+        "n_pos": 13561,
+        "n_neg": 40682,
+        "share_pos": 0.25000460888962633
+      },
+      "pov_rate_cut": 0.19664483064816118,
+      "High_Pov": {
+        "n": 54243,
+        "n_pos": 13561,
+        "n_neg": 40682,
+        "share_pos": 0.25000460888962633
+      }
+    }
+  }
+}

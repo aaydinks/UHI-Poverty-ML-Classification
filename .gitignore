@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local secrets (Census API key)
+.env
+
+# Data: raw downloads and large intermediates are rebuilt by `make data`
+data/raw/
+data/interim/
+data/processed/*.parquet
+
+# Editor and workspace folders
+.cursor/
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,18 @@
+element,value,shown_as,source
+Analysis sample: tracts,54243,"54,243",data/processed/median_values.json
+Analysis sample: urbanized areas,486,486,data/processed/median_values.json
+"Poverty target cut (ACS poverty rate, national median)",0.10499683744465528,10.5%,data/processed/median_values.json
+"UHI target cut (UHI_annual_day, national median, °C)",1.447570926,1.45 °C,data/processed/median_values.json
+Predictors in B-env (poverty task),64,64,uhi_poverty.features.CONFIGS
+Predictors in A-noLST (UHI task),28,28,uhi_poverty.features.CONFIGS
+Decision threshold τ,0.5,0.5,uhi_poverty.models.THRESHOLD
+Leave-one-city-out folds (one per UA),486,486,data/processed/median_values.json
+Training UAs per leave-one-city-out fold,485,485,data/processed/median_values.json
+County- and UA-grouped folds,5,5,uhi_poverty.validation.SCHEMES
+Largest UAs held out in turn,20,20,uhi_poverty.validation.N_MAJOR_UA
+Cluster-bootstrap resamples of UAs,1000,"1,000",uhi_poverty.metrics.B_DEFAULT
+Metrics in the panel,10,10,uhi_poverty.metrics.PANEL
+TreeSHAP folds (UA-grouped),5,5,uhi_poverty.interpret
+ACS vintage,2015–2019,2015–2019,data/README.md (S2)
+Gazetteer / boundary vintage,2019,2019,"data/README.md (S4, S6)"
+SUHI database reference year,2020,2020,data/README.md (S1)

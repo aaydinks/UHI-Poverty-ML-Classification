@@ -1,0 +1,78 @@
+{
+  "primary": {
+    "n": 54243,
+    "n00": 16653,
+    "n01": 10468,
+    "n10": 10468,
+    "n11": 16654,
+    "expected": [
+      [
+        13560.25,
+        13560.75
+      ],
+      [
+        13560.75,
+        13561.25
+      ]
+    ],
+    "chi2": 2821.4081199029524,
+    "df": 1,
+    "p": 0.0,
+    "chi2_yates": 2820.495928468853,
+    "p_yates": 0.0,
+    "phi": 0.2280662940060279,
+    "cramers_v": 0.2280662940060279,
+    "odds_ratio": 2.530950284791732,
+    "or_ci_low": 2.4449434102172827,
+    "or_ci_high": 2.6199826618964854,
+    "p_outcome_given_exposed": 0.6140402625175134,
+    "p_outcome_given_unexposed": 0.3859739685114856,
+    "risk_ratio": 1.5908851700169546,
+    "rr_ci_low": 1.5629271873998838,
+    "rr_ci_high": 1.6193432711285516,
+    "risk_difference": 0.22806629400602785,
+    "rd_ci_low": 0.2198726489102618,
+    "rd_ci_high": 0.2362599391017939,
+    "n_strata_informative": 452,
+    "cmh_or": 3.7921306972191764,
+    "cmh_or_ci_low": 3.638457297773102,
+    "cmh_or_ci_high": 3.9522946259650626,
+    "cmh_chi2": 4319.041851751438,
+    "cmh_p": 0.0,
+    "breslow_day_chi2": 1206.8609175288957,
+    "breslow_day_p": 0.0,
+    "or_boot_ci_low": 2.247241947154432,
+    "or_boot_ci_high": 2.886656361396789,
+    "B": 1000,
+    "logit_or": 2.530950284791743,
+    "logit_or_ci_low": 2.216997259297337,
+    "logit_or_ci_high": 2.8893627708487344,
+    "logit_cluster_se": 0.06757325414474656,
+    "logit_p": 5.68454768433742e-43,
+    "n_clusters": 486,
+    "analysis": "Primary: median splits"
+  },
+  "cut_values": {
+    "High_UHI": {
+      "column": "UHI_annual_day",
+      "rule": ">= median",
+      "value": 1.447570926,
+      "unit": "degC",
+      "frame": "primary"
+    },
+    "High_Pov": {
+      "column": "pov_rate",
+      "rule": ">= median",
+      "value": 0.10499683744465528,
+      "unit": "proportion",
+      "frame": "primary"
+    },
+    "High_Pov_LPI": {
+      "column": "LPI",
+      "rule": "< median (low index = poorer)",
+      "value": 55.0,
+      "unit": "index 0-99",
+      "frame": "lpi (5a)"
+    }
+  }
+}

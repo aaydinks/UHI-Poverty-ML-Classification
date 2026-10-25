@@ -1,0 +1,48 @@
+[project]
+name = "uhi-poverty"
+version = "0.1.0"
+description = "Tract-level surface urban heat island and poverty classification across U.S. urbanized areas"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+authors = [{ name = "aaydinks" }]
+dependencies = [
+    "numpy>=2.1",
+    "pandas>=2.2",
+    "pyarrow>=17",
+    "scipy>=1.14",
+    "scikit-learn>=1.6",
+    "lightgbm>=4.5",
+    "statsmodels>=0.14.4",
+    "geopandas>=1.0",
+    "pyogrio>=0.10",
+    "shapely>=2.0",
+    "pyproj>=3.7",
+    "matplotlib>=3.9",
+    "joblib>=1.4",
+    "xgboost>=3.4.1",
+    "catboost>=1.2.10",
+    "optuna>=5.0.0",
+    "imbalanced-learn>=0.14.2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.8"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uhi_poverty"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]

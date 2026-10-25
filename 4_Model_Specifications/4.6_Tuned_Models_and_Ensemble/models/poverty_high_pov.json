@@ -1,0 +1,289 @@
+{
+  "task": "B",
+  "target": "High_Pov",
+  "config": "B-env",
+  "model": "ens_weighted",
+  "label": "Soft-voting ensemble, tuned weights",
+  "n_train": 54243,
+  "positives": 27122,
+  "inner_roc_auc": 0.7785285412925285,
+  "tau_acc": 0.53,
+  "tau_f1": 0.41,
+  "settings": {
+    "lgbm": {
+      "prep": {
+        "engineer": true,
+        "variance": false,
+        "corr": true,
+        "scaler": "standard",
+        "pca": "none",
+        "smote": true
+      },
+      "params": {
+        "n_estimators": 248,
+        "learning_rate": 0.02719078622556796,
+        "num_leaves": 49,
+        "min_child_samples": 187,
+        "subsample": 0.8720045430841042,
+        "colsample_bytree": 0.5833537759799696,
+        "reg_lambda": 0.2608764242635817,
+        "reg_alpha": 3.64697618381286
+      }
+    },
+    "xgb": {
+      "prep": {
+        "engineer": true,
+        "variance": false,
+        "corr": false,
+        "scaler": "standard",
+        "pca": "0.99",
+        "smote": false
+      },
+      "params": {
+        "n_estimators": 1120,
+        "learning_rate": 0.01795633955218774,
+        "max_depth": 6,
+        "min_child_weight": 13.086954780668524,
+        "subsample": 0.5116892067310638,
+        "colsample_bytree": 0.6215285539464207,
+        "reg_lambda": 6.2867866611533705,
+        "reg_alpha": 0.03777367013466138,
+        "gamma": 0.49739674808571777
+      }
+    },
+    "catboost": {
+      "prep": {
+        "engineer": true,
+        "variance": false,
+        "corr": false,
+        "scaler": "minmax",
+        "pca": "none",
+        "smote": false
+      },
+      "params": {
+        "iterations": 826,
+        "learning_rate": 0.025088230625549046,
+        "depth": 5,
+        "l2_leaf_reg": 14.17235519901241,
+        "random_strength": 2.5616459700148173,
+        "bagging_temperature": 0.2820953555835033
+      }
+    },
+    "weights": {
+      "lgbm": 0.2,
+      "xgb": 0.2,
+      "catboost": 0.6000000000000001
+    }
+  },
+  "versions": {
+    "sklearn": "1.9.1",
+    "lightgbm": "4.7.0",
+    "xgboost": "3.4.1",
+    "catboost": "1.2.10",
+    "optuna": "5.0.0",
+    "imblearn": "0.14.2"
+  },
+  "tuning_version": 1,
+  "selection": [
+    {
+      "model": "ens_weighted",
+      "mean_inner_roc_auc": 0.7764720902045228
+    },
+    {
+      "model": "ens_equal",
+      "mean_inner_roc_auc": 0.7757098332221553
+    },
+    {
+      "model": "lgbm",
+      "mean_inner_roc_auc": 0.7733144004460751
+    },
+    {
+      "model": "catboost",
+      "mean_inner_roc_auc": 0.7721928302374955
+    },
+    {
+      "model": "xgb",
+      "mean_inner_roc_auc": 0.7714036274194267
+    },
+    {
+      "model": "logistic",
+      "mean_inner_roc_auc": 0.7367424657076448
+    }
+  ],
+  "nested_performance": {
+    "loco_tau_acc": {
+      "accuracy": [
+        0.706358424128459,
+        0.6906192647633002,
+        0.7228935528421989
+      ],
+      "f1": [
+        0.7092369477911646,
+        0.6883236117985478,
+        0.7288287874078438
+      ],
+      "roc_auc": [
+        0.7789948127736162,
+        0.7614746614769696,
+        0.7962526707940326
+      ],
+      "mcc": [
+        0.4127972557402171,
+        0.38216052922421917,
+        0.4459005314673119
+      ],
+      "balanced_accuracy": [
+        0.7063582418584369,
+        0.6909244717153421,
+        0.7229380113833112
+      ]
+    },
+    "loco_tau_f1": {
+      "accuracy": [
+        0.6913334439466844,
+        0.6758838793444135,
+        0.7059964140351165
+      ],
+      "f1": [
+        0.7360272439182052,
+        0.721836268391594,
+        0.7498923150873226
+      ],
+      "roc_auc": [
+        0.7789948127736162,
+        0.7614746614769696,
+        0.7962526707940326
+      ],
+      "mcc": [
+        0.40668417626685593,
+        0.37890070427030703,
+        0.4320288432444146
+      ],
+      "balanced_accuracy": [
+        0.6913303228172436,
+        0.676609136068444,
+        0.7058723591897001
+      ]
+    },
+    "ua5_tau_acc": {
+      "accuracy": [
+        0.7014176944490533,
+        0.6844540908492455,
+        0.7180545129062238
+      ],
+      "f1": [
+        0.7071989008207687,
+        0.6854396080998517,
+        0.7270142489301826
+      ],
+      "roc_auc": [
+        0.7734336303484671,
+        0.7546314339120543,
+        0.7921808982266608
+      ],
+      "mcc": [
+        0.4031488210819134,
+        0.36945124457848416,
+        0.4360288058550845
+      ],
+      "balanced_accuracy": [
+        0.7014173306868694,
+        0.6846361570410731,
+        0.7178493782126725
+      ]
+    },
+    "ua5_tau_f1": {
+      "accuracy": [
+        0.6868904743469203,
+        0.6710858300049604,
+        0.7030018249342144
+      ],
+      "f1": [
+        0.7327206345209618,
+        0.7173346925061894,
+        0.7479067645407569
+      ],
+      "roc_auc": [
+        0.7734336303484671,
+        0.7546314339120543,
+        0.7921808982266608
+      ],
+      "mcc": [
+        0.39790151407361224,
+        0.3671830959043641,
+        0.4267576620763497
+      ],
+      "balanced_accuracy": [
+        0.686887313451201,
+        0.6711503710660203,
+        0.7021516163359107
+      ]
+    }
+  },
+  "inputs": [
+    "LST_rur_day",
+    "LST_rur_day_summer",
+    "LST_rur_day_winter",
+    "LST_rur_night",
+    "LST_rur_night_summer",
+    "LST_rur_night_winter",
+    "LST_urb_day_CT",
+    "LST_urb_day_CT_act",
+    "LST_urb_day_CT_act_summer",
+    "LST_urb_day_CT_act_winter",
+    "LST_urb_day_CT_summer",
+    "LST_urb_day_CT_winter",
+    "LST_urb_day_all",
+    "LST_urb_day_all_summer",
+    "LST_urb_day_all_winter",
+    "LST_urb_night_CT",
+    "LST_urb_night_CT_act",
+    "LST_urb_night_CT_act_summer",
+    "LST_urb_night_CT_act_winter",
+    "LST_urb_night_CT_summer",
+    "LST_urb_night_CT_winter",
+    "LST_urb_night_all",
+    "LST_urb_night_all_summer",
+    "LST_urb_night_all_winter",
+    "UHI_annual_day",
+    "UHI_annual_night",
+    "UHI_summer_day",
+    "UHI_summer_night",
+    "UHI_winter_day",
+    "UHI_winter_night",
+    "UHI_annual_day_city",
+    "UHI_annual_night_city",
+    "UHI_summer_day_city",
+    "UHI_summer_night_city",
+    "UHI_winter_day_city",
+    "UHI_winter_night_city",
+    "NDVI_rur",
+    "NDVI_rur_summer",
+    "NDVI_rur_winter",
+    "NDVI_urb_CT",
+    "NDVI_urb_CT_act",
+    "NDVI_urb_CT_act_summer",
+    "NDVI_urb_CT_act_winter",
+    "NDVI_urb_CT_summer",
+    "NDVI_urb_CT_winter",
+    "NDVI_urb_all",
+    "NDVI_urb_all_summer",
+    "NDVI_urb_all_winter",
+    "DelNDVI_annual",
+    "DelNDVI_summer",
+    "DelNDVI_winter",
+    "DelNDVI_annual_city",
+    "DelNDVI_summer_city",
+    "DelNDVI_winter_city",
+    "DEM_rur",
+    "DEM_urb_CT",
+    "DEM_urb_CT_act",
+    "DEM_urb_all",
+    "DelDEM",
+    "Area",
+    "Total_Count",
+    "Urban_Count",
+    "water_frac",
+    "log_aland"
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "cuts": {
+    "High_UHI": {
+      "column": "UHI_annual_day",
+      "rule": ">= median",
+      "value": 1.447570926,
+      "unit": "degC",
+      "frame": "primary"
+    },
+    "High_Pov": {
+      "column": "pov_rate",
+      "rule": ">= median",
+      "value": 0.10499683744465528,
+      "unit": "proportion",
+      "frame": "primary"
+    },
+    "High_Pov_LPI": {
+      "column": "LPI",
+      "rule": "< median (low index = poorer)",
+      "value": 55.0,
+      "unit": "index 0-99",
+      "frame": "lpi (5a)"
+    }
+  },
+  "percentiles_primary": {
+    "UHI_annual_day": {
+      "p50": 1.447570926,
+      "p66": 2.31446618756,
+      "p75": 2.843159922
+    },
+    "pov_rate": {
+      "p50": 0.10499683744465528,
+      "p66": 0.1558760138248848,
+      "p75": 0.19664483064816118
+    }
+  },
+  "class_counts": {
+    "primary": {
+      "High_UHI": {
+        "n": 54243,
+        "n_pos": 27122,
+        "n_neg": 27121,
+        "share_pos": 0.5000092177792527
+      },
+      "High_Pov": {
+        "n": 54243,
+        "n_pos": 27122,
+        "n_neg": 27121,
+        "share_pos": 0.5000092177792527
+      }
+    },
+    "lpi_frame": {
+      "High_UHI": {
+        "n": 54237,
+        "n_pos": 27120,
+        "n_neg": 27117,
+        "share_pos": 0.5000276563969246
+      },
+      "High_Pov": {
+        "n": 54237,
+        "n_pos": 27120,
+        "n_neg": 27117,
+        "share_pos": 0.5000276563969246
+      },
+      "High_Pov_LPI": {
+        "n": 54237,
+        "n_pos": 26916,
+        "n_neg": 27321,
+        "share_pos": 0.49626638641517784
+      }
+    },
+    "pr_frame": {
+      "High_UHI": {
+        "n": 55095,
+        "n_pos": 27588,
+        "n_neg": 27507,
+        "share_pos": 0.5007350939286687
+      },
+      "High_Pov": {
+        "n": 55095,
+        "n_pos": 27962,
+        "n_neg": 27133,
+        "share_pos": 0.5075233687267448
+      }
+    }
+  },
+  "orientation_checks": {
+    "High_Pov": {
+      "mean_pov_rate_pos": 0.23060780344524018,
+      "mean_pov_rate_neg": 0.05615457941832708
+    },
+    "High_Pov_LPI": {
+      "mean_pov_rate_pos": 0.21557439206491427,
+      "mean_pov_rate_neg": 0.07226617361569096
+    },
+    "High_UHI": {
+      "mean_uhi_pos": 3.014405322235971,
+      "mean_uhi_neg": -0.07687593829320452
+    }
+  },
+  "n": {
+    "primary": 54243,
+    "lpi_frame": 54237,
+    "pr_frame": 55095,
+    "primary_uas": 486
+  }
+}

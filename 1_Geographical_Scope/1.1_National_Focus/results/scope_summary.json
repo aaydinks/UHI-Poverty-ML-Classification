@@ -1,0 +1,23 @@
+{
+  "all_2010_tracts_50_states_dc": 73056,
+  "all_2010_tracts_puerto_rico": 945,
+  "suhi_tracts_total": 55871,
+  "suhi_tracts_50_states_dc": 54998,
+  "suhi_tracts_puerto_rico": 873,
+  "suhi_uas_total": 497,
+  "suhi_uas_puerto_rico_only": 11,
+  "jurisdictions_with_suhi_tracts": 51,
+  "primary_n": 54243,
+  "primary_uas": 486,
+  "primary_states": 51,
+  "primary_share_of_all_2010_tracts": 0.7424852168199737,
+  "lpi_frame_n": 54237,
+  "pr_frame_n": 55095,
+  "pr_frame_puerto_rico_tracts": 852,
+  "primary_by_region": {
+    "South": 18652,
+    "West": 13148,
+    "Midwest": 11349,
+    "Northeast": 11094
+  }
+}

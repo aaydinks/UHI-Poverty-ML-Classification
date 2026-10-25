@@ -1,0 +1,19 @@
+quantity,value,share_of_n,source
+"cell: Low SUHI, low poverty",16653.0,0.3070073557878436,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+"cell: Low SUHI, high poverty",10468.0,0.19298342643290378,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+"cell: High SUHI, low poverty",10468.0,0.19298342643290378,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+"cell: High SUHI, high poverty",16654.0,0.30702579134634883,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+n,54243.0,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+odds_ratio,2.530950284791732,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+or_boot_ci_low,2.247241947154432,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+or_boot_ci_high,2.886656361396789,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+bootstrap_B,1000.0,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+cramers_v,0.2280662940060279,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+chi2,2821.4081199029524,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+df,1.0,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+p,0.0,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+cmh_or_by_ua,3.7921306972191764,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+cmh_or_ci_low,3.638457297773102,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+cmh_or_ci_high,3.9522946259650626,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+uhi_cut_degC,1.447570926,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json
+poverty_rate_cut,0.10499683744465528,,2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json

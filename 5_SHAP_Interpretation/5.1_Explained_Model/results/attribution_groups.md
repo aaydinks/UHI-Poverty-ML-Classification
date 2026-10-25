@@ -1,0 +1,22 @@
+# Attribution groups (closed under the exact identities of 3.1)
+
+| task | config | group | n_features | identities_inside | features |
+|---|---|---|---:|---:|---|
+| A | A-noLST | Vegetation: annual | 6 | 2 | DelNDVI_annual, DelNDVI_annual_city, NDVI_urb_CT, NDVI_urb_CT_act, NDVI_urb_all, NDVI_rur |
+| A | A-noLST | Vegetation: summer | 6 | 2 | DelNDVI_summer, DelNDVI_summer_city, NDVI_urb_CT_summer, NDVI_urb_CT_act_summer, NDVI_urb_all_summer, NDVI_rur_summer |
+| A | A-noLST | Vegetation: winter | 6 | 2 | DelNDVI_winter, DelNDVI_winter_city, NDVI_urb_CT_winter, NDVI_urb_CT_act_winter, NDVI_urb_all_winter, NDVI_rur_winter |
+| A | A-noLST | Elevation | 5 | 1 | DEM_rur, DEM_urb_CT, DEM_urb_CT_act, DEM_urb_all, DelDEM |
+| A | A-noLST | Tract size | 4 | 0 | Area, Total_Count, Urban_Count, log_aland |
+| A | A-noLST | Water share | 1 | 0 | water_frac |
+| B | B-env | Heat: annual day | 6 | 2 | UHI_annual_day, UHI_annual_day_city, LST_urb_day_CT, LST_urb_day_CT_act, LST_urb_day_all, LST_rur_day |
+| B | B-env | Heat: annual night | 6 | 2 | UHI_annual_night, UHI_annual_night_city, LST_urb_night_CT, LST_urb_night_CT_act, LST_urb_night_all, LST_rur_night |
+| B | B-env | Heat: summer day | 6 | 2 | UHI_summer_day, UHI_summer_day_city, LST_urb_day_CT_summer, LST_urb_day_CT_act_summer, LST_urb_day_all_summer, LST_rur_day_summer |
+| B | B-env | Heat: summer night | 6 | 2 | UHI_summer_night, UHI_summer_night_city, LST_urb_night_CT_summer, LST_urb_night_CT_act_summer, LST_urb_night_all_summer, LST_rur_night_summer |
+| B | B-env | Heat: winter day | 6 | 2 | UHI_winter_day, UHI_winter_day_city, LST_urb_day_CT_winter, LST_urb_day_CT_act_winter, LST_urb_day_all_winter, LST_rur_day_winter |
+| B | B-env | Heat: winter night | 6 | 2 | UHI_winter_night, UHI_winter_night_city, LST_urb_night_CT_winter, LST_urb_night_CT_act_winter, LST_urb_night_all_winter, LST_rur_night_winter |
+| B | B-env | Vegetation: annual | 6 | 2 | DelNDVI_annual, DelNDVI_annual_city, NDVI_urb_CT, NDVI_urb_CT_act, NDVI_urb_all, NDVI_rur |
+| B | B-env | Vegetation: summer | 6 | 2 | DelNDVI_summer, DelNDVI_summer_city, NDVI_urb_CT_summer, NDVI_urb_CT_act_summer, NDVI_urb_all_summer, NDVI_rur_summer |
+| B | B-env | Vegetation: winter | 6 | 2 | DelNDVI_winter, DelNDVI_winter_city, NDVI_urb_CT_winter, NDVI_urb_CT_act_winter, NDVI_urb_all_winter, NDVI_rur_winter |
+| B | B-env | Elevation | 5 | 1 | DEM_rur, DEM_urb_CT, DEM_urb_CT_act, DEM_urb_all, DelDEM |
+| B | B-env | Tract size | 4 | 0 | Area, Total_Count, Urban_Count, log_aland |
+| B | B-env | Water share | 1 | 0 | water_frac |

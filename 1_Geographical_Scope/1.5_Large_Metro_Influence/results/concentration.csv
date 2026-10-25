@@ -1,0 +1,6 @@
+top_k_uas,tracts,share_of_tracts,uas
+1,4217,0.0777427502166178,"New York--Newark, NY--NJ--CT"
+3,9034,0.16654683553638258,"New York--Newark, NY--NJ--CT; Los Angeles--Long Beach--Anaheim, CA; Chicago, IL--IN"
+5,11617,0.2141658831554302,"New York--Newark, NY--NJ--CT; Los Angeles--Long Beach--Anaheim, CA; Chicago, IL--IN; Philadelphia, PA--NJ--DE--MD; Miami, FL"
+10,16898,0.3115240676216286,"New York--Newark, NY--NJ--CT; Los Angeles--Long Beach--Anaheim, CA; Chicago, IL--IN; Philadelphia, PA--NJ--DE--MD; Miami, FL; Detroit, MI; Washington, DC--VA--MD; Dallas--Fort Worth--Arlington, TX; Boston, MA--NH--RI; Houston, TX"
+20,23777,0.4383422745792084,
