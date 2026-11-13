@@ -1,4 +1,4 @@
-"""Section 1.5: do a few large metros drive the results?
+"""Section 1.5: the models and the association without the largest urbanized areas.
 
 1. Concentration: share of tracts in the top 1, 5, 10 and 20 UAs; Lorenz curve.
 2. Model sensitivity: the primary Task A and Task B models (logistic, LightGBM)
@@ -150,124 +150,8 @@ def main() -> None:
     combined = pd.concat([ms, asn], ignore_index=True)
     combined.to_csv(OUT / "metro_sensitivity.csv", index=False)
     pc.to_csv(OUT / "pooled_vs_per_city.csv", index=False)
-    md = ["# Large-metro sensitivity\n", "## Concentration\n", report.md_table(conc, 3),
-          f"\nGini coefficient of tracts across {cstats['n_uas']} UAs: {cstats['gini']:.3f}.\n",
-          "## Models without the largest UAs (UA-grouped 5-fold)\n", report.md_table(ms, 3),
-          "\n## Pooled vs per-city (leave-one-city-out)\n", report.md_table(pc, 3),
-          "\n## Association without the largest UAs\n", report.md_table(asn, 3)]
-    report.write_text("\n".join(md), OUT / "metro_sensitivity.md")
     report.write_json(cstats, OUT / "concentration.json")
     plot_sensitivity(ms)
-    write_readme()
-
-
-def write_readme() -> None:
-    conc = pd.read_csv(OUT / "concentration.csv").set_index("top_k_uas")
-    cs = report.read_json(OUT / "concentration.json")
-    ms = pd.read_csv(OUT / "metro_sensitivity.csv")
-    pc = pd.read_csv(OUT / "pooled_vs_per_city.csv")
-    model = ms[ms.analysis.str.startswith("model")]
-    asn = ms[ms.analysis.str.startswith("association")].set_index("top_uas_dropped")
-    f = report.fmt_num
-    base = model[model.top_uas_dropped == 0].set_index(["task", "model"])["roc_auc"]
-    model = model.assign(delta=model.apply(lambda r: r.roc_auc - base[(r.task, r.model)], axis=1))
-    max_drop = max(0.0, float(-model["delta"].min()))
-    rise = model.loc[model["delta"].idxmax()]
-    lines = []
-    for (task, mdl), g in model.groupby(["task", "model"], sort=False):
-        g = g.set_index("top_uas_dropped")
-        lines.append(f"| {task} | {models.MODEL_LABELS[mdl]} | "
-                     + " | ".join(f(g.loc[k, "roc_auc"]) for k in DROPS) + " |")
-    plines = "\n".join(
-        f"| {r.task} | {models.MODEL_LABELS[r.model]} | {f(r.pooled_roc_auc)} | "
-        f"{f(r.mean_city_roc_auc)} | {f(r.median_city_roc_auc)} "
-        f"[{f(r.city_roc_auc_p25)}, {f(r.city_roc_auc_p75)}] | {f(r.median_city_roc_auc_top10)} | "
-        f"{f(r.median_city_roc_auc_others)} | {r.n_eligible_uas} |" for r in pc.itertuples())
-    or_range = (asn["odds_ratio"].min(), asn["odds_ratio"].max())
-    cmh_range = (asn["cmh_or"].min(), asn["cmh_or"].max())
-    lb = pc[(pc.task == "B") & (pc.model == "lgbm")].iloc[0]
-    la = pc[(pc.task == "A") & (pc.model == "lgbm")].iloc[0]
-    big_harder = (pc["median_city_roc_auc_top10"] <= pc["median_city_roc_auc_others"]).sum()
-    depends = max_drop >= 0.02 or or_range[0] <= 1
-    if depends:
-        verdict = ("Some results shift when the largest metros are removed: ROC-AUC falls by up "
-                   f"to {max_drop:.3f}; see the tables.")
-    else:
-        verdict = (
-            "No conclusion depends on a few metros. Removing the 1, 3 or 10 largest UAs "
-            + ("never lowers ROC-AUC" if max_drop < 0.0005 else
-               f"never lowers ROC-AUC by more than {max_drop:.3f}")
-            + f"; the largest change is a rise of "
-            f"{rise.delta:.3f} ({models.MODEL_LABELS[rise.model].lower()}, Task {rise.task}, "
-            f"top {int(rise.top_uas_dropped)} out), so the large metros make prediction slightly "
-            "harder, not easier. The association keeps its direction and size, and the largest "
-            f"UAs are not the easiest cities to predict ({big_harder} of {len(pc)} model × task "
-            "pairs have a lower median within-city ROC-AUC in the ten largest UAs than in the "
-            "rest).")
-    within_higher = (pc["median_city_roc_auc"] >= pc["pooled_roc_auc"]).all()
-    pooled_sentence = (
-        "The median ROC-AUC *within* a held-out city is higher than the pooled figure for every "
-        f"model (LightGBM: Task A {f(la.median_city_roc_auc)} vs pooled {f(la.pooled_roc_auc)}; "
-        f"Task B {f(lb.median_city_roc_auc)} vs {f(lb.pooled_roc_auc)}). The models rank tracts "
-        "inside an unseen city better than they place cities relative to each other, so pooled "
-        "numbers understate within-city discrimination rather than overstate it."
-        if within_higher else
-        "Pooled and within-city ROC-AUC differ by model; both are reported in section 4.1 "
-        f"(LightGBM: Task A pooled {f(la.pooled_roc_auc)} vs median within-city "
-        f"{f(la.median_city_roc_auc)}; Task B {f(lb.pooled_roc_auc)} vs "
-        f"{f(lb.median_city_roc_auc)}).")
-    text = f"""# 1.5 Large-metro influence
-
-## Purpose
-
-Tests whether a handful of very large metropolitan areas dominate the sample and drive the
-results.
-
-## Method
-
-`metro_influence.py` reuses the cached out-of-fold predictions to:
-
-1. measure how concentrated tracts are in the largest urbanized areas (UAs);
-2. retrain and re-evaluate the primary Task A (`A-noLST`) and Task B (`B-env`) models, logistic
-   regression and LightGBM, under UA-grouped 5-fold with all UAs and without the largest 1, 3
-   and 10 UAs;
-3. compare pooled leave-one-city-out metrics (each tract counts once, so big UAs weigh more)
-   with the mean across cities (each UA counts once), using UAs with ≥ 30 tracts and both
-   classes;
-4. recompute the association of section 2.2 (OR and CMH OR) without the largest 1, 3 and 10 UAs.
-
-## Results
-
-**Concentration** ([`results/concentration.png`](results/concentration.png)). The largest UA
-({conc.loc[1, 'uas']}) holds {report.fmt_pct(conc.loc[1, 'share_of_tracts'])} of the
-{int(conc.loc[20, 'tracts'] / conc.loc[20, 'share_of_tracts']):,} tracts; the largest 5 hold
-{report.fmt_pct(conc.loc[5, 'share_of_tracts'])}, the largest 10
-{report.fmt_pct(conc.loc[10, 'share_of_tracts'])} and the largest 20
-{report.fmt_pct(conc.loc[20, 'share_of_tracts'])} (Gini {cs['gini']:.2f} across {cs['n_uas']} UAs).
-
-**Models without the largest UAs** (ROC-AUC, UA-grouped 5-fold;
-[`results/metro_sensitivity.md`](results/metro_sensitivity.md),
-[`results/metro_sensitivity.png`](results/metro_sensitivity.png)):
-
-| Task | Model | All UAs | Top 1 out | Top 3 out | Top 10 out |
-|---|---|---:|---:|---:|---:|
-{chr(10).join(lines)}
-
-**Pooled vs per-city** (leave-one-city-out; per-city = ROC-AUC within each held-out UA):
-
-| Task | Model | Pooled ROC-AUC | Mean across cities | Median across cities [IQR] | Median, 10 largest UAs | Median, other UAs | Eligible UAs |
-|---|---|---:|---:|---:|---:|---:|---:|
-{plines}
-
-{pooled_sentence}
-
-**Association without the largest UAs.** The odds ratio stays between {f(or_range[0], 2)} and
-{f(or_range[1], 2)} and the CMH OR between {f(cmh_range[0], 2)} and {f(cmh_range[1], 2)} whether
-the largest 0, 1, 3 or 10 UAs are excluded.
-
-**Conclusion.** {verdict}
-"""
-    report.write_text(text, HERE / "README.md")
 
 
 if __name__ == "__main__":

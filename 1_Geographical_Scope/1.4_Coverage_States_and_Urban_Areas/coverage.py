@@ -1,9 +1,8 @@
 """Section 1.4: coverage by state and by urbanized area.
 
-Writes `results/tracts_by_state.{csv,md}` (all 51 jurisdictions),
-`results/tracts_by_urban_area.csv`, `results/major_urban_areas.md` (top 50),
-`results/included_excluded.md`, `results/coverage_map_tracts.png`,
-`results/coverage_by_state_map.png` and the README.
+Writes `results/tracts_by_state.csv` (all 51 jurisdictions),
+`results/tracts_by_urban_area.csv`, `results/coverage_summary.json`,
+`results/coverage_map_tracts.png` and `results/coverage_by_state_map.png`.
 """
 
 from __future__ import annotations
@@ -62,28 +61,6 @@ def by_ua(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def excluded_md(df: pd.DataFrame, st: pd.DataFrame) -> str:
-    in_uas = set(df.loc[df["in_primary"], "ua"])
-    all_uas = df.groupby("ua").agg(ua_name=("ua_name", "first"), n=("GEOID", "size"))
-    dropped = all_uas[~all_uas.index.isin(in_uas)].copy()
-    dropped["reason"] = "every tract excluded for missing data"
-    partial = df[~df["in_primary"] & df["ua"].isin(in_uas)]
-    lines = [
-        "# States and urbanized areas included and excluded\n",
-        f"**Included:** the study area is the 50 states + DC, and all 51 jurisdictions have "
-        f"tracts in the analysis sample; {len(in_uas)} urbanized areas.\n",
-        *([f"**Urbanized areas with no tract in the analysis sample ({len(dropped)}):**\n",
-           report.md_table(dropped.reset_index()[["ua", "ua_name", "n", "reason"]].rename(
-               columns={"n": "SUHI tracts"}))]
-          if len(dropped) else
-          ["**Urbanized areas:** every urbanized area in the SUHI database has at least one "
-           "tract in the analysis sample.\n"]),
-        f"\n**Partly excluded:** {len(partial):,} tracts in included UAs were dropped for missing "
-        "SUHI fields, renumbering after 2010, or a small ACS universe (section 1.3).\n",
-    ]
-    return "\n".join(lines)
-
-
 def status_map(df: pd.DataFrame, shapes, states) -> dict:
     status = pd.Series("Not urban (no SUHI value)", index=shapes.index)
     look = df.set_index("GEOID")
@@ -138,7 +115,7 @@ def state_map(st: pd.DataFrame, states) -> None:
     cb.set_label("Tracts in the analysis sample", color=plotting.INK_2, fontsize=8)
     cb.outline.set_visible(False)
     axes["conus"].set_title("Analysis-sample tracts by state", loc="left", fontsize=11)
-    plotting.note(fig, "Small states are unlabelled; every count is in tracts_by_state.md.",
+    plotting.note(fig, "Small states are unlabelled; every count is in tracts_by_state.csv.",
                   y=0.0)
     plotting.savefig(fig, OUT / "coverage_by_state_map.png")
 
@@ -148,19 +125,9 @@ def main() -> None:
     df = validation.load_analysis()
     gaz = build.read_gazetteer()
     st = by_state(df, gaz)
-    report.write_table(st, OUT / "tracts_by_state", digits=1,
-                       title="Tracts by state (all 51 jurisdictions)",
-                       note="coverage_pct = analysis tracts / all 2010 tracts. pct_high_* = share "
-                            "of the state's analysis tracts in the positive class.")
+    report.write_table(st, OUT / "tracts_by_state")
     ua = by_ua(df)
     ua.to_csv(OUT / "tracts_by_urban_area.csv", index=False)
-    top = ua.head(50)[["rank", "ua_name", "primary_state", "states_spanned", "n_tracts",
-                       "pct_high_uhi", "pct_high_pov"]]
-    report.write_text("# The 50 largest urbanized areas in the analysis sample\n\n"
-                      + report.md_table(top, digits=1)
-                      + "\nUAs are named after their principal cities. pct_high_* = share of the "
-                        "UA's tracts in the positive class.\n", OUT / "major_urban_areas.md")
-    report.write_text(excluded_md(df, st), OUT / "included_excluded.md")
     shapes = maps.load_tracts()
     states = maps.load_states()
     counts = status_map(df, shapes, states)
@@ -169,60 +136,6 @@ def main() -> None:
                        "n_included_uas": int(ua.shape[0]),
                        "n_states": int((st["analysis_tracts"] > 0).sum())},
                       OUT / "coverage_summary.json")
-    write_readme()
-
-
-def write_readme() -> None:
-    st = pd.read_csv(OUT / "tracts_by_state.csv", dtype={"state_fips": str})
-    ua = pd.read_csv(OUT / "tracts_by_urban_area.csv", dtype={"ua": str})
-    cs = report.read_json(OUT / "coverage_summary.json")
-    hi = st.sort_values("coverage_pct", ascending=False).head(3)
-    lo = st.sort_values("coverage_pct").head(3)
-    fmt = ", ".join
-    multi = int(ua["states_spanned"].str.contains(",").sum())
-    text = f"""# 1.4 Coverage by state and urbanized area
-
-## Purpose
-
-Shows which states and cities are in the sample, how much of each is covered, and which are left
-out.
-
-## Method
-
-`coverage.py` tabulates the analysis sample by state and by urbanized area (UA) and maps the
-status of every 2010 tract.
-
-- [`results/tracts_by_state.md`](results/tracts_by_state.md): all 51 jurisdictions, with the
-  analysis n, SUHI n, all 2010 tracts, coverage %, and the share of tracts that are
-  `High_UHI` and `High_Pov`.
-- [`results/tracts_by_urban_area.csv`](results/tracts_by_urban_area.csv): every included UA,
-  with its name (principal cities), primary state, every state it spans, n, % `High_UHI` and
-  % `High_Pov`. [`results/major_urban_areas.md`](results/major_urban_areas.md) lists the 50
-  largest.
-- [`results/included_excluded.md`](results/included_excluded.md): jurisdictions and UAs left
-  out, and why.
-- [`results/coverage_map_tracts.png`](results/coverage_map_tracts.png): every 2010 tract
-  coloured by status; [`results/coverage_by_state_map.png`](results/coverage_by_state_map.png):
-  analysis tracts per state.
-
-## Results
-
-All {cs['n_states']} jurisdictions (50 states + DC) and {cs['n_included_uas']} urbanized areas
-are in the analysis sample. Coverage (analysis tracts / all 2010 tracts) is highest in
-{fmt(f"{r.state_abbr} ({r.coverage_pct:.0f} %)" for r in hi.itertuples())} and lowest in
-{fmt(f"{r.state_abbr} ({r.coverage_pct:.0f} %)" for r in lo.itertuples())}, reflecting how
-urban each state is. The largest UAs are
-{fmt(f"{r.ua_name} ({r.n_tracts:,})" for r in ua.head(5).itertuples())}; {multi} UAs span more
-than one state.
-
-Tracts on the cartographic map, by status: {'; '.join(f"{k}: {v:,}" for k, v in cs['tract_status_counts_cb2019'].items())}.
-
-**"Cities" means urbanized areas.** The SUHI database's unit is the Census Urbanized Area
-(2010), a continuously built-up area named after its principal city or cities (for example
-"Minneapolis--St. Paul, MN--WI"). Throughout, "cities" means UAs; leave-one-city-out
-(section 4.1) holds out one UA at a time.
-"""
-    report.write_text(text, HERE / "README.md")
 
 
 if __name__ == "__main__":

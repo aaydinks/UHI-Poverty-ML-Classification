@@ -2,9 +2,8 @@
 
 For each model × task under leave-one-city-out and UA-grouped 5-fold: raw
 counts, row-normalised rates (TPR, FNR, TNR, FPR) and column-normalised rates
-(PPV, NPV), each with its denominator. Writes `DEFINITIONS.md`,
-`results/confusion_matrices.{csv,md}`, `results/majority_folds.{csv,md}`, one
-annotated figure per task, and the README.
+(PPV, NPV), each with its denominator. Writes `results/confusion_matrices.csv`,
+`results/majority_folds.csv` and one annotated figure per task.
 """
 
 from __future__ import annotations
@@ -94,47 +93,10 @@ def plot(t: pd.DataFrame, task: str) -> None:
     plotting.savefig(fig, OUT / f"confusion_task{task}.png")
 
 
-TERMS = """# Confusion-matrix terms and denominators
-
-Every rate in this repository states its denominator. With the median split the two classes
-are almost equal in size, so a rate computed over the wrong denominator can be off by a
-factor of about two without looking implausible.
-
-| Term | Definition | Denominator |
-|---|---|---|
-| TP, FP, TN, FN | Raw counts of true positives, false positives, true negatives, false negatives | – |
-| TPR / recall / sensitivity | TP / (TP + FN) | all actual positives |
-| FNR | FN / (TP + FN) | all actual positives |
-| TNR / specificity | TN / (TN + FP) | all actual negatives |
-| FPR | FP / (TN + FP) | all actual negatives |
-| PPV / precision | TP / (TP + FP) | all predicted positives |
-| NPV | TN / (TN + FN) | all predicted negatives |
-| Accuracy | (TP + TN) / n | all tracts |
-| Balanced accuracy | (TPR + TNR) / 2 | – |
-| F1 | 2TP / (2TP + FP + FN) | – |
-| MCC | (TP·TN − FP·FN) / √((TP+FP)(TP+FN)(TN+FP)(TN+FN)) | – |
-
-TPR + FNR = 1 and TNR + FPR = 1 (each pair shares a row denominator). PPV and NPV share no
-denominator with the row rates.
-
-Every confusion matrix is reported as counts together with rates within the actual class
-(TPR, FNR, TNR, FPR), with PPV and NPV given separately over their own denominators
-([`results/confusion_matrices.md`](results/confusion_matrices.md)).
-"""
-
-
 def main() -> None:
     df = validation.load_analysis()
     t = table(df)
-    show = t[["task", "scheme", "model", "n", "TP", "FP", "TN", "FN", "TPR", "FNR", "TNR", "FPR",
-              "PPV", "NPV", "accuracy", "balanced_accuracy"]]
-    report.write_table(t, OUT / "confusion_matrices", digits=3,
-                       title="Confusion matrices and rates (tau = 0.5)")
-    report.write_text("# Confusion matrices and rates (τ = 0.5)\n\n" + report.md_table(show)
-                      + "\nDenominators: TPR, FNR = actual positives; TNR, FPR = actual "
-                        "negatives; PPV = predicted positives; NPV = predicted negatives. "
-                        "`confusion_matrices.csv` lists every denominator.\n",
-                      OUT / "confusion_matrices.md")
+    report.write_table(t, OUT / "confusion_matrices")
     for task in TASKS:
         plot(t, task)
     rows = []
@@ -146,70 +108,7 @@ def main() -> None:
             rows.append({"task": task, "scheme": scheme, "n_folds": len(g),
                          "folds_predicting_positive": int(g.sum()),
                          "accuracy": float((o["y"] == o["pred"]).mean())})
-    report.write_table(pd.DataFrame(rows), OUT / "majority_folds", digits=3,
-                       title="Majority-class baseline: which class each fold predicts")
-    report.write_text(TERMS, HERE / "DEFINITIONS.md")
-    write_readme()
-
-
-def write_readme() -> None:
-    t = pd.read_csv(OUT / "confusion_matrices.csv")
-    mf = pd.read_csv(OUT / "majority_folds.csv").set_index(["task", "scheme"])
-    f = report.fmt_num
-
-    def r(task, model, scheme="loco"):
-        return t[(t.task == task) & (t.model == model) & (t.scheme == scheme)].iloc[0]
-
-    lines = []
-    for task in TASKS:
-        for model in ("logistic", "lgbm"):
-            x = r(task, model)
-            lines.append(
-                f"| {task} | {models.MODEL_LABELS[model]} | {x.TP:,} | {x.FP:,} | {x.TN:,} | "
-                f"{x.FN:,} | {f(x.TPR)} ({x.TP:,}/{x.TPR_denominator:,}) | "
-                f"{f(x.FPR)} ({x.FP:,}/{x.FPR_denominator:,}) | "
-                f"{f(x.PPV)} ({x.TP:,}/{x.PPV_denominator:,}) |")
-    m = r("A", "majority")
-    text = f"""# 4.3 Confusion matrices and denominators
-
-## Purpose
-
-This section reports the full confusion matrix of every model and states what each rate is
-divided by. With the median split the two classes are almost equal in size, so a rate over the
-wrong denominator can be off by a factor of about two without looking implausible.
-
-## Method
-
-- [`DEFINITIONS.md`](DEFINITIONS.md) defines every term with its denominator.
-- `confusion_matrices.py` writes, for every model × task under leave-one-city-out and
-  UA-grouped 5-fold, the four counts, all six rates and each rate's denominator
-  ([`results/confusion_matrices.csv`](results/confusion_matrices.csv)), and one annotated
-  figure per task. Each matrix is checked to sum to n.
-
-## Results
-
-Leave-one-city-out, n = {m.n:,} tracts (τ = 0.5); rate (numerator/denominator):
-
-| Task | Model | TP | FP | TN | FN | TPR | FPR | PPV |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-{chr(10).join(lines)}
-
-The majority-class baseline predicts one class for every tract in a fold: under
-leave-one-city-out on Task A it yields TP = {m.TP:,}, FP = {m.FP:,}, TN = {m.TN:,},
-FN = {m.FN:,}. The national median split leaves the two classes within one tract of each other,
-so holding out a city tips the training majority toward the class that city has *less* of:
-under leave-one-city-out the majority class predicts "positive" in {mf.loc[('A', 'loco'), 'folds_predicting_positive']}
-of {mf.loc[('A', 'loco'), 'n_folds']} folds on Task A and its accuracy falls to
-{f(mf.loc[('A', 'loco'), 'accuracy'])} ({f(mf.loc[('B', 'loco'), 'accuracy'])} on Task B;
-[`results/majority_folds.md`](results/majority_folds.md)). Pooled over folds, the baseline is
-therefore worse than chance, not merely equal to it. The no-skill references to compare models
-against are balanced accuracy 0.5, MCC 0 and ROC-AUC 0.5.
-
-Figures: [`results/confusion_taskA.png`](results/confusion_taskA.png),
-[`results/confusion_taskB.png`](results/confusion_taskB.png). UA-grouped 5-fold matrices are
-in the same CSV.
-"""
-    report.write_text(text, HERE / "README.md")
+    report.write_table(pd.DataFrame(rows), OUT / "majority_folds")
 
 
 if __name__ == "__main__":

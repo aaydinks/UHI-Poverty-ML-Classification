@@ -23,7 +23,7 @@ Out-of-fold predictions of the six other models are cached under
 those models only and stops (for running the slow ones in the background).
 
 Writes `results/algorithms_bars.csv`, `results/algorithms_auc.csv`, `results/algorithms_repo_check.csv`,
-`results/algorithms.png` and `README_algorithms.md`.
+and `results/algorithms.png`.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ from sklearn.svm import LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
-from uhi_poverty import features, metrics, models, paths, plotting, report, validation
+from uhi_poverty import features, metrics, models, paths, plotting, validation
 
 HERE = Path(__file__).resolve().parent
 OUT = paths.results_dir(__file__)
@@ -298,81 +298,6 @@ def plot(bars: pd.DataFrame) -> None:
     plotting.savefig(fig, OUT / "algorithms.png")
 
 
-# --------------------------------------------------------------------------- README
-
-
-def write_readme() -> None:
-    bars = pd.read_csv(OUT / "algorithms_bars.csv")
-    auc = pd.read_csv(OUT / "algorithms_auc.csv")
-    check = pd.read_csv(OUT / "algorithms_repo_check.csv")
-    f = report.fmt_num
-    sections = []
-    for task in PANELS:
-        b = bars[bars.task == task].set_index("model")
-        a = auc[auc.task == task].set_index("model")
-
-        def pm(m, k, b=b):
-            return f"{f(b.loc[m, k])} ± {f(b.loc[m, k + '_sd'])}"
-
-        rows = [f"| {ALGORITHM_LABELS[m]} | {pm(m, 'precision')} | {pm(m, 'recall')} "
-                f"| {pm(m, 'f1')} | {pm(m, 'accuracy')} "
-                f"| {report.fmt_ci(a.loc[m, 'estimate'], a.loc[m, 'ci_low'], a.loc[m, 'ci_high'])} |"
-                for m in ALGORITHMS]
-        best = a["estimate"].idxmax()
-        sections.append(
-            f"**{PANEL_TITLES[task]}** — target `{features.TASKS[task]['target']}`, "
-            f"{len(features.CONFIGS[PANELS[task]])} predictors; highest ROC-AUC: "
-            f"{ALGORITHM_LABELS[best]} ({f(a.loc[best, 'estimate'])}).\n\n"
-            "| Algorithm | Precision | Recall | F1 | Accuracy | ROC-AUC [95 % CI] |\n"
-            "|---|---:|---:|---:|---:|---|\n" + "\n".join(rows))
-    n = int(auc["n"].iloc[0])
-    n_folds = int(auc["n_folds"].iloc[0])
-    report.require(n_folds == 486, "leave-one-city-out should have 486 folds")
-    text = f"""# Algorithm comparison
-
-The algorithm comparison shows eight algorithms by precision, recall, F1 and accuracy (grouped bars, y from
-0 to 1) on {n:,} tracts in 486 urbanized areas, each area held out in turn
-(leave-one-city-out, {n_folds} folds), at τ = 0.5. Panel (a) predicts High UHI from `A-noLST`
-(no LST or SUHI column); panel (b) predicts High poverty from `B-env`. Each bar is the score
-aggregated over all held-out tracts; its error bar is ±1 SD of 1,000 UA cluster-bootstrap
-replicates (the bootstrap standard error). Table cells below are "aggregated estimate ±
-bootstrap SD".
-
-![Algorithm comparison](results/algorithms.png)
-
-Script: [`algorithms.py`](algorithms.py). Bar values:
-[`results/algorithms_bars.csv`](results/algorithms_bars.csv); ROC-AUC with 95 % UA cluster-bootstrap
-intervals (1,000 replicates): [`results/algorithms_auc.csv`](results/algorithms_auc.csv).
-
-## Results
-
-{sections[0]}
-
-{sections[1]}
-
-## Settings
-
-- **Logistic regression and LGBM** are the repository's own runs, read from the cached
-  out-of-fold engine (`validation.oof`) with the fixed settings (logistic C = 1,
-  max_iter = 5000; LightGBM 400 trees, learning rate 0.05, 31 leaves), not library defaults.
-  Their values match section 4.4's
-  [`metric_panel.csv`](../4_Model_Specifications/4.4_Metric_Panel_with_Uncertainty/results/metric_panel.csv)
-  exactly (largest absolute difference over {len(check)} estimates and CI bounds:
-  {check['max_abs_diff'].max():.1e}; [`results/algorithms_repo_check.csv`](results/algorithms_repo_check.csv)).
-- **Decision tree, random forest, SVM, KNN, CatBoost, XGBoost** use library defaults with
-  `random_state = 37`, single-threaded, nothing tuned. Each fold refits the whole pipeline:
-  median imputation, and for KNN and SVM `log1p` on `Area`, `Total_Count` and `Urban_Count`
-  followed by standardisation.
-- **SVM** is an approximation: an exact RBF SVM refitted 486 times on ~54,000 rows is
-  impractical, so the RBF kernel is approximated by `Nystroem(n_components=500)` followed by
-  `LinearSVC`. Its class is decision function ≥ 0 and its ROC-AUC is computed from the
-  uncalibrated decision function.
-- Bars are aggregated (pooled) over all out-of-fold predictions, not averaged over cities.
-  Error bars are ±1 SD of the same 1,000 UA cluster-bootstrap replicates that give the
-  ROC-AUC intervals. Out-of-fold predictions of the six other models are cached under
-  `data/interim/figures/algorithms/`.
-"""
-    report.write_text(text, HERE / "README_algorithms.md")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -394,7 +319,6 @@ def main(argv: list[str] | None = None) -> None:
     auc = t[t["metric"] == "roc_auc"].drop(columns="metric").reset_index(drop=True)
     auc.to_csv(OUT / "algorithms_auc.csv", index=False)
     plot(bars)
-    write_readme()
     print(bars.to_string(index=False))
 
 

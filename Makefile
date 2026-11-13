@@ -3,9 +3,9 @@
 export PYTHONPATH := $(CURDIR)/src
 PY := uv run python
 
-.PHONY: all data build engine scope thresholds predictors models interpret shap tune tuned figures panel test lint clean-cache
+.PHONY: all data build engine scope thresholds predictors models interpret shap tune tuned export figures panel test lint clean-cache
 
-all: data build engine models predictors thresholds scope interpret shap tune tuned figures panel test lint
+all: data build engine models predictors thresholds scope interpret shap tune tuned export figures panel test lint
 
 data:
 	$(PY) -m uhi_poverty.acquire
@@ -50,6 +50,9 @@ tune:
 
 tuned:
 	$(PY) 4_Model_Specifications/4.6_Tuned_Models_and_Ensemble/tuned_models.py
+
+export:
+	$(PY) 4_Model_Specifications/4.6_Tuned_Models_and_Ensemble/export_models.py
 
 figures:
 	$(PY) 6_Figures/pipeline.py

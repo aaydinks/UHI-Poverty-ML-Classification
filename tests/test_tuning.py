@@ -123,41 +123,9 @@ def test_correlation_filter_drops_the_later_of_a_correlated_pair():
     assert f.keep_.tolist() == [0, 2]
 
 
-def test_round_two_fixes_the_options_inner_cv_never_favoured():
-    import optuna
-
-    study = optuna.create_study(sampler=optuna.samplers.RandomSampler(seed=0))
-    for model in models.TUNED_MODELS:
-        for _ in range(5):
-            prep, _ = tuning.suggest(study.ask(), model, rnd=2)
-            assert prep["variance"] is False and prep["pca"] == "none"
-            assert (prep["scaler"] != "none") == (model == "logistic")
-
-
-def test_round_one_paths_and_fingerprints_are_unchanged_by_round_two():
+def test_cache_paths_are_stable():
     assert tuning._settings_path("A", "lgbm", "ua5").name == "A__lgbm__tune-ua5.json"
-    assert tuning._pred_path("A", "lgbm", "loco", 2).name == "A__lgbm__r2__loco.parquet"
-
-
-def test_stacked_ensemble_is_a_logistic_regression_on_member_logits():
-    rng = np.random.default_rng(3)
-    y = rng.integers(0, 2, 400)
-    rows = np.arange(400)
-    members = {m: [{"inner_rows": rows.tolist(),
-                    "inner_score": np.clip(y * 0.4 + rng.random(400) * (i + 1) * 0.5, 0.01,
-                                           0.99).tolist()}]
-               for i, m in enumerate(models.BOOSTERS)}
-    ens = tuning.ensemble_settings(members, y, stacked=True)
-    s = ens["ens_stacked"][0]
-    assert set(s["weights"]) == set(models.BOOSTERS) and "intercept" in s
-    preds = {m: pd.DataFrame({"GEOID": [str(i) for i in rows], "ua": "u", "state_fips": "01",
-                              "region": "South", "fold": "0", "settings_fold": 0, "y": y,
-                              "score": members[m][0]["inner_score"]})
-             for m in models.BOOSTERS}
-    out = tuning.combine(preds, ens["ens_stacked"])
-    assert out["score"].between(0, 1).all()
-    # the least noisy member gets the largest coefficient
-    assert max(s["weights"], key=s["weights"].get) == "lgbm"
+    assert tuning._pred_path("A", "lgbm", "loco").name == "A__lgbm__loco.parquet"
 
 
 def test_seed_bagging_averages_one_fit_per_seed():

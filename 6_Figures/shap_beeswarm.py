@@ -50,7 +50,7 @@ FOOTNOTE = (f"Out-of-fold SHAP of the fixed-setting models (UA-grouped 5-fold, s
             "training-fold background). Colour: the feature's percentile among all tracts. "
             "x-scales differ between panels. † Offset by another feature of the same exact "
             f"identity or attribution group (SHAP correlation ≤ {OFFSET_R}); their joint "
-            "effect is the group total in the README. Logistic panels are cut at the 0.5th and "
+            "effect is the group total. Logistic panels are cut at the 0.5th and "
             "99.5th percentiles of their SHAP values; the numbers at the panel edges count the points beyond.")
 
 
@@ -116,13 +116,13 @@ def model_rows(task: str, model: str, df: pd.DataFrame) -> tuple[pd.DataFrame, d
     cfg = interpret.config(task)
     src = paths.INTERPRET_DIR / f"{task}__{cfg}"
     meta = json.loads((src / "meta.json").read_text())
-    report.require(meta["record_seed"] == interpret.RECORD_SEED, f"{task}: not the record seed")
+    report.check(meta["record_seed"] == interpret.RECORD_SEED, f"{task}: not the record seed")
     if model == "lgbm":
         rows = pd.read_parquet(src / "rows.parquet")
-        report.require(len(rows) == meta["additivity"]["n"], f"{task}: cache row count")
+        report.check(len(rows) == meta["additivity"]["n"], f"{task}: cache row count")
     else:
         rows = interpret.logistic_rows(task, df)
-    report.require(meta["features"] == features.config(cfg), f"{task}: feature list")
+    report.check(meta["features"] == features.config(cfg), f"{task}: feature list")
     return rows, meta
 
 
@@ -198,201 +198,6 @@ def plot(data: dict) -> None:
     plotting.savefig(fig, OUT / "shap_beeswarm.png")
 
 
-# --------------------------------------------------------------------------- README
-
-
-def plain(group: str) -> str:
-    """'Vegetation: annual' -> 'annual vegetation'; 'Water share' -> 'water share'."""
-    head, _, tail = group.partition(": ")
-    return f"{tail} {head.lower()}" if tail else group.lower()
-
-
-def comparison(top: pd.DataFrame, grp: pd.DataFrame) -> tuple[str, str, str, str]:
-    """The group table per task and the two comparison paragraphs, checked against the data."""
-    f = report.fmt_num
-
-    def gtab(task):
-        w = grp[grp.task == task].pivot(index="group", columns="model",
-                                        values=["mean_abs_group_shap", "rank"])
-        w = w.sort_values(("rank", "lgbm"))
-        lines = [f"| {g} | {int(w.loc[g, ('rank', 'lgbm')])} | "
-                 f"{f(w.loc[g, ('mean_abs_group_shap', 'lgbm')])} | "
-                 f"{int(w.loc[g, ('rank', 'logistic')])} | "
-                 f"{f(w.loc[g, ('mean_abs_group_shap', 'logistic')])} |" for g in w.index]
-        return ("| Attribution group | LightGBM rank | LightGBM mean \\|Σ SHAP\\| | "
-                "Logistic rank | Logistic mean \\|Σ SHAP\\| |\n|---|---:|---:|---:|---:|\n"
-                + "\n".join(lines))
-
-    def rank(task, model, group):
-        g = grp[(grp.task == task) & (grp.model == model)].set_index("group")
-        return int(g.loc[group, "rank"]), float(g.loc[group, "mean_abs_group_shap"])
-
-    def order(task, model):
-        g = grp[(grp.task == task) & (grp.model == model)].sort_values("rank")
-        return g.group.tolist()
-
-    def feats(task, model):
-        return top[(top.task == task) & (top.model == model)].reset_index(drop=True)
-
-    # Task A
-    la, ra = order("A", "lgbm"), order("A", "logistic")
-    fa_l, fa_r = feats("A", "lgbm"), feats("A", "logistic")
-    report.require(la[:2] == ra[:2] == ["Vegetation: summer", "Tract size"],
-                   "A: both models should rank summer vegetation, then tract size, first")
-    report.require(fa_l.mean_abs_shap[0] > 2 * fa_l.mean_abs_shap[1],
-                   "A: LightGBM's top feature no longer has twice the next one's mean |SHAP|")
-    pair = set(fa_r.feature[:2])
-    report.require(pair == {"Total_Count", "Area"} and fa_r.offset_in_group[:2].all(),
-                   "A: logistic's top two should be the offsetting Total_Count/Area pair")
-    size_r = rank("A", "logistic", "Tract size")[1]
-    report.require(size_r < fa_r.mean_abs_shap[1], "A: the tract-size group no longer "
-                   "contributes less than either of its two leading members")
-    elev_l, elev_r = rank("A", "lgbm", "Elevation"), rank("A", "logistic", "Elevation")
-    dem_r = fa_r[fa_r.feature == "DEM_urb_CT_act"]
-    report.require(len(dem_r) == 1 and bool(dem_r.offset_in_group.iloc[0])
-                   and elev_r[0] > elev_l[0], "A: elevation offsetting no longer holds")
-    shared_a = sorted(set(fa_l.feature) & set(fa_r.feature))
-    text_a = (
-        f"**UHI (panels A and C).** The two models agree on what matters. Both rank the "
-        f"summer-vegetation group first and tract size second, and the third place goes to "
-        f"{plain(la[2])} for LightGBM and to {plain(ra[2])} for logistic regression. They "
-        f"differ in how the vegetation signal is carried. LightGBM sends it almost entirely "
-        f"through `DelNDVI_summer` (mean |SHAP| {f(fa_l.mean_abs_shap[0])}, more than twice the "
-        f"next feature). Logistic regression spreads it over the urban NDVI terms and the "
-        f"dNDVI columns. Logistic regression's two largest single features, `Total_Count` "
-        f"({f(fa_r.mean_abs_shap[0])}) and `Area` ({f(fa_r.mean_abs_shap[1])}), largely cancel "
-        f"each other: the whole tract-size group adds {f(size_r)}, less than either one alone. "
-        f"The same happens to the elevation pair: `DEM_urb_CT_act` is logistic regression's "
-        f"third feature, but the elevation group ranks {elev_r[0]} of {len(ra)} "
-        f"(LightGBM: {elev_l[0]}). Features in both top 10s: "
-        + ", ".join(f"`{s}`" for s in shared_a) + ".")
-
-    # Task B
-    lb, rb = order("B", "lgbm"), order("B", "logistic")
-    fb_l = feats("B", "lgbm")
-    report.require(lb[0] == "Tract size", "B: LightGBM's top group should be tract size")
-    report.require(rb[:2] == ["Heat: annual night", "Heat: winter night"],
-                   "B: logistic's top two groups should be annual and winter night heat")
-    an_l, wn_l = rank("B", "lgbm", "Heat: annual night"), rank("B", "lgbm", "Heat: winter night")
-    an_r, wn_r = rank("B", "logistic", "Heat: annual night"), rank("B", "logistic",
-                                                                     "Heat: winter night")
-    report.require(min(an_l[0], wn_l[0]) > 5, "B: LightGBM should rank night heat low")
-    report.require(fb_l.mean_abs_shap[0] < 1.5 * fb_l.mean_abs_shap[2],
-                   "B: LightGBM's top three are no longer close")
-    veg_l = [g for g in lb[1:4]]
-    report.require(all(g.startswith("Vegetation") for g in veg_l),
-                   "B: LightGBM's groups 2-4 should be vegetation")
-    veg_r = [i + 1 for i, g in enumerate(rb) if g.startswith("Vegetation")]
-    shared_b = sorted(set(fb_l.feature) & set(feats("B", "logistic").feature))
-    text_b = (
-        f"**Poverty (panels B and D).** Here the models disagree. LightGBM's largest group is "
-        f"tract size, followed by the three vegetation groups (winter, summer, annual), and its "
-        f"attribution is flat: its top three features lie between "
-        f"{f(fb_l.mean_abs_shap[2])} and {f(fb_l.mean_abs_shap[0])}. Logistic regression "
-        f"leans on night-time surface heat. Its two largest groups are annual-night heat "
-        f"({f(an_r[1])}) and winter-night heat ({f(wn_r[1])}), which LightGBM ranks "
-        f"{an_l[0]} and {wn_l[0]} of {len(lb)}. Vegetation follows in logistic regression "
-        f"(ranks {', '.join(map(str, veg_r))}), and tract size ranks "
-        f"{rank('B', 'logistic', 'Tract size')[0]}. Read this as a difference in what each "
-        f"model can use: a linear model fits one slope per column, so it picks up the broad "
-        f"poverty gradient carried by the many night-LST columns, while the tree ensemble "
-        f"gets its discrimination from thresholds and interactions on tract size and "
-        f"vegetation. Features in both top 10s: "
-        + (", ".join(f"`{s}`" for s in shared_b) if shared_b else "none") + ".")
-    return gtab("A"), gtab("B"), text_a, text_b
-
-
-def write_readme() -> None:
-    t = pd.read_csv(OUT / "shap_top_features.csv")
-    g = pd.read_csv(OUT / "shap_group_importance.csv")
-    f = report.fmt_num
-
-    def block(task, model):
-        return "\n".join(
-            f"| {r.rank} | `{r.feature}`{' †' if r.offset_in_group else ''} | {r.group} | "
-            f"{f(r.mean_abs_shap)} |"
-            for r in t[(t.task == task) & (t.model == model)].itertuples())
-
-    gtab_a, gtab_b, text_a, text_b = comparison(t, g)
-    head = "| Rank | Feature | Attribution group | Mean \\|SHAP\\| (log-odds) |\n|---:|---|---|---:|"
-    text = f"""# SHAP beeswarm
-
-The beeswarm shows the SHAP values of the top 10 features per task for two of the evaluated
-models ([`results/shap_beeswarm.png`](results/shap_beeswarm.png)). The top row is LightGBM, a
-gradient-boosted tree ensemble; the bottom row is logistic regression. Both use the fixed
-settings of `models.py`.
-
-- **Panels A and C, `High_UHI` without temperature input** (`A-noLST`): the models use no
-  `LST_*` or `UHI_*` column, because the urban and rural LST terms define the label
-  (section 3.1).
-- **Panels B and D, `High_Pov` from the ACS poverty rate** (`B-env`): positive SHAP raises the
-  predicted probability of *high* poverty.
-- Both models are explained out of fold under the UA-grouped 5-fold split (seed
-  {interpret.RECORD_SEED}), on the same folds, on the national sample. Each panel shows
-  {N_POINTS:,} randomly chosen tracts. Colour is the feature's percentile among all tracts.
-  The x-scales differ between panels.
-- **LightGBM** values are exact TreeSHAP in log-odds (section 5.1). `shap_beeswarm.py` reads
-  the cached attributions and stops if its ranking differs from
-  [`5.2/results/feature_importance.csv`](../5_SHAP_Interpretation/5.2_Attribution_and_Stability/results/feature_importance.csv);
-  it matches.
-- **Logistic regression** values are exact linear SHAP. Every preprocessing step (median
-  imputation, `log1p` on the size counts, standardisation) acts on one column, so with the
-  training fold as background a feature's SHAP value is its coefficient times its
-  standardised value, and the intercept is the base value
-  (`interpret.logistic_rows`). The contributions reproduce the cached out-of-fold logistic
-  scores exactly.
-- **†** marks a top-10 feature whose SHAP values are offset by another top-10 feature of the
-  same attribution group (correlation of their SHAP values ≤ {OFFSET_R}). Exact identities
-  (a dNDVI column and its two NDVI terms; `Area`, `Total_Count` and `Urban_Count`) stay
-  collinear in logistic regression too, and its L2 penalty can give two members large
-  coefficients of opposite sign. Their individual rows then overstate what the model uses,
-  and only their sum is meaningful. The comparison below is therefore made on attribution
-  groups (mean |sum of SHAP| within a group), which is exact for both models.
-
-## LightGBM vs logistic regression
-
-{text_a}
-
-{gtab_a}
-
-{text_b}
-
-{gtab_b}
-
-**Reading the two rows.** Logistic-regression rows always show one clean colour gradient,
-because each SHAP value is a linear function of one (transformed) feature. LightGBM rows can
-mix colours, which signals non-linear effects and interactions. Compare ranks across the two
-rows, not magnitudes: logistic regression's per-feature values are inflated by offsetting
-coefficients on collinear columns. SHAP values describe each fitted model's predictions, not
-causal effects. The grouped attribution of LightGBM and its stability across 15 fold models
-are in [section 5.2](../5_SHAP_Interpretation/5.2_Attribution_and_Stability/README.md).
-
-## Top 10 features
-
-**Panel A — LightGBM, UHI**
-
-{head}
-{block("A", "lgbm")}
-
-**Panel B — LightGBM, poverty**
-
-{head}
-{block("B", "lgbm")}
-
-**Panel C — logistic regression, UHI**
-
-{head}
-{block("A", "logistic")}
-
-**Panel D — logistic regression, poverty**
-
-{head}
-{block("B", "logistic")}
-
-All values: [`results/shap_top_features.csv`](results/shap_top_features.csv) and
-[`results/shap_group_importance.csv`](results/shap_group_importance.csv).
-"""
-    report.write_text(text, HERE / "README_shap_beeswarm.md")
 
 
 def main() -> None:
@@ -400,20 +205,10 @@ def main() -> None:
     top = pd.concat([d["top"] for d in data.values()], ignore_index=True)
     check_against_5_2(top)
     top["matches_5_2"] = np.where(top.model == "lgbm", "yes", "–")
-    report.write_table(top, OUT / "shap_top_features", digits=3,
-                       title="SHAP beeswarm: top 10 features per task and model by mean |SHAP|",
-                       note="Out-of-fold SHAP (log-odds), all tracts of the primary frame, UA-grouped "
-                            f"5-fold, seed {interpret.RECORD_SEED}. `offset_in_group`: offset by "
-                            "another top-10 feature of the same attribution group (SHAP "
-                            f"correlation ≤ {OFFSET_R}). `matches_5_2`: same feature and value at "
-                            "the same rank in 5.2/results/feature_importance.csv (LightGBM).\n")
+    report.write_table(top, OUT / "shap_top_features")
     groups = pd.concat([d["groups"] for d in data.values()], ignore_index=True)
-    report.write_table(groups, OUT / "shap_group_importance", digits=3,
-                       title="SHAP by attribution group, per task and model",
-                       note="Mean over tracts of |sum of SHAP within the group| (log-odds); "
-                            "rank 1 = largest.\n")
+    report.write_table(groups, OUT / "shap_group_importance")
     plot(data)
-    write_readme()
 
 
 if __name__ == "__main__":

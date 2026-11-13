@@ -1,7 +1,7 @@
 """The pipeline diagram.
 
 Three columns (Datasets → Models → Validation, rounded boxes, a fold grid with
-the held-out part highlighted): the sources of `data/README.md`, the two tasks
+the held-out part highlighted): the data sources, the two tasks
 with their median labels and feature configurations (`features.CONFIGS`), the
 three fixed-setting models at τ = 0.5, leave-one-city-out as the headline scheme,
 the metric panel with UA cluster-bootstrap CIs, out-of-fold TreeSHAP, and the
@@ -319,50 +319,6 @@ def draw(fig, height: float = HEIGHT, v: dict | None = None) -> None:
     box(ax, cx0 + 2, y + 7.9, cx1 - 2, y + 11.1, "Attribution grouped by exact identity", fs=9)
 
 
-def write_readme(f: pd.DataFrame) -> None:
-    rows = "\n".join(f"| {e} | {s} | `{src}` |"
-                     for e, s, src in zip(f.element, f.shown_as, f.source, strict=True))
-    text = f"""# Pipeline diagram
-
-`pipeline.py` draws the pipeline diagram in three columns (Datasets → Models → Validation). Its numbers
-are read from the built sample (`median_values.json`) and the shared modules, so they cannot
-drift from the analysis.
-
-## What the diagram shows
-
-- **Datasets.** The SUHI database (Chakraborty et al. 2020), the 2019 Gazetteer and
-  cartographic boundaries on 2010 tracts, and the ACS 2015–2019 poverty rate (table B17001)
-  feed one national analysis sample. The HUD Low Poverty Index is a robustness outcome only
-  (dashed).
-- **Models.** Poverty: ACS poverty rate ≥ the national median → `High_Pov`, on `B-env`.
-  UHI: `UHI_annual_day` ≥ the national median → `High_UHI`, on `A-noLST`, which drops every
-  `LST_*` and `UHI_*` column, because the target is computed from LST (section 3.1). The
-  majority class, logistic regression and LightGBM run with settings fixed in advance and
-  τ = 0.5. They are compared, not blended, and no threshold is tuned on test data.
-- **Validation.** Leave-one-city-out is the headline: the fold grid holds urbanized areas, one
-  of which is held out per fold. County- and UA-grouped 5-fold, UA-buffered state and region
-  hold-outs and the 20 largest UAs are also reported.
-- **Preprocessing.** Logistic regression gets median imputation, log1p on the skewed size
-  columns and standardisation, fitted inside each fold; LightGBM gets the raw inputs.
-- **Metrics.** The full panel, each with a 95 % UA cluster-bootstrap CI.
-- **Interpretability.** Out-of-fold TreeSHAP for LightGBM under UA-grouped 5-fold,
-  attributed to groups that keep each exact identity whole (section 5.2).
-- **Tuned models (section 4.6).** Dashed and secondary: a nested Optuna search over XGBoost,
-  LightGBM, CatBoost and a soft-voting ensemble, with τ chosen on training cities only. The
-  diagram gives no numbers for them; they are in section 4.6.
-
-## Numbers shown
-
-| Element | Shown as | Source |
-|---|---|---|
-{rows}
-
-All values: [`results/pipeline.csv`](results/pipeline.csv).
-Figure: [`results/pipeline.png`](results/pipeline.png).
-"""
-    report.write_text(text, HERE / "README_pipeline.md")
-
-
 def main() -> None:
     plotting.apply_style()
     v = values()
@@ -371,7 +327,6 @@ def main() -> None:
     fig = plt.figure(figsize=(WIDTH / 10, HEIGHT / 10))
     draw(fig, HEIGHT, v)
     plotting.savefig(fig, OUT / "pipeline.png")
-    write_readme(f)
 
 
 if __name__ == "__main__":

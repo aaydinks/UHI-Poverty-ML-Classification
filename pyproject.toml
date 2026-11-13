@@ -3,6 +3,7 @@ name = "uhi-poverty"
 version = "0.1.0"
 description = "Tract-level surface urban heat island and poverty classification across U.S. urbanized areas"
 readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.12,<3.14"
 authors = [{ name = "aaydinks" }]
 dependencies = [

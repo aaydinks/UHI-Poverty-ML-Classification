@@ -124,51 +124,6 @@ def draw(fig, r: dict | None = None) -> None:
     panel(fig, counts, t["rows"], t["cols"], t["title"], t["stats"], t["notes"])
 
 
-def write_readme(r: dict) -> None:
-    nums = pd.read_csv(OUT / "chi_squared_heatmap.csv")
-    p = nums.set_index("quantity")["value"]
-    n_clusters = r["primary"]["n_clusters"]
-    cells = nums[nums.quantity.str.startswith("cell: ")]
-    f = report.fmt_num
-    rows = "\n".join(f"| {q.removeprefix('cell: ')} | {int(v):,} | {report.fmt_pct(s)} |"
-                     for q, v, s in zip(cells.quantity, cells.value, cells.share_of_n,
-                                        strict=True))
-    text = f"""# Chi-squared heatmap
-
-`chi_squared_heatmap.py` draws the 2×2 heatmap of SUHI class against poverty class. It
-reads every number from section 2.2
-([`{paths.rel(SOURCE_JSON)}`](../{paths.rel(SOURCE_JSON)})) and does not re-estimate
-anything.
-
-- **Sample and thresholds.** The table is the primary national sample (n = {int(p['n']):,} tracts in
-  {n_clusters} urbanized areas), split at the national medians that define the classifiers'
-  labels.
-- **Framing.** The title leads with the effect size. The statistics sit directly under it
-  in bold: the odds ratio with its UA cluster-bootstrap CI and Cramér's V, then χ² with its
-  degrees of freedom, its p-value and n.
-- **Dependence.** The CI resamples urbanized areas, and a footnote gives the
-  Cochran–Mantel–Haenszel OR stratified by UA.
-
-## Numbers shown
-
-| Cell | Count | Share of n |
-|---|---:|---:|
-{rows}
-
-| Statistic | Value |
-|---|---|
-| Odds ratio (95 % UA cluster-bootstrap CI, B = {int(p['bootstrap_B']):,}) | {f(p['odds_ratio'], 2)} ({f(p['or_boot_ci_low'], 2)}–{f(p['or_boot_ci_high'], 2)}) |
-| Cramér's V | {f(p['cramers_v'], 3)} |
-| χ²(1) | {p['chi2']:,.1f}, p {report.fmt_p(p['p'])} |
-| CMH OR by UA (95 % CI) | {f(p['cmh_or_by_ua'], 2)} ({f(p['cmh_or_ci_low'], 2)}–{f(p['cmh_or_ci_high'], 2)}) |
-| n | {int(p['n']):,} |
-
-All values: [`results/chi_squared_heatmap.csv`](results/chi_squared_heatmap.csv).
-Figure: [`results/chi_squared_heatmap.png`](results/chi_squared_heatmap.png).
-"""
-    report.write_text(text, HERE / "README_chi_squared_heatmap.md")
-
-
 def main() -> None:
     plotting.apply_style()
     r = load()
@@ -176,7 +131,6 @@ def main() -> None:
     fig = plt.figure(figsize=FIGSIZE)
     draw(fig, r)
     plotting.savefig(fig, OUT / "chi_squared_heatmap.png")
-    write_readme(r)
 
 
 if __name__ == "__main__":

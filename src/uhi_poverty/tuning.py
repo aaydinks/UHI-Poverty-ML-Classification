@@ -43,7 +43,6 @@ import sklearn
 import xgboost
 from joblib import Parallel, delayed
 from optuna.trial import TrialState
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedGroupKFold, StratifiedKFold
 
@@ -62,22 +61,8 @@ TUNE_SCHEME = {"ua5": "ua5", "loco": "ua5", "random5": "random5"}  # evaluation 
 SCHEMES = ("ua5", "loco", "random5")
 ALL_MODELS = models.TUNED_MODELS + models.ENSEMBLES
 
-# Round 2. Every change follows from round 1's *inner*
-# cross-validation only, never from its outer scores: the low-variance filter and
-# PCA lost in every model and task and are dropped; scaling cannot change a tree
-# without PCA, so boosters get none; parameters that the search pushed against
-# the edge of their range get a wider range; there are more trials; each outer
-# refit is averaged over five seeds; and a stacked ensemble (a logistic
-# regression on the members' inner out-of-fold logits) joins the soft votes.
-N_TRIALS_R2 = {"logistic": 60, "lgbm": 150, "xgb": 150, "catboost": 100}
-BAG_SEEDS = {1: (SEED,), 2: (37, 38, 39, 40, 41)}
-ENSEMBLES_R2 = models.ENSEMBLES + ("ens_stacked",)
-ALL_MODELS_R2 = models.TUNED_MODELS + ENSEMBLES_R2
-SCHEMES_R2 = ("ua5", "loco")
-
-
-def n_trials_for(model: str, rnd: int = 1) -> int | None:
-    return (N_TRIALS if rnd == 1 else N_TRIALS_R2).get(model)
+def n_trials_for(model: str) -> int | None:
+    return N_TRIALS.get(model)
 
 
 optuna.logging.set_verbosity(optuna.logging.WARNING)
@@ -85,10 +70,8 @@ optuna.logging.set_verbosity(optuna.logging.WARNING)
 # --------------------------------------------------------------------------- search space
 
 
-def suggest(trial, model: str, rnd: int = 1) -> tuple[dict, dict]:
+def suggest(trial, model: str) -> tuple[dict, dict]:
     """(preprocessing, model parameters) for one trial."""
-    if rnd == 2:
-        return suggest_r2(trial, model)
     prep = {
         "engineer": trial.suggest_categorical("engineer", [False, True]),
         "variance": trial.suggest_categorical("variance", [False, True]),
@@ -130,56 +113,6 @@ def suggest(trial, model: str, rnd: int = 1) -> tuple[dict, dict]:
             "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 1.0, 20.0, log=True),
             "random_strength": trial.suggest_float("random_strength", 0.0, 5.0),
             "bagging_temperature": trial.suggest_float("bagging_temperature", 0.0, 1.0),
-        }
-    else:
-        raise KeyError(model)
-    return prep, params
-
-
-def suggest_r2(trial, model: str) -> tuple[dict, dict]:
-    """Round 2: the options inner CV never favoured are fixed off; edge-hit ranges widened."""
-    prep = {
-        "engineer": trial.suggest_categorical("engineer", [False, True]),
-        "variance": False,
-        "corr": trial.suggest_categorical("corr", [False, True]),
-        "scaler": (trial.suggest_categorical("scaler", ["minmax", "standard"])
-                   if model == "logistic" else "none"),
-        "pca": "none",
-        "smote": trial.suggest_categorical("smote", [False, True]),
-    }
-    if model == "logistic":
-        params = {"C": trial.suggest_float("C", 1e-4, 100.0, log=True)}
-    elif model == "lgbm":
-        params = {
-            "n_estimators": trial.suggest_int("n_estimators", 200, 3000, log=True),
-            "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.2, log=True),
-            "num_leaves": trial.suggest_int("num_leaves", 8, 255, log=True),
-            "min_child_samples": trial.suggest_int("min_child_samples", 10, 800, log=True),
-            "subsample": trial.suggest_float("subsample", 0.4, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.2, 1.0),
-            "reg_lambda": trial.suggest_float("reg_lambda", 1e-3, 100.0, log=True),
-            "reg_alpha": trial.suggest_float("reg_alpha", 1e-3, 100.0, log=True),
-        }
-    elif model == "xgb":
-        params = {
-            "n_estimators": trial.suggest_int("n_estimators", 200, 2500, log=True),
-            "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.2, log=True),
-            "max_depth": trial.suggest_int("max_depth", 3, 10),
-            "min_child_weight": trial.suggest_float("min_child_weight", 1.0, 100.0, log=True),
-            "subsample": trial.suggest_float("subsample", 0.4, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.2, 1.0),
-            "reg_lambda": trial.suggest_float("reg_lambda", 1e-3, 100.0, log=True),
-            "reg_alpha": trial.suggest_float("reg_alpha", 1e-3, 100.0, log=True),
-            "gamma": trial.suggest_float("gamma", 0.0, 15.0),
-        }
-    elif model == "catboost":
-        params = {
-            "iterations": trial.suggest_int("iterations", 200, 2500, log=True),
-            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.2, log=True),
-            "depth": trial.suggest_int("depth", 3, 9),
-            "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 1.0, 200.0, log=True),
-            "random_strength": trial.suggest_float("random_strength", 0.0, 15.0),
-            "bagging_temperature": trial.suggest_float("bagging_temperature", 0.0, 2.0),
         }
     else:
         raise KeyError(model)
@@ -274,8 +207,7 @@ def _fit_score(task: str, model: str, prep: dict, params: dict, X: np.ndarray, y
 
 def tune_folds(task: str, model: str, df: pd.DataFrame, tune_scheme: str,
                n_trials: int | None = None, n_jobs: int = -1,
-               fixed_prep: dict | None = None, outer: list | None = None,
-               rnd: int = 1) -> list[dict]:
+               fixed_prep: dict | None = None, outer: list | None = None) -> list[dict]:
     """Optuna search in every outer fold at once; returns one settings dict per outer fold.
 
     Each study only ever sees its outer fold's training rows: the inner splits are
@@ -283,7 +215,7 @@ def tune_folds(task: str, model: str, df: pd.DataFrame, tune_scheme: str,
     overrides the outer folds; the final models pass one fold holding every row.
     """
     X, y, cols = _design(df, task)
-    n_trials = n_trials or n_trials_for(model, rnd)
+    n_trials = n_trials or n_trials_for(model)
     outer = outer if outer is not None else validation.splits(df, y, tune_scheme)
     inner = [inner_splits(df, y, tr, tune_scheme) for _, tr, _ in outer]
     studies = [optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(
@@ -298,7 +230,7 @@ def tune_folds(task: str, model: str, df: pd.DataFrame, tune_scheme: str,
             for k, study in enumerate(studies):
                 for _ in range(min(BATCH, n_trials - done[k])):
                     trial = study.ask()
-                    prep, params = suggest(trial, model, rnd)
+                    prep, params = suggest(trial, model)
                     if fixed_prep:
                         prep.update(fixed_prep)
                     asked.append((k, trial, prep, params))
@@ -344,24 +276,12 @@ def tune_folds(task: str, model: str, df: pd.DataFrame, tune_scheme: str,
     return settings
 
 
-def _logit(p: np.ndarray) -> np.ndarray:
-    p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
-    return np.log(p / (1 - p))
-
-
-def ensemble_settings(booster_settings: dict[str, list[dict]], y: np.ndarray,
-                      stacked: bool = False) -> dict:
-    """Per outer fold: equal and inner-tuned soft-voting weights, and their thresholds.
-
-    With `stacked`, also a logistic regression on the members' inner out-of-fold
-    logits (four coefficients, fitted on tens of thousands of inner rows).
-    """
+def ensemble_settings(booster_settings: dict[str, list[dict]], y: np.ndarray) -> dict:
+    """Per outer fold: equal and inner-tuned soft-voting weights, and their thresholds."""
     grid = [w for w in itertools.product(np.arange(0, 1 + 1e-9, WEIGHT_STEP), repeat=2)
             if w[0] + w[1] <= 1 + 1e-9]
     weights_grid = np.array([(a, b, 1 - a - b) for a, b in grid]).clip(0, 1)
     out = {"ens_equal": [], "ens_weighted": []}
-    if stacked:
-        out["ens_stacked"] = []
     n_folds = len(next(iter(booster_settings.values())))
     for k in range(n_folds):
         members = [booster_settings[m][k] for m in models.BOOSTERS]
@@ -378,16 +298,6 @@ def ensemble_settings(booster_settings: dict[str, list[dict]], y: np.ndarray,
             s = P @ w
             out[name].append({
                 "k": k, "weights": dict(zip(models.BOOSTERS, map(float, w), strict=True)),
-                "inner_auc": float(roc_auc_score(yk, s)),
-                "tau_acc": choose_tau(yk, s, "accuracy"), "tau_f1": choose_tau(yk, s, "f1"),
-            })
-        if stacked:
-            meta = LogisticRegression(C=1.0, max_iter=1000).fit(_logit(P), yk)
-            s = meta.predict_proba(_logit(P))[:, 1]
-            out["ens_stacked"].append({
-                "k": k, "weights": dict(zip(models.BOOSTERS, map(float, meta.coef_[0]),
-                                            strict=True)),
-                "intercept": float(meta.intercept_[0]),
                 "inner_auc": float(roc_auc_score(yk, s)),
                 "tau_acc": choose_tau(yk, s, "accuracy"), "tau_f1": choose_tau(yk, s, "f1"),
             })
@@ -438,11 +348,7 @@ def combine(member_preds: dict[str, pd.DataFrame], settings: list[dict]) -> pd.D
     k_row = base["settings_fold"].to_numpy()
     w = np.array([[settings[k]["weights"][m] for m in models.BOOSTERS] for k in k_row])
     P = np.column_stack([member_preds[m]["score"].to_numpy() for m in models.BOOSTERS])
-    if "intercept" in settings[0]:  # stacked: logistic regression on the members' logits
-        b = np.array([settings[k]["intercept"] for k in k_row])
-        score = 1 / (1 + np.exp(-(b + (_logit(P) * w).sum(axis=1))))
-    else:
-        score = (P * w).sum(axis=1)
+    score = (P * w).sum(axis=1)
     df = base[["GEOID", "ua", "state_fips", "region"]]
     return _frame(df, base["y"].to_numpy(), base["fold"].to_numpy(), k_row, score, settings)
 
@@ -467,13 +373,10 @@ def data_hash(df: pd.DataFrame, task: str) -> str:
     return h.hexdigest()
 
 
-def tuning_fingerprint(df: pd.DataFrame, task: str, model: str, tune_scheme: str,
-                       rnd: int = 1) -> str:
+def tuning_fingerprint(df: pd.DataFrame, task: str, model: str, tune_scheme: str) -> str:
     spec = {"version": VERSION, "task": task, "model": model, "scheme": tune_scheme,
             "seed": SEED, "batch": BATCH, "inner_folds": INNER_FOLDS,
-            "n_trials": n_trials_for(model, rnd), "data": data_hash(df, task), **_versions()}
-    if rnd > 1:  # round 1's fingerprint is left exactly as it was, so its cache stays valid
-        spec.update({"round": rnd, "bag_seeds": BAG_SEEDS[rnd]})
+            "n_trials": n_trials_for(model), "data": data_hash(df, task), **_versions()}
     return hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()
 
 
@@ -484,16 +387,12 @@ def settings_hash(settings: list[dict]) -> str:
     return hashlib.sha256(json.dumps(keep, sort_keys=True, default=float).encode()).hexdigest()
 
 
-def _round_tag(rnd: int) -> str:
-    return "" if rnd == 1 else f"__r{rnd}"
+def _settings_path(task, model, tune_scheme):
+    return paths.TUNED_DIR / f"{task}__{model}__tune-{tune_scheme}.json"
 
 
-def _settings_path(task, model, tune_scheme, rnd: int = 1):
-    return paths.TUNED_DIR / f"{task}__{model}{_round_tag(rnd)}__tune-{tune_scheme}.json"
-
-
-def _pred_path(task, model, scheme, rnd: int = 1):
-    return paths.TUNED_DIR / f"{task}__{model}{_round_tag(rnd)}__{scheme}.parquet"
+def _pred_path(task, model, scheme):
+    return paths.TUNED_DIR / f"{task}__{model}__{scheme}.parquet"
 
 
 def _read_cached(path, fp):
@@ -505,66 +404,62 @@ def _read_cached(path, fp):
 
 
 def tuned_settings(task: str, model: str, tune_scheme: str, df: pd.DataFrame | None = None,
-                   n_jobs: int = -1, refresh: bool = False, rnd: int = 1) -> list[dict]:
+                   n_jobs: int = -1, refresh: bool = False) -> list[dict]:
     """Per-outer-fold settings of one tuned model or ensemble, cached."""
     df = validation.frame("primary", df)
-    if model in ENSEMBLES_R2:
-        ensembles = models.ENSEMBLES if rnd == 1 else ENSEMBLES_R2
-        members = {m: tuned_settings(task, m, tune_scheme, df, n_jobs, rnd=rnd)
-                   for m in models.BOOSTERS}
-        fp = hashlib.sha256((tune_scheme + _round_tag(rnd)
-                             + "".join(settings_hash(members[m])
-                                       for m in models.BOOSTERS)).encode()).hexdigest()
-        path = _settings_path(task, model, tune_scheme, rnd)
+    if model in models.ENSEMBLES:
+        members = {m: tuned_settings(task, m, tune_scheme, df, n_jobs) for m in models.BOOSTERS}
+        fp = hashlib.sha256((tune_scheme + "".join(settings_hash(members[m])
+                                                   for m in models.BOOSTERS)).encode()).hexdigest()
+        path = _settings_path(task, model, tune_scheme)
         meta = None if refresh else _read_cached(path, fp)
         if meta is None:
             _, y, _ = _design(df, task)
-            ens = ensemble_settings(members, y, stacked=rnd > 1)
-            for name in ensembles:
-                _write_json(_settings_path(task, name, tune_scheme, rnd),
+            ens = ensemble_settings(members, y)
+            for name in models.ENSEMBLES:
+                _write_json(_settings_path(task, name, tune_scheme),
                             {"fingerprint": fp, "settings": ens[name]})
             meta = {"settings": ens[model]}
         return meta["settings"]
-    fp = tuning_fingerprint(df, task, model, tune_scheme, rnd)
-    path = _settings_path(task, model, tune_scheme, rnd)
+    fp = tuning_fingerprint(df, task, model, tune_scheme)
+    path = _settings_path(task, model, tune_scheme)
     meta = None if refresh else _read_cached(path, fp)
     if meta is None:
         t0 = time.time()
-        settings = tune_folds(task, model, df, tune_scheme, n_jobs=n_jobs, rnd=rnd)
+        settings = tune_folds(task, model, df, tune_scheme, n_jobs=n_jobs)
         meta = {"fingerprint": fp, "seconds": round(time.time() - t0, 1), "settings": settings}
         _write_json(path, meta)
     return meta["settings"]
 
 
 def predictions(task: str, model: str, scheme: str, df: pd.DataFrame | None = None,
-                n_jobs: int = -1, refresh: bool = False, rnd: int = 1) -> pd.DataFrame:
+                n_jobs: int = -1, refresh: bool = False) -> pd.DataFrame:
     """Outer predictions of one tuned model or ensemble under one scheme, cached."""
     df = validation.frame("primary", df)
     tune_scheme = TUNE_SCHEME[scheme]
-    settings = tuned_settings(task, model, tune_scheme, df, n_jobs, rnd=rnd)
+    settings = tuned_settings(task, model, tune_scheme, df, n_jobs)
     # an ensemble's predictions also depend on every member's settings
-    members = models.BOOSTERS if model in ENSEMBLES_R2 else ()
-    fp = hashlib.sha256((tuning_fingerprint(df, task, model, tune_scheme, rnd) + scheme
+    members = models.BOOSTERS if model in models.ENSEMBLES else ()
+    fp = hashlib.sha256((tuning_fingerprint(df, task, model, tune_scheme) + scheme
                          + settings_hash(settings)
-                         + "".join(settings_hash(tuned_settings(task, m, tune_scheme, df, n_jobs,
-                                                                rnd=rnd))
+                         + "".join(settings_hash(tuned_settings(task, m, tune_scheme, df, n_jobs))
                                    for m in members)).encode()).hexdigest()
-    path = _pred_path(task, model, scheme, rnd)
+    path = _pred_path(task, model, scheme)
     meta_path = path.with_suffix(".json")
     if not refresh and path.exists() and _read_cached(meta_path, fp) is not None:
         return pd.read_parquet(path)
     t0 = time.time()
-    if model in ENSEMBLES_R2:
-        members = {m: predictions(task, m, scheme, df, n_jobs, rnd=rnd) for m in models.BOOSTERS}
+    if model in models.ENSEMBLES:
+        members = {m: predictions(task, m, scheme, df, n_jobs) for m in models.BOOSTERS}
         out = combine(members, settings)
     else:
-        out = predict_folds(task, model, df, scheme, settings, n_jobs, seeds=BAG_SEEDS[rnd])
+        out = predict_folds(task, model, df, scheme, settings, n_jobs)
     paths.TUNED_DIR.mkdir(parents=True, exist_ok=True)
     out.to_parquet(path, index=False)
     _write_json(meta_path, {"fingerprint": fp, "n_rows": len(out),
                             "n_folds": int(out["fold"].nunique()),
                             "seconds": round(time.time() - t0, 1)})
-    log.info("%s %s%s %s: %d folds, %.0f s", task, model, _round_tag(rnd), scheme,
+    log.info("%s %s %s: %d folds, %.0f s", task, model, scheme,
              out["fold"].nunique(), time.time() - t0)
     return out
 
@@ -637,10 +532,8 @@ def _fit_full(task, model, s, Xdf, y):
 # --------------------------------------------------------------------------- runs
 
 
-def planned_runs(rnd: int = 1) -> list[tuple[str, str, str]]:
+def planned_runs() -> list[tuple[str, str, str]]:
     """(task, model, scheme): the held-out-city schemes first, the random reference last."""
-    if rnd == 2:  # round 1 already reports the random-fold reference
-        return [(t, m, s) for s in SCHEMES_R2 for t in ("A", "B") for m in ALL_MODELS_R2]
     return [(t, m, s) for s in SCHEMES for t in ("A", "B") for m in ALL_MODELS]
 
 
@@ -669,8 +562,6 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--only", default=None, help="substring filter on 'task__model__scheme'")
     parser.add_argument("--pilot", action="store_true", help="run the Task B LightGBM pilot")
     parser.add_argument("--refresh", action="store_true")
-    parser.add_argument("--round", type=int, default=1, choices=(1, 2),
-                        help="2 = the narrowed, widened, seed-bagged second round")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     if args.pilot:
@@ -678,12 +569,12 @@ def main(argv: list[str] | None = None) -> None:
         print(pilot().to_string(index=False))
         return
     df = validation.frame("primary")
-    runs = planned_runs(args.round)
+    runs = planned_runs()
     if args.only:
         runs = [r for r in runs if args.only in "__".join(r)]
     log.info("%d runs planned", len(runs))
     for task, model, scheme in runs:
-        predictions(task, model, scheme, df, refresh=args.refresh, rnd=args.round)
+        predictions(task, model, scheme, df, refresh=args.refresh)
 
 
 if __name__ == "__main__":

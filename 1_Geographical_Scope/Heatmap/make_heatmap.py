@@ -185,52 +185,6 @@ def main() -> None:
         "n_uas": int(len(ua)),
         "metro_panels": panels,
     }, OUT / "map_coverage.json")
-    write_readme()
-
-
-def write_readme() -> None:
-    c = report.read_json(OUT / "map_coverage.json")
-    panels = ", ".join(f"{p['ua_name']} ({p['region']})" for p in c["metro_panels"])
-    water = [g for g in c["unmatched"] if g[5:7] == "99"]
-    other = [g for g in c["unmatched"] if g[5:7] != "99"]
-    text = f"""# 1.2 National heat map
-
-## Purpose
-
-Maps surface urban heat across every urbanized area in the country, on the same 2010 tract
-geometry as the data.
-
-## Method
-
-`make_heatmap.py` draws four figures from the SUHI database on 2019 cartographic boundary
-tracts (1:500k), which use 2010 tract definitions, the same vintage as the data:
-
-- [`results/F1_national_tract_uhi.png`](results/F1_national_tract_uhi.png): daytime annual SUHI
-  intensity (`UHI_annual_day`) for every tract, conterminous U.S. in Albers equal-area
-  (EPSG:5070), with Alaska (EPSG:3338) and Hawaii insets.
-- [`results/F2_national_ua_uhi.png`](results/F2_national_ua_uhi.png): one point per urbanized
-  area at its centroid, coloured by median tract SUHI and sized by tract count. Urban tracts are
-  tiny at national scale, so this is the readable national view
-  ([`results/ua_summary.csv`](results/ua_summary.csv) holds the values).
-- [`results/F3_metro_panels_uhi.png`](results/F3_metro_panels_uhi.png): the largest UA in each
-  Census region ({panels}).
-- [`results/F4_national_tract_summer_lst.png`](results/F4_national_tract_summer_lst.png):
-  tract-level summer daytime urban LST (`LST_urb_day_CT_summer`), one value per tract.
-
-## Map details
-
-- **Geometry.** The maps use 2019 cartographic boundaries, which carry 2010 tract codes, so the
-  data join the polygons without tracts dropping out through later splits or renumbering. {c['matched_to_cb2019_geometry']:,} of the
-  {c['suhi_tracts_with_value']:,} SUHI tracts with a value match a polygon. Of the
-  {len(c['unmatched'])} that do not, {len(water)} are water-only tracts (tract code 99xxxx) that the
-  cartographic file omits and {len(other)} were renumbered after 2010 ({', '.join(other)}).
-- **Colour scale.** SUHI can be negative ({report.fmt_pct(c['share_negative_suhi'])} of tracts are
-  cooler than their rural reference), so the scale is diverging, blue below and red above 0 °C,
-  with a neutral grey midpoint at 0 °C. Its limits are symmetric, ±{c['colour_limit_degC']:.1f} °C,
-  set by the 2nd–98th percentiles so a few extreme tracts do not wash out the rest.
-- **Scope.** All {c['n_uas']:,} urbanized areas in the database are shown.
-"""
-    report.write_text(text, HERE / "README.md")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,6 @@
 """Repository and data locations.
 
 `UHI_DATA_DIR` moves the whole data tree (raw, interim, processed, manifest).
-`UHI_SOURCE_DIR` points at the folder holding the two local source CSVs.
 """
 
 from __future__ import annotations
@@ -22,8 +21,6 @@ MEDIANS_JSON = PROCESSED / "median_values.json"
 OOF_DIR = INTERIM / "oof"
 INTERPRET_DIR = INTERIM / "interpret"
 TUNED_DIR = INTERIM / "tuned"
-
-SOURCE_DIR = Path(os.environ.get("UHI_SOURCE_DIR", Path.home() / "Downloads"))
 
 SUHI_CSV = RAW / "suhi" / "Census_UHI_US_Urbanized_recalculated.csv"
 LPI_CSV = RAW / "hud_lpi" / "Low Poverty Index.csv"
