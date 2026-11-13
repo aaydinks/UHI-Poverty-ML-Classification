@@ -1,0 +1,37 @@
+task,model,group,n_features,mean_abs_group_shap,rank
+A,lgbm,Vegetation: summer,6,1.5422191048992806,1
+A,lgbm,Tract size,4,1.0408362094556078,2
+A,lgbm,Water share,1,0.44750729373583265,3
+A,lgbm,Vegetation: annual,6,0.4210835162765081,4
+A,lgbm,Elevation,5,0.292173755941616,5
+A,lgbm,Vegetation: winter,6,0.2570563749157796,6
+B,lgbm,Tract size,4,0.4317890253721193,1
+B,lgbm,Vegetation: winter,6,0.2937818139336432,2
+B,lgbm,Vegetation: summer,6,0.24640038206996095,3
+B,lgbm,Vegetation: annual,6,0.23319565710748413,4
+B,lgbm,Elevation,5,0.22305324144177277,5
+B,lgbm,Heat: summer night,6,0.17787750428834703,6
+B,lgbm,Heat: winter day,6,0.15793649296960124,7
+B,lgbm,Heat: annual day,6,0.1103677743645237,8
+B,lgbm,Heat: summer day,6,0.10655120386927976,9
+B,lgbm,Heat: winter night,6,0.09319341112274647,10
+B,lgbm,Heat: annual night,6,0.09162332122463869,11
+B,lgbm,Water share,1,0.06410072721395907,12
+A,logistic,Vegetation: summer,6,2.061911501254362,1
+A,logistic,Tract size,4,1.5685696490663996,2
+A,logistic,Vegetation: annual,6,1.391358883318811,3
+A,logistic,Vegetation: winter,6,0.7158881874557985,4
+A,logistic,Water share,1,0.5171809072379516,5
+A,logistic,Elevation,5,0.1733272039557246,6
+B,logistic,Heat: annual night,6,2.6200819164649634,1
+B,logistic,Heat: winter night,6,1.791631421291161,2
+B,logistic,Vegetation: annual,6,0.939062551098516,3
+B,logistic,Vegetation: summer,6,0.886180251818156,4
+B,logistic,Heat: summer night,6,0.8003980227226086,5
+B,logistic,Heat: annual day,6,0.692908536314686,6
+B,logistic,Heat: winter day,6,0.5665038110829452,7
+B,logistic,Heat: summer day,6,0.4880724344541477,8
+B,logistic,Vegetation: winter,6,0.44978101404351684,9
+B,logistic,Tract size,4,0.24334205191184477,10
+B,logistic,Elevation,5,0.20650525150815638,11
+B,logistic,Water share,1,0.05560722177589133,12

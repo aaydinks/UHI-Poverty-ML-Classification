@@ -3,7 +3,7 @@
 ## Purpose
 
 This section fits the UHI model without the target's components or their close proxies, and
-shows, through an ablation ladder and an LST-only baseline, what each family of inputs adds.
+shows, through an ablation ladder and two LST references, what each family of inputs adds.
 
 ## Method
 
@@ -15,8 +15,9 @@ shows, through an ablation ladder and an LST-only baseline, what each family of 
   5-fold for comparison only. Fixed hyperparameters, τ = 0.5, every learned step fitted inside
   the training folds.
 - Ablation ladder, each rung removing only what its name says (the two geometry columns are
-  in every rung except the LST-only baseline): `A-full` → `A-narrow` → `A-noLST-keepUHI` →
-  `A-noLST` → `A-noLST+pov`, plus `A-lst-only`.
+  in every rung except the LST references): `A-full` → `A-narrow` → `A-noLST-keepUHI` →
+  `A-noLST` → `A-noLST+pov`, plus `A-lst-only` (one urban-LST column) and the **LST
+  reference `A-lst`** (all 24 `LST_*` columns and nothing else).
 - [`results/feature_lists.csv`](results/feature_lists.csv) lists every predictor of every
   configuration in this repository, with its family.
 
@@ -34,6 +35,7 @@ MCC, PR-AUC and balanced accuracy with CIs):
 | `A-noLST` | 28 | NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A) | 0.946 | 0.910 [0.888, 0.929] | 0.819 | 0.647 |
 | `A-noLST+pov` | 29 | A-noLST + ACS poverty rate | 0.947 | 0.912 [0.892, 0.930] | 0.822 | 0.652 |
 | `A-lst-only` | 1 | LST_urb_day_CT alone (LST-only baseline) | 0.722 | 0.619 [0.536, 0.696] | 0.630 | 0.221 |
+| `A-lst` | 24 | All 24 LST_* columns: urban and rural, day and night, annual and seasonal, tract and UA-wide (LST reference; contains both terms of the target) | 1.000 | 0.997 [0.996, 0.998] | 0.971 | 0.943 |
 
 - With the target's own components (`A-full`) the model is close to perfect, because it can
   subtract `LST_rur_day` from `LST_urb_day_CT`.
@@ -46,6 +48,11 @@ MCC, PR-AUC and balanced accuracy with CIs):
   LightGBM and 0.899 [0.884, 0.914] for logistic regression in held-out
   cities. It measures how well high surface urban heat can be predicted from vegetation,
   elevation and built form alone.
+- The LST reference (`A-lst`, temperature columns only) reaches ROC-AUC
+  0.997 [0.996, 0.998] for LightGBM and
+  0.999 [0.999, 1.000] for logistic regression. It is a reference, not
+  a usable predictor: the label is the difference of two of its columns, which logistic
+  regression can represent exactly.
 - Adding the ACS poverty rate (`A-noLST+pov`) changes leave-one-city-out ROC-AUC from
   0.910 to
   0.912.

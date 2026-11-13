@@ -14,6 +14,7 @@ fitted models.
 | 4.4 Metric panel with uncertainty | [`4.4_Metric_Panel_with_Uncertainty/`](4.4_Metric_Panel_with_Uncertainty/) | `metric_panel.py` | every metric × model × task × scheme with UA cluster-bootstrap CIs; forest plot |
 | 4.5 Baselines | [`4.5_Baselines/`](4.5_Baselines/) | `baselines.py` | majority, logistic, LightGBM and reference baselines; paired differences |
 | 4.6 Tuned models and ensemble | [`4.6_Tuned_Models_and_Ensemble/`](4.6_Tuned_Models_and_Ensemble/) | `tuned_models.py` | logistic regression, LightGBM, XGBoost and CatBoost tuned in nested UA-grouped cross-validation, and a soft-voting ensemble, with thresholds chosen on training cities |
+| 4.7 Every model, one metric panel | [`4.7_All_Models_Metric_Panel/`](4.7_All_Models_Metric_Panel/) | `all_models.py` | prevalence, accuracy, balanced accuracy, precision, recall, specificity, F1, ROC-AUC and PR-AUC with 95 % UA cluster-bootstrap CIs for every model in the repository, including the LST reference model; cross-checked against every other section |
 
 ## Shared specification
 
@@ -36,4 +37,5 @@ fitted models.
 
 Run with `make engine` (fills the prediction cache, about 15 minutes on 15 cores) and then
 `make models`. Section 4.6 runs with `make tune tuned`; `make tune` fills the tuned-model
-cache (`data/interim/tuned/`, a few hours on 15 cores).
+cache (`data/interim/tuned/`, a few hours on 15 cores). Section 4.7 runs last, with
+`make panel`, because it reads every other section's predictions.

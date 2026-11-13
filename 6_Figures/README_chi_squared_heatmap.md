@@ -5,11 +5,12 @@ reads every number from section 2.2
 ([`2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json`](../2_Classification_Thresholds/2.2_Chi_Squared_Median/results/chi_squared_results.json)) and does not re-estimate
 anything.
 
-- **Sample and cut-offs.** The table is the primary national sample (n = 54,243 tracts in
+- **Sample and thresholds.** The table is the primary national sample (n = 54,243 tracts in
   486 urbanized areas), split at the national medians that define the classifiers'
   labels.
-- **Framing.** The title leads with the effect size (odds ratio and its UA cluster-bootstrap
-  CI, Cramér's V), and the p-value appears once, next to χ² and its degrees of freedom.
+- **Framing.** The title leads with the effect size. The statistics sit directly under it
+  in bold: the odds ratio with its UA cluster-bootstrap CI and Cramér's V, then χ² with its
+  degrees of freedom, its p-value and n.
 - **Dependence.** The CI resamples urbanized areas, and a footnote gives the
   Cochran–Mantel–Haenszel OR stratified by UA.
 

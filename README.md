@@ -13,7 +13,7 @@ whose numbers are written by the script from its results.
 | [`1_Geographical_Scope/`](1_Geographical_Scope/) | National scope, heat maps, tract accounting, coverage, large-metro influence |
 | [`2_Classification_Thresholds/`](2_Classification_Thresholds/) | Median splits and their precedent; the chi-squared test at the models' cut-offs |
 | [`3_UHI_Model_Predictors/`](3_UHI_Model_Predictors/) | The UHI formula; the UHI model without any temperature input |
-| [`4_Model_Specifications/`](4_Model_Specifications/) | Spatially grouped validation, confusion matrices, metric panel with CIs, baselines, nested-tuned models and a soft-voting ensemble |
+| [`4_Model_Specifications/`](4_Model_Specifications/) | Spatially grouped validation, confusion matrices, metric panel with CIs, baselines, nested-tuned models and a soft-voting ensemble, and one metric panel for every model |
 | [`5_SHAP_Interpretation/`](5_SHAP_Interpretation/) | The model SHAP explains; grouped attribution and its stability |
 | [`6_Figures/`](6_Figures/) | The paper's figures, each with its script, the numbers it shows, and a README |
 | [`data/`](data/) | Sources, manifest and the API-key instructions |

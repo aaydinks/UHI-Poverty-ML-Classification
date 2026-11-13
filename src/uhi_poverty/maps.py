@@ -2,7 +2,7 @@
 
 Geometry is the 2019 cartographic boundary file (1:500k), which is drawn on 2010
 tract definitions. The conterminous U.S. is drawn in Albers equal-area
-(EPSG:5070), with insets for Alaska (EPSG:3338), Hawaii and Puerto Rico.
+(EPSG:5070), with insets for Alaska (EPSG:3338) and Hawaii.
 """
 
 from __future__ import annotations
@@ -16,8 +16,7 @@ from . import geo, paths, plotting
 CONUS_CRS = "EPSG:5070"
 AK_CRS = "EPSG:3338"
 HI_CRS = "ESRI:102007"  # Hawaii Albers equal-area conic
-PR_CRS = "EPSG:32161"  # Puerto Rico & Virgin Islands State Plane
-NON_CONUS = {"02": AK_CRS, "15": HI_CRS, "72": PR_CRS}
+NON_CONUS = {"02": AK_CRS, "15": HI_CRS}
 
 
 def load_tracts() -> gpd.GeoDataFrame:
@@ -28,12 +27,12 @@ def load_tracts() -> gpd.GeoDataFrame:
     gdf = gpd.GeoDataFrame(gdf, geometry="geometry", crs=frames[0].crs)
     gdf["GEOID"] = geo.normalize_geoid(gdf["GEOID"])
     gdf["state_fips"] = gdf["GEOID"].str[:2]
-    return gdf
+    return gdf[geo.in_study_area(gdf["GEOID"])].reset_index(drop=True)
 
 
 def load_states() -> gpd.GeoDataFrame:
     s = gpd.read_file(f"zip://{paths.STATES_ZIP}", columns=["STATEFP", "STUSPS"])
-    return s[s["STATEFP"].isin(list(geo.STATES) + [geo.PUERTO_RICO])]
+    return s[s["STATEFP"].isin(list(geo.STATES))]
 
 
 # Inset extents (lon/lat): the main Hawaiian islands, and Alaska without the far Aleutians.
@@ -51,14 +50,12 @@ def _part(gdf: gpd.GeoDataFrame, fips: str | None, crs: str) -> gpd.GeoDataFrame
     return sub.to_crs(crs)
 
 
-def national_axes(fig, inset_pr: bool = True):
-    """Main CONUS axis plus Alaska, Hawaii and (optionally) Puerto Rico insets."""
+def national_axes(fig):
+    """Main CONUS axis plus Alaska and Hawaii insets."""
     main = fig.add_axes([0.0, 0.12, 1.0, 0.86])
     ak = fig.add_axes([0.0, 0.0, 0.2, 0.26])
     hi = fig.add_axes([0.2, 0.02, 0.14, 0.16])
     axes = {"conus": main, "02": ak, "15": hi}
-    if inset_pr:
-        axes["72"] = fig.add_axes([0.36, 0.02, 0.12, 0.1])
     for ax in axes.values():
         ax.set_axis_off()
     return axes
@@ -83,9 +80,6 @@ def draw(axes: dict, tracts: gpd.GeoDataFrame, states: gpd.GeoDataFrame, plot_kw
             ax.set_xlim(-2.4e6, 2.3e6)
             ax.set_ylim(2.6e5, 3.2e6)
         ax.set_aspect("equal")
-    if "72" in axes:
-        axes["72"].set_title("Puerto Rico\n(sensitivity frame)", fontsize=7, loc="left",
-                             color=plotting.INK_2, fontweight="normal")
     axes["02"].set_title("Alaska", fontsize=7, loc="left", color=plotting.INK_2,
                          fontweight="normal")
     axes["15"].set_title("Hawaii", fontsize=7, loc="left", color=plotting.INK_2,

@@ -4,8 +4,6 @@
 - `High_Pov = ACS poverty rate >= median` (national, primary sample)
 - `High_Pov_LPI = LPI < LPI median` (LPI robustness frame). HUD's Low Poverty
   Index rises as poverty falls, so a *low* index marks the poorer tracts.
-
-The same cut values are applied to the Puerto Rico sensitivity frame.
 """
 
 from __future__ import annotations

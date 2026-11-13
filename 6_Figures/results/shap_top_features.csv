@@ -1,21 +1,41 @@
-task,rank,feature,group,mean_abs_shap,matches_5_2
-A,1,DelNDVI_summer,Vegetation: summer,1.3904689636721619,True
-A,2,Area,Tract size,0.5378215757121761,True
-A,3,Total_Count,Tract size,0.45229360007451425,True
-A,4,water_frac,Water share,0.44750729373583265,True
-A,5,Urban_Count,Tract size,0.25992229090887076,True
-A,6,DelDEM,Elevation,0.1795631741138725,True
-A,7,DelNDVI_annual,Vegetation: annual,0.15931637273575855,True
-A,8,NDVI_urb_CT,Vegetation: annual,0.153701768749405,True
-A,9,DEM_urb_CT_act,Elevation,0.13067848985170377,True
-A,10,NDVI_urb_CT_summer,Vegetation: summer,0.1305309979031246,True
-B,1,DelNDVI_winter,Vegetation: winter,0.22624909381504577,True
-B,2,DelNDVI_annual_city,Vegetation: annual,0.19130866464287663,True
-B,3,Total_Count,Tract size,0.1881942120858095,True
-B,4,Area,Tract size,0.18647866209502875,True
-B,5,DelDEM,Elevation,0.17167157235225303,True
-B,6,UHI_winter_day_city,Heat: winter day,0.13494573225794487,True
-B,7,DelNDVI_annual,Vegetation: annual,0.13078721083472902,True
-B,8,NDVI_urb_CT_summer,Vegetation: summer,0.12415979164501204,True
-B,9,Urban_Count,Tract size,0.09243798058888239,True
-B,10,NDVI_rur_summer,Vegetation: summer,0.09239224321202456,True
+task,model,rank,feature,group,mean_abs_shap,offset_in_group,matches_5_2
+A,lgbm,1,DelNDVI_summer,Vegetation: summer,1.3904689636721619,False,yes
+A,lgbm,2,Area,Tract size,0.5378215757121761,False,yes
+A,lgbm,3,Total_Count,Tract size,0.45229360007451425,False,yes
+A,lgbm,4,water_frac,Water share,0.44750729373583265,False,yes
+A,lgbm,5,Urban_Count,Tract size,0.25992229090887076,False,yes
+A,lgbm,6,DelDEM,Elevation,0.1795631741138725,False,yes
+A,lgbm,7,DelNDVI_annual,Vegetation: annual,0.15931637273575855,False,yes
+A,lgbm,8,NDVI_urb_CT,Vegetation: annual,0.153701768749405,False,yes
+A,lgbm,9,DEM_urb_CT_act,Elevation,0.13067848985170377,False,yes
+A,lgbm,10,NDVI_urb_CT_summer,Vegetation: summer,0.1305309979031246,False,yes
+B,lgbm,1,DelNDVI_winter,Vegetation: winter,0.22624909381504577,False,yes
+B,lgbm,2,DelNDVI_annual_city,Vegetation: annual,0.19130866464287663,False,yes
+B,lgbm,3,Total_Count,Tract size,0.1881942120858095,False,yes
+B,lgbm,4,Area,Tract size,0.18647866209502875,False,yes
+B,lgbm,5,DelDEM,Elevation,0.17167157235225303,False,yes
+B,lgbm,6,UHI_winter_day_city,Heat: winter day,0.13494573225794487,False,yes
+B,lgbm,7,DelNDVI_annual,Vegetation: annual,0.13078721083472902,False,yes
+B,lgbm,8,NDVI_urb_CT_summer,Vegetation: summer,0.12415979164501204,False,yes
+B,lgbm,9,Urban_Count,Tract size,0.09243798058888239,False,yes
+B,lgbm,10,NDVI_rur_summer,Vegetation: summer,0.09239224321202456,False,yes
+A,logistic,1,Total_Count,Tract size,3.928840218852575,True,–
+A,logistic,2,Area,Tract size,3.169461619392238,True,–
+A,logistic,3,DEM_urb_CT_act,Elevation,1.9177299223972089,True,–
+A,logistic,4,NDVI_urb_CT_act_summer,Vegetation: summer,1.3527311733485103,False,–
+A,logistic,5,NDVI_urb_CT_act,Vegetation: annual,1.181618173796162,False,–
+A,logistic,6,NDVI_urb_all_summer,Vegetation: summer,1.0785239990711089,False,–
+A,logistic,7,Urban_Count,Tract size,1.0766675395940941,False,–
+A,logistic,8,DelNDVI_summer,Vegetation: summer,0.9737810571801176,False,–
+A,logistic,9,log_aland,Tract size,0.9429033126198807,True,–
+A,logistic,10,DEM_urb_CT,Elevation,0.9341849608059506,True,–
+B,logistic,1,DEM_urb_all,Elevation,1.3085013535244745,False,–
+B,logistic,2,LST_urb_night_all_winter,Heat: winter night,0.8370635911416983,False,–
+B,logistic,3,Area,Tract size,0.823444826412552,False,–
+B,logistic,4,LST_rur_night_winter,Heat: winter night,0.8149954259475343,False,–
+B,logistic,5,LST_urb_night_CT_winter,Heat: winter night,0.8114453594451194,False,–
+B,logistic,6,UHI_annual_night_city,Heat: annual night,0.7910202838042371,False,–
+B,logistic,7,DelNDVI_annual_city,Vegetation: annual,0.7500453935713897,False,–
+B,logistic,8,NDVI_urb_CT_act_summer,Vegetation: summer,0.7469737135221904,False,–
+B,logistic,9,NDVI_urb_CT_act,Vegetation: annual,0.7201640464584346,False,–
+B,logistic,10,LST_urb_day_CT_act_summer,Heat: summer day,0.670417490873969,False,–

@@ -1,6 +1,6 @@
 {
-  "suhi_tracts_with_value": 55649,
-  "matched_to_cb2019_geometry": 55629,
+  "suhi_tracts_with_value": 54777,
+  "matched_to_cb2019_geometry": 54758,
   "unmatched": [
     "04019002701",
     "04019002903",
@@ -20,12 +20,11 @@
     "36085008900",
     "36085990100",
     "39035990000",
-    "55117990000",
-    "72115990000"
+    "55117990000"
   ],
-  "colour_limit_degC": 5.29725925564,
-  "share_negative_suhi": 0.2295459037898255,
-  "n_uas": 497,
+  "colour_limit_degC": 5.202637807639998,
+  "share_negative_suhi": 0.22962192160943462,
+  "n_uas": 486,
   "metro_panels": [
     {
       "region": "Northeast",

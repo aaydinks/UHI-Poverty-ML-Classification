@@ -170,16 +170,22 @@ class Scored:
 
 
 def bootstrap_panel(scored: Scored, clusters, B: int = B_DEFAULT, seed: int = SEED,
-                    metrics: list[str] | None = None) -> pd.DataFrame:
-    """Point estimate and percentile 95 % CI for each metric."""
+                    metrics: list[str] | None = None, sd: bool = False) -> pd.DataFrame:
+    """Point estimate and percentile 95 % CI for each metric.
+
+    With `sd`, also the standard deviation of the bootstrap replicates (`boot_sd`).
+    """
     metrics = metrics or PANEL
     point = scored.at(np.ones_like(scored.y))
     reps = np.array([[scored.at(w)[m] for m in metrics]
                      for w in cluster_weights(clusters, B, seed)])
     lo = np.nanpercentile(reps, 2.5, axis=0)
     hi = np.nanpercentile(reps, 97.5, axis=0)
-    return pd.DataFrame({"metric": metrics, "estimate": [point[m] for m in metrics],
-                         "ci_low": lo, "ci_high": hi})
+    out = pd.DataFrame({"metric": metrics, "estimate": [point[m] for m in metrics],
+                        "ci_low": lo, "ci_high": hi})
+    if sd:
+        out["boot_sd"] = np.nanstd(reps, axis=0, ddof=1)
+    return out
 
 
 def paired_delta(a: Scored, b: Scored, clusters, metrics=("roc_auc", "mcc"),

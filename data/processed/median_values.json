@@ -19,7 +19,7 @@
       "rule": "< median (low index = poorer)",
       "value": 55.0,
       "unit": "index 0-99",
-      "frame": "lpi (5a)"
+      "frame": "lpi (4a)"
     }
   },
   "percentiles_primary": {
@@ -68,20 +68,6 @@
         "n_neg": 27321,
         "share_pos": 0.49626638641517784
       }
-    },
-    "pr_frame": {
-      "High_UHI": {
-        "n": 55095,
-        "n_pos": 27588,
-        "n_neg": 27507,
-        "share_pos": 0.5007350939286687
-      },
-      "High_Pov": {
-        "n": 55095,
-        "n_pos": 27962,
-        "n_neg": 27133,
-        "share_pos": 0.5075233687267448
-      }
     }
   },
   "orientation_checks": {
@@ -101,7 +87,6 @@
   "n": {
     "primary": 54243,
     "lpi_frame": 54237,
-    "pr_frame": 55095,
     "primary_uas": 486
   }
 }

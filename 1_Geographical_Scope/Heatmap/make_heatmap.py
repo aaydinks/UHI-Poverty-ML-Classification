@@ -1,7 +1,7 @@
 """Section 1.2: national maps of surface urban heat on 2010 tract geometry.
 
 F1  tract choropleth of `UHI_annual_day`, conterminous U.S. in Albers equal-area,
-    with Alaska, Hawaii and Puerto Rico insets; diverging scale centred at 0 °C
+    with Alaska and Hawaii insets; diverging scale centred at 0 °C
     with robust symmetric limits (2nd–98th percentile).
 F2  one point per UA at its centroid, coloured by median tract SUHI, sized by tracts.
 F3  zoom panels for the largest UA in each Census region.
@@ -25,7 +25,7 @@ OUT = paths.results_dir(__file__)
 
 
 def suhi_frame() -> pd.DataFrame:
-    """Every SUHI tract with a daytime SUHI value (50 states + DC + Puerto Rico)."""
+    """Every SUHI tract with a daytime SUHI value (50 states + DC)."""
     df = validation.load_analysis()
     return df[df["UHI_annual_day"].notna()].copy()
 
@@ -74,7 +74,6 @@ def ua_summary(df: pd.DataFrame) -> pd.DataFrame:
     }).reset_index()
     out["primary_state"] = out["ua"].map(geo.ua_primary_state(df["ua"], df["state_fips"]))
     out["region"] = geo.lookup(out["primary_state"], "region")
-    out["in_primary_sample"] = out["primary_state"] != geo.PUERTO_RICO
     return out.sort_values("n_tracts", ascending=False).reset_index(drop=True)
 
 
@@ -105,8 +104,6 @@ def f2(ua: pd.DataFrame, states, lim) -> None:
         ax.set_aspect("equal")
     axes["02"].set_title("Alaska", fontsize=7, loc="left", color=plotting.INK_2, fontweight="normal")
     axes["15"].set_title("Hawaii", fontsize=7, loc="left", color=plotting.INK_2, fontweight="normal")
-    axes["72"].set_title("Puerto Rico\n(sensitivity frame)", fontsize=7, loc="left",
-                         color=plotting.INK_2, fontweight="normal")
     sm = plt.cm.ScalarMappable(norm=norm, cmap=plotting.suhi_cmap())
     colorbar(fig, sm, [0.56, 0.06, 0.38, 0.025], "Median tract daytime SUHI in the UA (°C)")
     axes["conus"].set_title(f"Surface urban heat by urbanized area ({len(ua):,} UAs)",
@@ -117,8 +114,7 @@ def f2(ua: pd.DataFrame, states, lim) -> None:
 
 
 def f3(gdf, df, lim) -> list[dict]:
-    p = df[~df["territory"]]
-    counts = p.groupby(["region", "ua"]).size().rename("n").reset_index()
+    counts = df.groupby(["region", "ua"]).size().rename("n").reset_index()
     largest = counts.sort_values(["region", "n"], ascending=[True, False]).drop_duplicates("region")
     order = [r for r in geo.REGIONS if r in set(largest["region"])]
     largest = largest.set_index("region").loc[order].reset_index()
@@ -211,8 +207,7 @@ tracts (1:500k), which use 2010 tract definitions, the same vintage as the data:
 
 - [`results/F1_national_tract_uhi.png`](results/F1_national_tract_uhi.png): daytime annual SUHI
   intensity (`UHI_annual_day`) for every tract, conterminous U.S. in Albers equal-area
-  (EPSG:5070), with Alaska (EPSG:3338), Hawaii and Puerto Rico insets. Puerto Rico is labelled
-  as the sensitivity frame.
+  (EPSG:5070), with Alaska (EPSG:3338) and Hawaii insets.
 - [`results/F2_national_ua_uhi.png`](results/F2_national_ua_uhi.png): one point per urbanized
   area at its centroid, coloured by median tract SUHI and sized by tract count. Urban tracts are
   tiny at national scale, so this is the readable national view

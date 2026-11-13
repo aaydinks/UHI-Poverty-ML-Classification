@@ -1,7 +1,6 @@
 """Section 1.1: the study's geographic scope, in numbers.
 
-Writes `results/scope_summary.json` (tracts, UAs, states, Puerto Rico counts and
-the primary sample n) and the README with the study-area description.
+Writes `results/scope_summary.json` (tracts, UAs, states and the primary sample n) and the README with the study-area description.
 """
 
 from __future__ import annotations
@@ -18,24 +17,16 @@ def main() -> None:
     df = validation.load_analysis()
     gaz = build.read_gazetteer()
     p = df[df["in_primary"]]
-    pr = df[df["state_fips"] == geo.PUERTO_RICO]
-    gaz_states = gaz[~geo.is_territory(gaz["GEOID"].str[:2])]
     summary = {
-        "all_2010_tracts_50_states_dc": int(len(gaz_states)),
-        "all_2010_tracts_puerto_rico": int((gaz["GEOID"].str[:2] == geo.PUERTO_RICO).sum()),
-        "suhi_tracts_total": int(len(df)),
-        "suhi_tracts_50_states_dc": int((~df["territory"]).sum()),
-        "suhi_tracts_puerto_rico": int(len(pr)),
+        "all_2010_tracts_50_states_dc": int(len(gaz)),
+        "suhi_tracts_50_states_dc": int(len(df)),
         "suhi_uas_total": int(df["ua"].nunique()),
-        "suhi_uas_puerto_rico_only": int(df.loc[df["territory"], "ua"].nunique()),
-        "jurisdictions_with_suhi_tracts": int(df.loc[~df["territory"], "state_fips"].nunique()),
+        "jurisdictions_with_suhi_tracts": int(df["state_fips"].nunique()),
         "primary_n": int(len(p)),
         "primary_uas": int(p["ua"].nunique()),
         "primary_states": int(p["state_fips"].nunique()),
-        "primary_share_of_all_2010_tracts": float(len(p) / len(gaz_states)),
+        "primary_share_of_all_2010_tracts": float(len(p) / len(gaz)),
         "lpi_frame_n": int(df["in_lpi_frame"].sum()),
-        "pr_frame_n": int(df["in_pr_frame"].sum()),
-        "pr_frame_puerto_rico_tracts": int((df["in_pr_frame"] & df["territory"]).sum()),
         "primary_by_region": p["region"].value_counts().to_dict(),
     }
     report.write_json(summary, OUT / "scope_summary.json")
@@ -64,13 +55,11 @@ tract codes.
 |---|---:|
 | All 2010 census tracts, 50 states + DC | {s['all_2010_tracts_50_states_dc']:,} |
 | Tracts in the SUHI database, 50 states + DC | {s['suhi_tracts_50_states_dc']:,} |
-| Tracts in the SUHI database, Puerto Rico | {s['suhi_tracts_puerto_rico']:,} |
-| Urbanized areas (UAs) in the SUHI database | {s['suhi_uas_total']:,} (of which {s['suhi_uas_puerto_rico_only']} in Puerto Rico) |
+| Urbanized areas (UAs) in the SUHI database, 50 states + DC | {s['suhi_uas_total']:,} |
 | **Primary analysis sample** | **{s['primary_n']:,} tracts in {s['primary_uas']} UAs across {s['primary_states']} jurisdictions (50 states + DC)** |
 | Share of all 2010 tracts in the 50 states + DC | {report.fmt_pct(s['primary_share_of_all_2010_tracts'])} |
 | By Census region | {regions} |
 | Robustness frame with HUD LPI | {s['lpi_frame_n']:,} |
-| Sensitivity frame with Puerto Rico | {s['pr_frame_n']:,} ({s['pr_frame_puerto_rico_tracts']:,} Puerto Rico tracts) |
 """
     report.write_text(text, HERE / "README.md")
 

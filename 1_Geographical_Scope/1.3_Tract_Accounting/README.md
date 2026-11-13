@@ -21,21 +21,18 @@ reconcile (the build fails otherwise).
 |---|---|---:|---:|
 | 0 | All 2010 tracts, 50 states + DC (2019 Gazetteer; coverage universe) | 73,056 |  |
 | 1 | In the SUHI database, 50 states + DC (urbanized-area tracts only) | 54,998 | 18,067 |
-| 2 | 50 states + DC (Puerto Rico held out as the sensitivity frame) | 54,998 | 873 |
-| 3 | Complete SUHI target and features | 54,761 | 237 |
-| 3g | …with Gazetteer geometry (water_frac, log_aland) | 54,752 | 9 |
-| 4 | Matched to ACS 2015–2019 with poverty universe >= 50 | 54,243 | 509 |
-| 5 | Primary analysis sample | 54,243 |  |
-| 5a | …with HUD LPI present (robustness frame) | 54,237 | 6 |
-| 5b | …plus Puerto Rico (sensitivity frame) | 55,095 |  |
+| 2 | Complete SUHI target and features | 54,761 | 237 |
+| 2g | …with Gazetteer geometry (water_frac, log_aland) | 54,752 | 9 |
+| 3 | Matched to ACS 2015–2019 with poverty universe >= 50 | 54,243 | 509 |
+| 4 | Primary analysis sample | 54,243 |  |
+| 4a | …with HUD LPI present (robustness frame) | 54,237 | 6 |
 
-By reason, over the 50 states + DC and Puerto Rico
+By reason, over the 50 states + DC
 ([`results/excluded_by_state_and_reason.csv`](results/excluded_by_state_and_reason.csv)):
 
 | Reason | Tracts |
 |---|---:|
-| Not urban: no SUHI value (source limitation) | 18,139 |
-| Territory (Puerto Rico; kept as the sensitivity frame) | 873 |
+| Not urban: no SUHI value (source limitation) | 18,067 |
 | Missing SUHI fields | 237 |
 | Not in the 2019 Gazetteer (tract renumbered after 2010) | 9 |
 | ACS unmatched or poverty universe < 50 persons | 509 |

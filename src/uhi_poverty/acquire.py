@@ -212,7 +212,7 @@ def run(poverty_source: str = "acs", source_dir: Path | None = None) -> pd.DataF
         f"{MENDELEY_URL} (local copy {paths.rel(source_dir / LOCAL_SOURCES['S1'][0])})", s1,
         "CC BY 4.0")
 
-    jurisdictions = sorted(geo.STATES) + [geo.PUERTO_RICO]
+    jurisdictions = sorted(geo.STATES)
     if poverty_source == "acs":
         key = census_key()
         if not key:

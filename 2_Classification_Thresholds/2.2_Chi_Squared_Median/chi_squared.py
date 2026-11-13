@@ -57,7 +57,6 @@ def summary_row(name: str, x, y, ua, full: bool = True) -> dict:
 def sensitivity(df: pd.DataFrame, cuts: dict) -> pd.DataFrame:
     p = validation.frame("primary", df)
     lpi = validation.frame("lpi", df)
-    pr = validation.frame("pr", df)
     rows = [summary_row("Primary: median splits", p["High_UHI"].astype(int),
                         p["High_Pov"].astype(int), p["ua"])]
     rows.append(summary_row("Poverty = HUD LPI below its median (LPI frame)",
@@ -76,8 +75,6 @@ def sensitivity(df: pd.DataFrame, cuts: dict) -> pd.DataFrame:
     rows.append(summary_row("Both at the 75th percentile",
                             (p["UHI_annual_day"] >= q75u).astype(int),
                             (p["pov_rate"] >= q75p).astype(int), p["ua"]))
-    rows.append(summary_row("Puerto Rico included (same cut values)",
-                            pr["High_UHI"].astype(int), pr["High_Pov"].astype(int), pr["ua"]))
     top10 = validation.top_uas(p, 10)
     q = p[~p["ua"].isin(top10)]
     rows.append(summary_row("Top-10 UAs by tract count excluded", q["High_UHI"].astype(int),
@@ -197,8 +194,8 @@ national medians. It reports:
   Breslow–Day test, a UA cluster-bootstrap CI for the OR (B = 1,000), and a logistic regression
   with UA-clustered standard errors;
 - sensitivity analyses: the LPI-based poverty label, a 20 % "poverty area" cut-off, SUHI at the
-  66th and 75th percentiles, both outcomes at the 75th percentile, Puerto Rico included, and the
-  ten largest UAs excluded.
+  66th and 75th percentiles, both outcomes at the 75th percentile, and the ten largest UAs
+  excluded.
 
 ## Results
 

@@ -2,8 +2,8 @@
 
 Trains LightGBM (and logistic regression) on `A-noLST`, which contains no
 `LST_*` and no `UHI_*` column, and runs the ablation ladder
-A-full → A-narrow → A-noLST-keepUHI → A-noLST → A-noLST+pov, plus the LST-only
-baseline, under leave-one-city-out (primary), UA-grouped 5-fold and random
+A-full → A-narrow → A-noLST-keepUHI → A-noLST → A-noLST+pov, plus two LST
+references (`A-lst-only`, one urban-LST column; `A-lst`, every LST column), under leave-one-city-out (primary), UA-grouped 5-fold and random
 5-fold (for comparison only). Writes the full predictor list of every
 configuration to `results/feature_lists.csv`.
 """
@@ -118,7 +118,7 @@ def write_readme() -> None:
 ## Purpose
 
 This section fits the UHI model without the target's components or their close proxies, and
-shows, through an ablation ladder and an LST-only baseline, what each family of inputs adds.
+shows, through an ablation ladder and two LST references, what each family of inputs adds.
 
 ## Method
 
@@ -130,8 +130,9 @@ shows, through an ablation ladder and an LST-only baseline, what each family of 
   5-fold for comparison only. Fixed hyperparameters, τ = 0.5, every learned step fitted inside
   the training folds.
 - Ablation ladder, each rung removing only what its name says (the two geometry columns are
-  in every rung except the LST-only baseline): `A-full` → `A-narrow` → `A-noLST-keepUHI` →
-  `A-noLST` → `A-noLST+pov`, plus `A-lst-only`.
+  in every rung except the LST references): `A-full` → `A-narrow` → `A-noLST-keepUHI` →
+  `A-noLST` → `A-noLST+pov`, plus `A-lst-only` (one urban-LST column) and the **LST
+  reference `A-lst`** (all 24 `LST_*` columns and nothing else).
 - [`results/feature_lists.csv`](results/feature_lists.csv) lists every predictor of every
   configuration in this repository, with its family.
 
@@ -156,6 +157,11 @@ MCC, PR-AUC and balanced accuracy with CIs):
   LightGBM and {ci('A-noLST', 'logistic', 'loco', 'roc_auc')} for logistic regression in held-out
   cities. It measures how well high surface urban heat can be predicted from vegetation,
   elevation and built form alone.
+- The LST reference (`A-lst`, temperature columns only) reaches ROC-AUC
+  {ci('A-lst', 'lgbm', 'loco', 'roc_auc')} for LightGBM and
+  {ci('A-lst', 'logistic', 'loco', 'roc_auc')} for logistic regression. It is a reference, not
+  a usable predictor: the label is the difference of two of its columns, which logistic
+  regression can represent exactly.
 - Adding the ACS poverty rate (`A-noLST+pov`) changes leave-one-city-out ROC-AUC from
   {f(v('A-noLST', 'lgbm', 'loco', 'roc_auc').estimate)} to
   {f(v('A-noLST+pov', 'lgbm', 'loco', 'roc_auc').estimate)}.

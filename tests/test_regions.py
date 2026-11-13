@@ -13,10 +13,9 @@ def test_all_51_jurisdictions_mapped():
     assert table.loc[table["state_abbr"] == "DC", "region"].item() == "South"
 
 
-def test_puerto_rico_flagged_as_territory():
-    assert geo.PUERTO_RICO not in geo.STATES
-    assert geo.is_territory(["72", "06"]).tolist() == [True, False]
-    assert geo.lookup(pd.Series(["72"]), "region").item() == "Territory"
+def test_study_area_is_the_50_states_and_dc():
+    assert geo.in_study_area(["06001400100", "11001000100", "72001956300"]).tolist() == [
+        True, True, False]
 
 
 def test_ua_primary_state_and_span():

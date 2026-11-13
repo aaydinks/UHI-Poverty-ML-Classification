@@ -14,7 +14,9 @@ is High_UHI on `A-noLST`, panel (b) is High_Pov on `B-env`. The folds are
 - SVM: an exact RBF SVM refitted 486 times on ~54k rows is impractical, so the kernel is
   approximated with `Nystroem(n_components=500)` + `LinearSVC`. Its score is the decision
   function (used only for ROC-AUC); its class is decision ≥ 0.
-- Bars use τ = 0.5. ROC-AUC carries a 95 % UA cluster-bootstrap CI.
+- Bars are aggregated (pooled) over all out-of-fold predictions at τ = 0.5; error bars
+  are ±1 SD of 1,000 UA cluster-bootstrap replicates. ROC-AUC carries a 95 % UA
+  cluster-bootstrap CI.
 
 Out-of-fold predictions of the six other models are cached under
 `data/interim/figures/algorithms/` with a fingerprint sidecar. `--fit dt,knn` fills the cache for
@@ -63,7 +65,7 @@ SEED = 37
 N_JOBS = 6
 SCHEME = "loco"
 PANELS = {"A": "A-noLST", "B": "B-env"}
-PANEL_TITLES = {"A": "(a) High UHI, A-noLST", "B": "(b) High poverty, B-env"}
+PANEL_TITLES = {"A": "(a) UHI, A-noLST", "B": "(b) Poverty, B-env"}
 
 ALGORITHMS = ("logistic", "dt", "rf", "svm", "knn", "catboost", "xgboost", "lgbm")
 ALGORITHM_LABELS = {"logistic": "Logistic Regression", "dt": "Decision Tree",
@@ -78,7 +80,9 @@ METRIC_LABELS = {"precision": "Precision", "recall": "Recall", "f1": "F1 Score",
 # An ordered ramp from the sequential blue scale: four hues would exceed the three
 # categorical slots that pass the colour-vision checks.
 METRIC_COLORS = dict(zip(METRICS, [plotting.SEQ_BLUE[i] for i in (1, 3, 5, 7)], strict=True))
-NOTE = ("Leave-one-city-out, 486 urbanized areas, τ = 0.5. Logistic regression and LGBM use "
+NOTE = ("Leave-one-city-out, 486 urbanized areas, τ = 0.5. Bars: scores aggregated over all "
+        "held-out tracts; error bars: ±1 SD of 1,000 UA cluster-bootstrap replicates. "
+        "Logistic regression and LGBM use "
         "the repository's fixed settings; the other six use library defaults (random_state = 37). "
         "SVM: RBF kernel approximated by Nystroem (500 components) + LinearSVC.")
 
@@ -212,7 +216,8 @@ def score_all(df: pd.DataFrame) -> pd.DataFrame:
         for name in ALGORITHMS:
             o = predictions(task, name, df)
             s = metrics.Scored(o["y"], o["score"], o["pred"])
-            t = metrics.bootstrap_panel(s, o["ua"].to_numpy(), metrics=[*METRICS, "roc_auc"])
+            t = metrics.bootstrap_panel(s, o["ua"].to_numpy(), metrics=[*METRICS, "roc_auc"],
+                                        sd=True)
             t.insert(0, "model", name)
             t.insert(0, "config", PANELS[task])
             t.insert(0, "task", task)
@@ -241,10 +246,11 @@ def repo_check(t: pd.DataFrame) -> pd.DataFrame:
 
 
 def bars_table(t: pd.DataFrame) -> pd.DataFrame:
-    """One row per (task, model): the four bar heights."""
+    """One row per (task, model): the four bar heights and their bootstrap SDs."""
     w = t[t["metric"].isin(METRICS)].pivot_table(index=["task", "config", "model"],
-                                                  columns="metric", values="estimate")
-    w = w.reset_index()[["task", "config", "model", *METRICS]]
+                                                  columns="metric", values=["estimate", "boot_sd"])
+    w.columns = [m if v == "estimate" else f"{m}_sd" for v, m in w.columns]
+    w = w.reset_index()[["task", "config", "model", *METRICS, *(f"{m}_sd" for m in METRICS)]]
     w["order"] = w["model"].map(ALGORITHMS.index)
     w = w.sort_values(["task", "order"]).drop(columns="order").reset_index(drop=True)
     w.insert(3, "algorithm", w["model"].map(ALGORITHM_LABELS))
@@ -265,7 +271,9 @@ def draw_bars(ax, bars: pd.DataFrame, title: str, ylabel: bool = True) -> None:
     width = 0.2
     for j, m in enumerate(METRICS):
         ax.bar(x + (j - 1.5) * width, bars[m], width, color=METRIC_COLORS[m],
-               edgecolor=plotting.SURFACE, linewidth=0.4, label=METRIC_LABELS[m])
+               edgecolor=plotting.SURFACE, linewidth=0.4, label=METRIC_LABELS[m],
+               yerr=bars[f"{m}_sd"], capsize=1.6,
+               error_kw={"ecolor": plotting.INK, "elinewidth": 0.7, "capthick": 0.7})
     ax.axhline(0.5, color=plotting.INK_2, linewidth=0.8, linestyle=(0, (4, 3)), zorder=3)
     ax.set_ylim(0, 1)
     ax.set_yticks(np.linspace(0, 1, 6))
@@ -274,7 +282,7 @@ def draw_bars(ax, bars: pd.DataFrame, title: str, ylabel: bool = True) -> None:
     ax.grid(axis="x", visible=False)
     ax.set_xlabel("Machine learning models")
     if ylabel:
-        ax.set_ylabel("Score")
+        ax.set_ylabel("Score (aggregated)")
     ax.set_title(title)
 
 
@@ -286,8 +294,6 @@ def plot(bars: pd.DataFrame) -> None:
     fig.tight_layout()
     fig.legend(handles=legend_handles(), loc="lower left", bbox_to_anchor=(0.01, 0.98),
                ncol=4)
-    fig.suptitle("Eight algorithms, leave-one-city-out", x=0.01,
-                 ha="left", y=1.08, fontweight="bold", fontsize=10)
     plotting.note(fig, NOTE + " Dashed line: 0.5.", y=-0.01)
     plotting.savefig(fig, OUT / "algorithms.png")
 
@@ -304,8 +310,12 @@ def write_readme() -> None:
     for task in PANELS:
         b = bars[bars.task == task].set_index("model")
         a = auc[auc.task == task].set_index("model")
-        rows = [f"| {ALGORITHM_LABELS[m]} | {f(b.loc[m, 'precision'])} | {f(b.loc[m, 'recall'])} "
-                f"| {f(b.loc[m, 'f1'])} | {f(b.loc[m, 'accuracy'])} "
+
+        def pm(m, k, b=b):
+            return f"{f(b.loc[m, k])} ± {f(b.loc[m, k + '_sd'])}"
+
+        rows = [f"| {ALGORITHM_LABELS[m]} | {pm(m, 'precision')} | {pm(m, 'recall')} "
+                f"| {pm(m, 'f1')} | {pm(m, 'accuracy')} "
                 f"| {report.fmt_ci(a.loc[m, 'estimate'], a.loc[m, 'ci_low'], a.loc[m, 'ci_high'])} |"
                 for m in ALGORITHMS]
         best = a["estimate"].idxmax()
@@ -323,7 +333,10 @@ def write_readme() -> None:
 The algorithm comparison shows eight algorithms by precision, recall, F1 and accuracy (grouped bars, y from
 0 to 1) on {n:,} tracts in 486 urbanized areas, each area held out in turn
 (leave-one-city-out, {n_folds} folds), at τ = 0.5. Panel (a) predicts High UHI from `A-noLST`
-(no LST or SUHI column); panel (b) predicts High poverty from `B-env`.
+(no LST or SUHI column); panel (b) predicts High poverty from `B-env`. Each bar is the score
+aggregated over all held-out tracts; its error bar is ±1 SD of 1,000 UA cluster-bootstrap
+replicates (the bootstrap standard error). Table cells below are "aggregated estimate ±
+bootstrap SD".
 
 ![Algorithm comparison](results/algorithms.png)
 
@@ -354,8 +367,10 @@ intervals (1,000 replicates): [`results/algorithms_auc.csv`](results/algorithms_
   impractical, so the RBF kernel is approximated by `Nystroem(n_components=500)` followed by
   `LinearSVC`. Its class is decision function ≥ 0 and its ROC-AUC is computed from the
   uncalibrated decision function.
-- Bars are pooled over all out-of-fold predictions. Out-of-fold predictions of the six other
-  models are cached under `data/interim/figures/algorithms/`.
+- Bars are aggregated (pooled) over all out-of-fold predictions, not averaged over cities.
+  Error bars are ±1 SD of the same 1,000 UA cluster-bootstrap replicates that give the
+  ROC-AUC intervals. Out-of-fold predictions of the six other models are cached under
+  `data/interim/figures/algorithms/`.
 """
     report.write_text(text, HERE / "README_algorithms.md")
 

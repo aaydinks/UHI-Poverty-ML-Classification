@@ -17,16 +17,14 @@ from uhi_poverty import build, geo, paths, plotting, report, validation
 
 HERE = Path(__file__).resolve().parent
 OUT = paths.results_dir(__file__)
-REASONS = ["not urban (no SUHI value; source limitation)", "territory (Puerto Rico)",
-           "missing SUHI fields", "missing geometry (not in 2019 Gazetteer)",
+REASONS = ["not urban (no SUHI value; source limitation)", "missing SUHI fields", "missing geometry (not in 2019 Gazetteer)",
            "ACS unmatched or poverty universe < 50"]
 
 
 def by_state(df: pd.DataFrame, gaz: pd.DataFrame) -> pd.DataFrame:
     gaz = gaz.assign(state_fips=gaz["GEOID"].str[:2])
-    gaz = gaz[gaz["state_fips"].isin(list(geo.STATES) + [geo.PUERTO_RICO])]
-    reason = df["exclusion_reason"].replace({"ACS unmatched": REASONS[4],
-                                             "ACS poverty universe < 50": REASONS[4]})
+    reason = df["exclusion_reason"].replace({"ACS unmatched": REASONS[3],
+                                             "ACS poverty universe < 50": REASONS[3]})
     t = pd.crosstab(df["state_fips"], reason)
     out = pd.DataFrame(index=sorted(gaz["state_fips"].unique()))
     out["all_2010_tracts"] = gaz.groupby("state_fips").size()
@@ -63,20 +61,20 @@ def cluster_sizes(p: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
 def flow_diagram(flow: pd.DataFrame) -> None:
     plotting.apply_style()
-    steps = flow[flow["step"].isin(["0", "1", "3", "3g", "4", "5"])].reset_index(drop=True)
+    steps = flow[flow["step"].isin(["0", "1", "2", "2g", "3", "4"])].reset_index(drop=True)
     fig, ax = plt.subplots(figsize=(7.6, 6.6))
     ax.set_axis_off()
     ax.set_xlim(0, 10)
     ax.set_ylim(0, len(steps) * 1.5)
     labels = {"0": "All 2010 tracts, 50 states + DC", "1": "In the SUHI database (50 states + DC)",
-              "3": "Complete SUHI target and features", "3g": "With tract geometry",
-              "4": "ACS 2015–2019 matched, universe ≥ 50", "5": "Primary analysis sample"}
+              "2": "Complete SUHI target and features", "2g": "With tract geometry",
+              "3": "ACS 2015–2019 matched, universe ≥ 50", "4": "Primary analysis sample"}
     side = {"1": "Not urban (no SUHI value)",
-            "3": "Missing SUHI fields", "3g": "Not in 2019 Gazetteer",
-            "4": "ACS unmatched or\nuniverse < 50 persons"}
+            "2": "Missing SUHI fields", "2g": "Not in 2019 Gazetteer",
+            "3": "ACS unmatched or\nuniverse < 50 persons"}
     for i, r in steps.iterrows():
         y = (len(steps) - 1 - i) * 1.5 + 0.35
-        primary = r["step"] == "5"
+        primary = r["step"] == "4"
         face = plotting.BLUE if primary else plotting.NEUTRAL
         ink = "white" if primary else plotting.INK
         ax.add_patch(FancyBboxPatch((0.3, y), 4.6, 0.8, boxstyle="round,pad=0.02,rounding_size=0.08",
@@ -91,12 +89,7 @@ def flow_diagram(flow: pd.DataFrame) -> None:
         nxt = steps.iloc[i + 1]["step"] if i < len(steps) - 1 else None
         if nxt in side:
             removed = int(flow.loc[flow["step"] == nxt, "n_removed"].iloc[0])
-            if nxt == "1":
-                pr = int(flow.loc[flow["step"] == "2", "n_removed"].iloc[0])
-                text = (f"{side[nxt]}\n− {removed:,}\n(Puerto Rico's {pr:,} SUHI tracts are "
-                        "the sensitivity frame)")
-            else:
-                text = f"{side[nxt]}\n− {removed:,}"
+            text = f"{side[nxt]}\n− {removed:,}"
             ax.annotate("", xy=(5.6, y - 0.35), xytext=(2.6, y - 0.35),
                         arrowprops={"arrowstyle": "-|>", "color": plotting.MUTED, "lw": 1})
             ax.text(5.75, y - 0.35, text, ha="left", va="center", fontsize=8,
@@ -139,8 +132,8 @@ def write_readme() -> None:
         f"| {k} | {r.rule} | {int(r.n_tracts):,} | "
         f"{'' if np.isnan(r.n_removed) else f'{int(r.n_removed):,}'} |"
         for k, r in flow.iterrows())
-    most_acs = st[st.state != "Total"].sort_values(REASONS[4], ascending=False).head(3)
-    acs_states = ", ".join(f"{r.state} {int(r[REASONS[4]])}" for _, r in most_acs.iterrows())
+    most_acs = st[st.state != "Total"].sort_values(REASONS[3], ascending=False).head(3)
+    acs_states = ", ".join(f"{r.state} {int(r[REASONS[3]])}" for _, r in most_acs.iterrows())
     text = f"""# 1.3 Tracts used and excluded
 
 ## Purpose
@@ -164,16 +157,15 @@ reconcile (the build fails otherwise).
 |---|---|---:|---:|
 {rows}
 
-By reason, over the 50 states + DC and Puerto Rico
+By reason, over the 50 states + DC
 ([`results/excluded_by_state_and_reason.csv`](results/excluded_by_state_and_reason.csv)):
 
 | Reason | Tracts |
 |---|---:|
 | Not urban: no SUHI value (source limitation) | {int(tot[REASONS[0]]):,} |
-| Territory (Puerto Rico; kept as the sensitivity frame) | {int(tot[REASONS[1]]):,} |
-| Missing SUHI fields | {int(tot[REASONS[2]]):,} |
-| Not in the 2019 Gazetteer (tract renumbered after 2010) | {int(tot[REASONS[3]]):,} |
-| ACS unmatched or poverty universe < 50 persons | {int(tot[REASONS[4]]):,} |
+| Missing SUHI fields | {int(tot[REASONS[1]]):,} |
+| Not in the 2019 Gazetteer (tract renumbered after 2010) | {int(tot[REASONS[2]]):,} |
+| ACS unmatched or poverty universe < 50 persons | {int(tot[REASONS[3]]):,} |
 | **Included (primary sample)** | **{int(tot['included (primary sample)']):,}** |
 
 Of the ACS exclusions, {ax['n_universe_below_50']} tracts have a poverty universe below 50

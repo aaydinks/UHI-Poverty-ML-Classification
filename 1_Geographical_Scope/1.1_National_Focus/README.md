@@ -16,10 +16,8 @@ tract codes.
 |---|---:|
 | All 2010 census tracts, 50 states + DC | 73,056 |
 | Tracts in the SUHI database, 50 states + DC | 54,998 |
-| Tracts in the SUHI database, Puerto Rico | 873 |
-| Urbanized areas (UAs) in the SUHI database | 497 (of which 11 in Puerto Rico) |
+| Urbanized areas (UAs) in the SUHI database, 50 states + DC | 486 |
 | **Primary analysis sample** | **54,243 tracts in 486 UAs across 51 jurisdictions (50 states + DC)** |
 | Share of all 2010 tracts in the 50 states + DC | 74.2 % |
 | By Census region | Northeast 11,094, Midwest 11,349, South 18,652, West 13,148 |
 | Robustness frame with HUD LPI | 54,237 |
-| Sensitivity frame with Puerto Rico | 55,095 (852 Puerto Rico tracts) |

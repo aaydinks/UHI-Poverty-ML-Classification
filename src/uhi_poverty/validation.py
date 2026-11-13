@@ -57,7 +57,7 @@ def load_analysis() -> pd.DataFrame:
 def frame(name: str = "primary", df: pd.DataFrame | None = None) -> pd.DataFrame:
     """Rows of a named frame, in a stable order (by GEOID), index reset."""
     df = load_analysis() if df is None else df
-    mask = {"primary": "in_primary", "lpi": "in_lpi_frame", "pr": "in_pr_frame"}[name]
+    mask = {"primary": "in_primary", "lpi": "in_lpi_frame"}[name]
     return df[df[mask]].sort_values("GEOID").reset_index(drop=True)
 
 
@@ -194,7 +194,7 @@ def oof(task: str, config: str, model: str, scheme: str, drop_top: int = 0,
 PRIMARY_RUNS = [(t, features.TASKS[t]["primary"], m, s)
                 for t in ("A", "B") for m in models.MODELS for s in SCHEMES]
 ABLATION_CONFIGS = ["A-full", "A-narrow", "A-noLST-keepUHI", "A-noLST", "A-noLST+pov",
-                    "A-lst-only"]
+                    "A-lst-only", "A-lst"]
 ABLATION_SCHEMES = ("loco", "ua5", "random5")
 ABLATION_RUNS = [("A", c, m, s) for c in ABLATION_CONFIGS for m in ("logistic", "lgbm")
                  for s in ABLATION_SCHEMES]

@@ -72,7 +72,7 @@
       "rule": "< median (low index = poorer)",
       "value": 55.0,
       "unit": "index 0-99",
-      "frame": "lpi (5a)"
+      "frame": "lpi (4a)"
     }
   }
 }

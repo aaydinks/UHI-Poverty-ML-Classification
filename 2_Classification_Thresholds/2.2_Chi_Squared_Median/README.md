@@ -20,8 +20,8 @@ national medians. It reports:
   Breslow–Day test, a UA cluster-bootstrap CI for the OR (B = 1,000), and a logistic regression
   with UA-clustered standard errors;
 - sensitivity analyses: the LPI-based poverty label, a 20 % "poverty area" cut-off, SUHI at the
-  66th and 75th percentiles, both outcomes at the 75th percentile, Puerto Rico included, and the
-  ten largest UAs excluded.
+  66th and 75th percentiles, both outcomes at the 75th percentile, and the ten largest UAs
+  excluded.
 
 ## Results
 

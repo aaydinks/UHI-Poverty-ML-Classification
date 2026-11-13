@@ -33,7 +33,7 @@ urban each state is. The largest UAs are
 New York--Newark, NY--NJ--CT (4,217), Los Angeles--Long Beach--Anaheim, CA (2,758), Chicago, IL--IN (2,059), Philadelphia, PA--NJ--DE--MD (1,395), Miami, FL (1,188); 69 UAs span more
 than one state.
 
-Tracts on the cartographic map, by status: Analysis sample: 54,243; Puerto Rico (sensitivity frame): 872; Excluded: missing data: 728; Not urban (no SUHI value): 17,896.
+Tracts on the cartographic map, by status: Analysis sample: 54,243; Excluded: missing data: 728; Not urban (no SUHI value): 17,860.
 
 **"Cities" means urbanized areas.** The SUHI database's unit is the Census Urbanized Area
 (2010), a continuously built-up area named after its principal city or cities (for example
