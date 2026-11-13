@@ -249,6 +249,74 @@ def compute(task: str, df: pd.DataFrame | None = None, n_jobs: int = -1,
     return {"meta": meta, **tables}
 
 
+def linear_contributions(pipe, X: pd.DataFrame) -> np.ndarray:
+    """Exact SHAP values of the fixed logistic pipeline in log-odds, n × (p + 1).
+
+    Every preprocessing step (median imputation, `log1p`, standardisation) acts on one
+    column at a time, so the model is linear in one transformed copy of each input.
+    With the training fold as background, interventional SHAP is then
+    φ_j = β_j · (z_j − mean_train z_j) = β_j · z_j, since the scaler centres the
+    training fold; the bias (last column) is the intercept.
+    """
+    pre, est = pipe[:-1], pipe.named_steps["model"]
+    z = np.asarray(pre.transform(X), dtype=float)
+    beta = np.asarray(est.coef_, dtype=float).ravel()
+    if z.shape != (len(X), X.shape[1]) or beta.shape != (X.shape[1],):
+        raise AssertionError("the logistic pipeline must keep one column per input")
+    return np.column_stack([z * beta, np.full(len(X), float(est.intercept_[0]))])
+
+
+def _logistic_fold(X, y, cols, label, train_idx, test_idx):
+    Xtr = pd.DataFrame(X[train_idx], columns=cols)
+    Xte = pd.DataFrame(X[test_idx], columns=cols)
+    pipe = models.make_model("logistic").fit(Xtr, y[train_idx])
+    c = linear_contributions(pipe, Xte)
+    return pd.DataFrame(c[:, :-1], columns=cols).assign(bias=c[:, -1], _idx=test_idx,
+                                                         fold=str(label))
+
+
+def logistic_rows(task: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Out-of-fold SHAP of the fixed logistic regression, shaped like the `rows` table.
+
+    Same split as the LightGBM attribution of record (UA-grouped 5-fold, seed 37).
+    The contributions must reproduce the cached out-of-fold scores of
+    `validation.oof(task, config, "logistic", "ua5")`; that run must already be cached.
+    """
+    df = validation.frame("primary", df)
+    cfg = config(task)
+    cols = features.config(cfg)
+    y = df[features.TASKS[task]["target"]].astype(int).to_numpy()
+    X = df[cols].to_numpy(dtype=np.float64)
+    key = validation.run_key(task, cfg, "logistic", SCHEME)
+    meta_path = paths.OOF_DIR / f"{key}.json"
+    fp = validation._fingerprint(df, X, y, "logistic", SCHEME)
+    if not meta_path.exists() or json.loads(meta_path.read_text()).get("fingerprint") != fp:
+        raise RuntimeError(f"{key}: not in the out-of-fold cache (run `make engine`)")
+
+    parts = [_logistic_fold(X, y, cols, label, tr, te)
+             for label, tr, te in validation.splits(df, y, SCHEME, seed=RECORD_SEED)]
+    rows = pd.concat(parts).sort_values("_idx")
+    if len(rows) != len(df) or rows["_idx"].duplicated().any():
+        raise AssertionError(f"{task}: every tract must be explained exactly once")
+    idx = rows.pop("_idx").to_numpy()
+    rows.insert(0, "GEOID", df["GEOID"].to_numpy()[idx])
+    rows.insert(1, "ua", df["ua"].to_numpy()[idx])
+    rows.insert(2, "y", y[idx])
+    rows.insert(3, "score", sigmoid(rows[cols].sum(axis=1) + rows["bias"]))
+    rows = rows.reset_index(drop=True)
+
+    o = validation.oof(task, cfg, "logistic", SCHEME, df=df)
+    m = rows[["GEOID", "fold", "score"]].merge(o[["GEOID", "fold", "score"]], on="GEOID",
+                                                suffixes=("", "_oof"), validate="one_to_one")
+    if (m["fold"] != m["fold_oof"]).any():
+        raise AssertionError(f"{task}: fold assignment differs from the cached logistic run")
+    err = float((m["score"] - m["score_oof"]).abs().max())
+    if err > ADDITIVITY_TOL:
+        raise AssertionError(f"{task}: logistic contributions do not reproduce the OOF "
+                             f"scores ({err:.2e})")
+    return rows
+
+
 def feature_values(rows: pd.DataFrame, cols: list[str],
                    df: pd.DataFrame | None = None) -> pd.DataFrame:
     """Input values aligned with `rows`, whose feature-named columns hold SHAP values."""

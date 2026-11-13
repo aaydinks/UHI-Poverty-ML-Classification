@@ -21,7 +21,6 @@ from uhi_poverty import build, geo, maps, paths, plotting, report, validation
 HERE = Path(__file__).resolve().parent
 OUT = paths.results_dir(__file__)
 STATUS_COLORS = {"Analysis sample": plotting.BLUE,
-                 "Puerto Rico (sensitivity frame)": plotting.ORANGE,
                  "Excluded: missing data": plotting.AQUA,
                  "Not urban (no SUHI value)": plotting.NEUTRAL}
 
@@ -65,24 +64,20 @@ def by_ua(df: pd.DataFrame) -> pd.DataFrame:
 
 def excluded_md(df: pd.DataFrame, st: pd.DataFrame) -> str:
     in_uas = set(df.loc[df["in_primary"], "ua"])
-    all_uas = df.groupby("ua").agg(ua_name=("ua_name", "first"), n=("GEOID", "size"),
-                                   territory=("territory", "all"))
+    all_uas = df.groupby("ua").agg(ua_name=("ua_name", "first"), n=("GEOID", "size"))
     dropped = all_uas[~all_uas.index.isin(in_uas)].copy()
-    dropped["reason"] = np.where(dropped["territory"], "Puerto Rico (sensitivity frame)",
-                                 "every tract excluded for missing data")
-    partial = df[~df["in_primary"] & ~df["territory"] & df["ua"].isin(in_uas)]
+    dropped["reason"] = "every tract excluded for missing data"
+    partial = df[~df["in_primary"] & df["ua"].isin(in_uas)]
     lines = [
         "# States and urbanized areas included and excluded\n",
-        f"**Included:** all 51 jurisdictions (50 states + DC) have tracts in the analysis sample; "
-        f"{len(in_uas)} urbanized areas.\n",
-        "**Excluded jurisdictions:**\n",
-        "- Puerto Rico: held out of the primary sample and analysed as a sensitivity frame "
-        f"({int(df['in_pr_frame'].sum() - df['in_primary'].sum()):,} usable tracts).",
-        "- American Samoa, Guam, the Northern Mariana Islands and the U.S. Virgin Islands: not in "
-        "the SUHI database.\n",
-        f"**Urbanized areas with no tract in the analysis sample ({len(dropped)}):**\n",
-        report.md_table(dropped.reset_index()[["ua", "ua_name", "n", "reason"]].rename(
-            columns={"n": "SUHI tracts"})),
+        f"**Included:** the study area is the 50 states + DC, and all 51 jurisdictions have "
+        f"tracts in the analysis sample; {len(in_uas)} urbanized areas.\n",
+        *([f"**Urbanized areas with no tract in the analysis sample ({len(dropped)}):**\n",
+           report.md_table(dropped.reset_index()[["ua", "ua_name", "n", "reason"]].rename(
+               columns={"n": "SUHI tracts"}))]
+          if len(dropped) else
+          ["**Urbanized areas:** every urbanized area in the SUHI database has at least one "
+           "tract in the analysis sample.\n"]),
         f"\n**Partly excluded:** {len(partial):,} tracts in included UAs were dropped for missing "
         "SUHI fields, renumbering after 2010, or a small ACS universe (section 1.3).\n",
     ]
@@ -95,10 +90,8 @@ def status_map(df: pd.DataFrame, shapes, states) -> dict:
     g = shapes["GEOID"]
     in_suhi = g.isin(look.index)
     prim = g.map(look["in_primary"]).fillna(False).astype(bool)
-    terr = g.map(look["territory"]).fillna(False).astype(bool)
     status[in_suhi] = "Excluded: missing data"
     status[prim] = "Analysis sample"
-    status[in_suhi & terr] = "Puerto Rico (sensitivity frame)"
     shapes = shapes.assign(status=pd.Categorical(status, categories=list(STATUS_COLORS)))
     fig = plt.figure(figsize=(10, 6.6))
     axes = maps.national_axes(fig)
@@ -119,7 +112,7 @@ def state_map(st: pd.DataFrame, states) -> None:
                      right_on="state_fips", how="left")
     s["state_fips"] = s["STATEFP"]
     fig = plt.figure(figsize=(10, 6.6))
-    axes = maps.national_axes(fig, inset_pr=False)
+    axes = maps.national_axes(fig)
     norm = Normalize(vmin=0, vmax=float(st["analysis_tracts"].max()))
     for key, ax in axes.items():
         fips = None if key == "conus" else key

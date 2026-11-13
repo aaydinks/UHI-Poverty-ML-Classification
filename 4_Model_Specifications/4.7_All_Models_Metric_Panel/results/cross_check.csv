@@ -1,0 +1,5 @@
+source,n_compared,max_abs_diff
+4.4 metric panel,54,0.0
+3.2 ablation,60,0.0
+6 algorithm comparison,80,0.0
+4.6 tuned panel,72,0.0

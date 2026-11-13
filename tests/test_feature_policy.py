@@ -46,7 +46,7 @@ def test_engineered_terms_use_only_the_task_configuration():
 def test_config_sizes():
     sizes = {k: len(v) for k, v in features.CONFIGS.items()}
     assert sizes == {"A-full": 63, "A-narrow": 61, "A-noLST-keepUHI": 39, "A-noLST": 28,
-                     "A-noLST+pov": 29, "A-lst-only": 1, "B-env": 64, "B-nonthermal": 28,
+                     "A-noLST+pov": 29, "A-lst-only": 1, "A-lst": 24, "B-env": 64, "B-nonthermal": 28,
                      "geo-only": 6}
     # every rung of the ladder differs from the previous by only the named columns
     full, narrow = set(features.CONFIGS["A-full"]), set(features.CONFIGS["A-narrow"])
@@ -54,3 +54,6 @@ def test_config_sizes():
     keep_uhi, no_lst = set(features.CONFIGS["A-noLST-keepUHI"]), set(features.CONFIGS["A-noLST"])
     assert keep_uhi - no_lst == {c for c in features.SUHI if c != features.TARGET_UHI}
     assert no_lst <= keep_uhi
+    # the LST reference is every LST column and nothing else, so it holds both target terms
+    assert features.CONFIGS["A-lst"] == features.LST
+    assert {"LST_urb_day_CT", "LST_rur_day"} <= set(features.CONFIGS["A-lst"])

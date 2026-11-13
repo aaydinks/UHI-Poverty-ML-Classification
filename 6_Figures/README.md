@@ -10,7 +10,7 @@ and a README written from those results. The national heat map is produced by
 | Algorithm comparison | Eight algorithms × four metrics under leave-one-city-out, for the UHI task (a) and the poverty task (b) | [`algorithms.png`](results/algorithms.png) | [README_algorithms](README_algorithms.md) |
 | Confusion matrices by city, UHI | The UHI model in the ten largest held-out cities | [`confusion_by_city_uhi.png`](results/confusion_by_city_uhi.png) | [README_confusion_by_city](README_confusion_by_city.md) |
 | Confusion matrices by city, poverty | The poverty model in the ten largest held-out cities | [`confusion_by_city_poverty.png`](results/confusion_by_city_poverty.png) | [README_confusion_by_city](README_confusion_by_city.md) |
-| SHAP beeswarm | SHAP values of the top 10 features per task | [`shap_beeswarm.png`](results/shap_beeswarm.png) | [README_shap_beeswarm](README_shap_beeswarm.md) |
+| SHAP beeswarm | SHAP values of the top 10 features per task, LightGBM (top) and logistic regression (bottom), with a written comparison | [`shap_beeswarm.png`](results/shap_beeswarm.png) | [README_shap_beeswarm](README_shap_beeswarm.md) |
 | Chi-squared heatmap | The 2×2 table of SUHI class against poverty class, with the odds ratio | [`chi_squared_heatmap.png`](results/chi_squared_heatmap.png) | [README_chi_squared_heatmap](README_chi_squared_heatmap.md) |
 
 The figures read their numbers from the analyses and check them against them: the chi-squared

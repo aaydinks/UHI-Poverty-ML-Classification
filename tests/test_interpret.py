@@ -47,6 +47,20 @@ def test_contributions_sum_to_the_predicted_logit():
                                atol=1e-12)
 
 
+def test_linear_contributions_sum_to_the_predicted_logit():
+    rng = np.random.default_rng(37)
+    X = pd.DataFrame(rng.normal(size=(400, 4)), columns=["Area", "b", "c", "d"])
+    X["Area"] = np.exp(X["Area"])  # a log1p column
+    X.loc[::17, "b"] = np.nan  # an imputed value
+    y = (X.c - X.d + rng.normal(size=400) > 0).astype(int).to_numpy()
+    pipe = models.make_model("logistic").fit(X, y)
+    c = interpret.linear_contributions(pipe, X)
+    assert c.shape == (400, 5)
+    np.testing.assert_allclose(c.sum(axis=1), pipe.decision_function(X), atol=1e-10)
+    # centred on the training sample: each feature's mean contribution is zero
+    np.testing.assert_allclose(c[:, :-1].mean(axis=0), 0, atol=1e-10)
+
+
 def test_group_sums():
     phi = pd.DataFrame({"a": [1.0, -2.0], "b": [0.5, 0.5], "c": [3.0, 0.0]})
     gs = interpret.group_sums(phi, {"g1": ["a", "b"], "g2": ["c"]})

@@ -113,6 +113,7 @@ CONFIGS: dict[str, list[str]] = {
     "A-noLST": NON_THERMAL,
     "A-noLST+pov": NON_THERMAL + POVERTY,
     "A-lst-only": ["LST_urb_day_CT"],
+    "A-lst": LST,
     "B-env": SUHI_FEATURES + GEOMETRY,
     "B-nonthermal": NON_THERMAL,
     "geo-only": LOCATION,
@@ -125,6 +126,8 @@ CONFIG_NOTES = {
     "A-noLST": "NDVI, dNDVI, DEM, morphology, geometry; no LST_* or UHI_* (primary Task A)",
     "A-noLST+pov": "A-noLST + ACS poverty rate",
     "A-lst-only": "LST_urb_day_CT alone (LST-only baseline)",
+    "A-lst": ("All 24 LST_* columns: urban and rural, day and night, annual and seasonal, "
+              "tract and UA-wide (LST reference; contains both terms of the target)"),
     "B-env": "All SUHI columns incl. UHI_annual_day, + geometry (primary Task B)",
     "B-nonthermal": "NDVI, dNDVI, DEM, morphology, geometry (no heat)",
     "geo-only": "Centroid latitude/longitude + Census region (location baseline)",

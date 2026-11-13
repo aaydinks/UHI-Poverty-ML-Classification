@@ -11,9 +11,9 @@ two targets to rebuild them.
 | ID | Dataset | Where it comes from | Vintage | Role |
 |---|---|---|---|---|
 | S1 | SUHI database (Chakraborty et al., 2020) | Mendeley Data `x9mv4krnm2` v3, file `Census_UHI_US_Urbanized_recalculated.csv` (CC BY 4.0). Copied from the local download, which must hash to Mendeley's published SHA-256 `7c0c39af…a25585`; acquisition stops otherwise. | 2010 tracts, 2010 UAs | Heat, vegetation, elevation and morphology features; UHI target; UA group key |
-| S2 | ACS 2015–2019 5-year: `B17001_001E/M`, `B17001_002E/M`, `B01003_001E` | Census API `https://api.census.gov/data/2019/acs/acs5`, one call per state (50 + DC) plus Puerto Rico; raw JSON cached per state | 2010 tracts (the last 5-year release on 2010 geography) | Primary poverty outcome |
+| S2 | ACS 2015–2019 5-year: `B17001_001E/M`, `B17001_002E/M`, `B01003_001E` | Census API `https://api.census.gov/data/2019/acs/acs5`, one call per state (50 + DC); raw JSON cached per state | 2010 tracts (the last 5-year release on 2010 geography) | Primary poverty outcome |
 | S3 | HUD AFFH Low Poverty Index, `AFFHT0006` | HUD Open Data, copied from the local download | 2010 tracts; ACS 2011–2015 | Robustness outcome (low index = poorer) |
-| S4 | Cartographic boundary tracts 2019, 1:500k | `https://www2.census.gov/geo/tiger/GENZ2019/shp/cb_2019_{SS}_tract_500k.zip`, 52 files | 2010 tracts | Maps |
+| S4 | Cartographic boundary tracts 2019, 1:500k | `https://www2.census.gov/geo/tiger/GENZ2019/shp/cb_2019_{SS}_tract_500k.zip`, 51 files | 2010 tracts | Maps |
 | S5 | Cartographic boundary states 2019, 1:500k | `…/GENZ2019/shp/cb_2019_us_state_500k.zip` | – | Map outlines |
 | S6 | 2019 Gazetteer, tracts | `https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2019_Gazetteer/2019_Gaz_tracts_national.zip` | 2010 tracts | Centroids, land and water area, all-tract universe |
 

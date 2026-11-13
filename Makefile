@@ -3,9 +3,9 @@
 export PYTHONPATH := $(CURDIR)/src
 PY := uv run python
 
-.PHONY: all data build engine scope thresholds predictors models interpret shap tune tuned figures test lint clean-cache
+.PHONY: all data build engine scope thresholds predictors models interpret shap tune tuned figures panel test lint clean-cache
 
-all: data build engine models predictors thresholds scope interpret shap tune tuned figures test lint
+all: data build engine models predictors thresholds scope interpret shap tune tuned figures panel test lint
 
 data:
 	$(PY) -m uhi_poverty.acquire
@@ -57,6 +57,10 @@ figures:
 	$(PY) 6_Figures/confusion_by_city.py
 	$(PY) 6_Figures/shap_beeswarm.py
 	$(PY) 6_Figures/chi_squared_heatmap.py
+
+# every model in one metric panel; reads the caches of models, predictors, tuned and figures
+panel:
+	$(PY) 4_Model_Specifications/4.7_All_Models_Metric_Panel/all_models.py
 
 test:
 	uv run pytest

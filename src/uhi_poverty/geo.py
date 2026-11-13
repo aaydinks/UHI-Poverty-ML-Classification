@@ -60,15 +60,6 @@ STATES: dict[str, tuple[str, str, str, str]] = {
     "56": ("WY", "Wyoming", "West", "Mountain"),
 }
 
-# Territories: (abbreviation, name). Puerto Rico is the only one in the SUHI database.
-TERRITORIES: dict[str, tuple[str, str]] = {
-    "60": ("AS", "American Samoa"),
-    "66": ("GU", "Guam"),
-    "69": ("MP", "Northern Mariana Islands"),
-    "72": ("PR", "Puerto Rico"),
-    "78": ("VI", "U.S. Virgin Islands"),
-}
-PUERTO_RICO = "72"
 REGIONS = ("Northeast", "Midwest", "South", "West")
 
 
@@ -100,29 +91,22 @@ def county_of(geoids: pd.Series) -> pd.Series:
     return geoids.str[:5]
 
 
-def is_territory(fips) -> np.ndarray:
-    return pd.Series(fips).isin(list(TERRITORIES)).to_numpy()
+def in_study_area(geoids) -> np.ndarray:
+    """True for tract GEOIDs in the 50 states + DC, the study area."""
+    return pd.Series(geoids).astype(str).str[:2].isin(list(STATES)).to_numpy()
 
 
-def state_table(include_territories: bool = False) -> pd.DataFrame:
-    """One row per jurisdiction: fips, abbr, name, region, division, territory flag."""
-    rows = [
-        {"state_fips": f, "state_abbr": a, "state_name": n, "region": r, "division": d,
-         "territory": False}
+def state_table() -> pd.DataFrame:
+    """One row per jurisdiction (50 states + DC): fips, abbr, name, region, division."""
+    return pd.DataFrame([
+        {"state_fips": f, "state_abbr": a, "state_name": n, "region": r, "division": d}
         for f, (a, n, r, d) in STATES.items()
-    ]
-    if include_territories:
-        rows += [
-            {"state_fips": f, "state_abbr": a, "state_name": n, "region": "Territory",
-             "division": "Territory", "territory": True}
-            for f, (a, n) in TERRITORIES.items()
-        ]
-    return pd.DataFrame(rows)
+    ])
 
 
 def lookup(fips: pd.Series, field: str) -> pd.Series:
-    """Map state FIPS to `abbr`, `name`, `region` or `division`; territories included."""
-    table = state_table(include_territories=True).set_index("state_fips")
+    """Map state FIPS to `abbr`, `name`, `region` or `division`."""
+    table = state_table().set_index("state_fips")
     column = {"abbr": "state_abbr", "name": "state_name"}.get(field, field)
     return pd.Series(fips).map(table[column])
 
