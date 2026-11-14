@@ -34,7 +34,7 @@ SEQ_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#2a78d6", "#1c5cab", "#
 # Diverging blue (cooler than rural) <-> red (hotter than rural), grey midpoint at 0 °C.
 DIVERGING = ["#104281", "#2a78d6", "#86b6ef", NEUTRAL, "#f2a3a2", "#e34948", "#8f1d1d"]
 
-DPI = 300
+DPI = 600
 
 
 def apply_style() -> None:
