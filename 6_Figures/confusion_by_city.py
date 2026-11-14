@@ -9,8 +9,7 @@ predictions of the headline LightGBM (Task A `A-noLST`, Task B `B-env`), at
 tracts with its UA cluster-bootstrap CI, which must equal the 4.4 panel.
 
 Writes `results/confusion_by_city_uhi.png`, `results/confusion_by_city_poverty.png`,
-`results/confusion_by_city_panels.{csv,md}`, `results/confusion_by_city_pooled.csv` and
-`README_confusion_by_city.md`.
+`results/confusion_by_city_panels.csv` and `results/confusion_by_city_pooled.csv`.
 """
 
 from __future__ import annotations
@@ -22,7 +21,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.colors import LinearSegmentedColormap
 
-from uhi_poverty import metrics, paths, plotting, report, validation
+from uhi_poverty import metrics, paths, plotting, validation
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results"
@@ -209,92 +208,14 @@ def main() -> None:
         if r.TN + r.FP + r.FN + r.TP != r.n:
             raise AssertionError(f"{r.city}: confusion matrix does not sum to n")
     t.to_csv(OUT / "confusion_by_city_panels.csv", index=False)
-    report.write_text(
-        "# Confusion matrices by city: the ten held-out cities\n\n"
-        + report.md_table(t.drop(columns=["ua_name"]), digits=3)
-        + "\nLeave-one-city-out LightGBM, τ = 0.5. TPR denominator = actual high; "
-          "TNR denominator = actual low.\n",
-        OUT / "confusion_by_city_panels.md")
     p.to_csv(OUT / "confusion_by_city_pooled.csv", index=False)
     plotting.apply_style()
     for task, spec in FIGURES.items():
         fig = plt.figure(figsize=FIGSIZE)
         draw_figure(fig, task, t, p.set_index("task", drop=False).loc[task])
         plotting.savefig(fig, OUT / spec["png"])
-    write_readme()
     print(t[["task", "city", "n", "f1", "accuracy", "mcc"]].to_string(index=False))
     print(p.to_string(index=False))
-
-
-def write_readme() -> None:
-    t = pd.read_csv(OUT / "confusion_by_city_panels.csv", dtype={"ua": str})
-    p = pd.read_csv(OUT / "confusion_by_city_pooled.csv").set_index("task")
-    f = report.fmt_num
-    rows = []
-    for r in t.itertuples():
-        rows.append(f"| {FIGURES[r.task]['panels']} | {r.rank} | {r.city} | {r.n:,} | {r.TN:,} | "
-                    f"{r.FP:,} | {r.FN:,} | {r.TP:,} | {f(r.TPR)} ({r.TP:,}/{r.TPR_denominator:,}) "
-                    f"| {f(r.TNR)} ({r.TN:,}/{r.TNR_denominator:,}) | {f(r.f1)} | {f(r.accuracy)} "
-                    f"| {f(r.mcc)} |")
-    head = []
-    for task, spec in FIGURES.items():
-        x, s = p.loc[task], t[t.task == task]
-        head.append(f"| {spec['panels']} | {task} `{spec['config']}` | {int(x.n):,} | "
-                    f"{report.fmt_ci(x.f1_estimate, x.f1_ci_low, x.f1_ci_high)} | "
-                    f"{report.fmt_ci(x.mcc_estimate, x.mcc_ci_low, x.mcc_ci_high)} | "
-                    f"{spread(s.f1)} |")
-    report.require(abs(p.loc["A", "f1_estimate"] - 0.819) < 5e-4
-                   and abs(p.loc["B", "f1_estimate"] - 0.725) < 5e-4,
-                   "pooled F1 no longer 0.819 / 0.725")
-    cities = ", ".join(t[t.task == "A"].sort_values("rank").city)
-    text = f"""# Confusion matrices by city
-
-Two figures, one for the UHI model and one for the poverty model, each show ten confusion
-matrices in a 2 × 5 grid, with the count and percentage in each cell, F1 · Accuracy / MCC above
-each panel, and the F1 spread in the header.
-
-## Design
-
-- **Panels.** Each panel is one of the ten largest urbanized areas by tract count
-  ({cities}), held out from training under leave-one-city-out validation. The
-  model never saw a tract of the city it is scored on.
-- **Model and labels.** The cached leave-one-city-out predictions of the headline LightGBM
-  (`validation.oof(task, config, "lgbm", "loco")`): Task A `A-noLST` (no LST or SUHI
-  predictors) for `High_UHI`, Task B `B-env` for `High_Pov`, both at τ = 0.5. Poverty is the ACS
-  poverty rate against the national median.
-- **Denominators** (per
-  [`4.3 DEFINITIONS.md`](../4_Model_Specifications/4.3_Confusion_Matrices_and_Denominators/DEFINITIONS.md)).
-  The cell percentage is the count over the city's tracts, and the cell says so; the four cells
-  sum to 100 %. TPR (TP / actual high) and TNR (TN / actual low) are in each panel's subtitle
-  with their numerators and denominators.
-- **Header.** The pooled leave-one-city-out F1 over all {int(p.loc['A', 'n']):,} tracts and
-  {int(p.loc['A', 'n_uas'])} UAs, with its 95 % UA cluster-bootstrap CI (B = 1,000), then the mean,
-  SD and range of F1 across the ten cities. The script checks the pooled estimate and CI
-  against
-  [`4.4 metric_panel.csv`](../4_Model_Specifications/4.4_Metric_Panel_with_Uncertainty/results/metric_panel.csv)
-  to 1e-9.
-- **Shading** is the cell's share of the city's tracts on one scale for all ten panels, so
-  panels can be compared. The UHI panels are blue and the poverty panels orange.
-
-## Results
-
-| Panels | Task | Tracts | Pooled F1 [95 % CI] | Pooled MCC [95 % CI] | F1 across the 10 cities |
-|---|---|---:|---|---|---|
-{chr(10).join(head)}
-
-| Panels | Rank | City | n | TN | FP | FN | TP | TPR | TNR | F1 | Acc | MCC |
-|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-{chr(10).join(rows)}
-
-Figures: [`results/confusion_by_city_uhi.png`](results/confusion_by_city_uhi.png),
-[`results/confusion_by_city_poverty.png`](results/confusion_by_city_poverty.png). Tables:
-[`results/confusion_by_city_panels.csv`](results/confusion_by_city_panels.csv),
-[`results/confusion_by_city_pooled.csv`](results/confusion_by_city_pooled.csv).
-
-Rebuild: `uv run python 6_Figures/confusion_by_city.py` (reads the
-out-of-fold cache that `make engine` fills).
-"""
-    report.write_text(text, HERE / "README_confusion_by_city.md")
 
 
 if __name__ == "__main__":

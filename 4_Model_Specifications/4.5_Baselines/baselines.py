@@ -113,106 +113,10 @@ def plot(t: pd.DataFrame) -> None:
 def main() -> None:
     df = validation.load_analysis()
     t = side_by_side(df)
-    report.write_table(t, OUT / "baselines", digits=3,
-                       title="Models and baselines (tau = 0.5; 95 % UA cluster-bootstrap CIs)")
+    report.write_table(t, OUT / "baselines")
     d = deltas(df)
-    report.write_table(d, OUT / "paired_deltas", digits=3,
-                       title="Paired differences, Δ = a − b (95 % UA cluster-bootstrap CI)")
+    report.write_table(d, OUT / "paired_deltas")
     plot(t)
-    write_readme()
-
-
-def write_readme() -> None:
-    t = pd.read_csv(OUT / "baselines.csv")
-    d = pd.read_csv(OUT / "paired_deltas.csv")
-    f = report.fmt_num
-
-    def row(task, label, scheme="loco"):
-        return t[(t.task == task) & (t.baseline == label) & (t.scheme == scheme)].iloc[0]
-
-    def delta(task, comp, metric="roc_auc", scheme="loco"):
-        r = d[(d.task == task) & (d.comparison == comp) & (d.metric == metric)
-              & (d.scheme == scheme)].iloc[0]
-        return f"{f(r.delta)} [{f(r.ci_low)}, {f(r.ci_high)}]"
-
-    lines = []
-    for task, entries in ENTRIES.items():
-        for _, _, label in entries:
-            r = row(task, label)
-            lines.append(f"| {task} | {label} | {f(r.roc_auc)} [{f(r.roc_auc_ci_low)}, "
-                         f"{f(r.roc_auc_ci_high)}] | {f(r.mcc)} | {f(r.balanced_accuracy)} | "
-                         f"{f(r.pr_auc)} |")
-    dlines = []
-    for task, comps in COMPARISONS.items():
-        for label, _, _ in comps:
-            dlines.append(f"| {task} | {label} | {delta(task, label)} | "
-                          f"{delta(task, label, 'mcc')} |")
-    lst = row("A", "LST-only, LightGBM")
-    heat = d[(d.task == "B") & (d.comparison == "LightGBM (B-env) − LightGBM (no heat variables)")
-             & (d.metric == "roc_auc") & (d.scheme == "loco")].iloc[0]
-    heat_note = (", an improvement the data cannot distinguish from zero" if heat.ci_low <= 0
-                 else "")
-    text = f"""# 4.5 Baselines
-
-## Purpose
-
-This section tests whether the gradient-boosted models beat simpler alternatives: a
-majority-class baseline, a plain statistical model, and, for the heat task, a model that only
-sees land-surface temperature.
-
-## Method
-
-`baselines.py` compares, under leave-one-city-out and UA-grouped 5-fold:
-
-- the majority class (`DummyClassifier("most_frequent")`);
-- logistic regression (median imputation → `log1p` on area and pixel counts → standardisation);
-- LightGBM (fixed settings);
-- reference baselines: for Task A, `LST_urb_day_CT` alone (an LST-only model); for
-  Task B, location only (centroid latitude/longitude + Census region) and the same
-  non-thermal features as `A-noLST` with no heat variable (`B-nonthermal`).
-
-Paired differences use the same UA bootstrap draws for both models (B = 1,000).
-
-A constant score carries no ranking, so the majority class's ROC-AUC is 0.5 and its PR-AUC
-equals the prevalence by definition. Its threshold metrics are computed from its predictions as
-they are. With a median split the two classes differ by one tract, so holding out a city tips
-the training majority toward the class that city has less of. Pooled over leave-one-city-out
-folds, the majority class is therefore worse than chance (section 4.3), which makes
-"LightGBM − majority" differences in MCC larger than LightGBM's gain over a no-skill rule
-(MCC 0). That gain is simply LightGBM's own MCC.
-
-## Results
-
-Leave-one-city-out (UA-grouped 5-fold is in [`results/baselines.md`](results/baselines.md)):
-
-| Task | Model | ROC-AUC [95 % CI] | MCC | Balanced accuracy | PR-AUC |
-|---|---|---:|---:|---:|---:|
-{chr(10).join(lines)}
-
-Paired differences, leave-one-city-out ([`results/paired_deltas.md`](results/paired_deltas.md)):
-
-| Task | Comparison | Δ ROC-AUC [95 % CI] | Δ MCC [95 % CI] |
-|---|---|---:|---:|
-{chr(10).join(dlines)}
-
-`LST_urb_day_CT` is one of the two terms of the target (`UHI_annual_day` = `LST_urb_day_CT` −
-`LST_rur_day`, section 3.1), yet on its own it predicts high SUHI poorly in held-out cities
-(ROC-AUC {f(lst.roc_auc)}). SUHI is measured against each city's own rural reference, so the same
-tract temperature can be a strong heat island in one city and none in another. The leak-free
-`A-noLST` model, which sees no temperature at all, does far better (Δ ROC-AUC
-{delta('A', 'LightGBM (A-noLST) − LightGBM (LST only)')}).
-
-**Heat and poverty.** Adding every SUHI and LST variable to the non-thermal features
-changes LightGBM's poverty ROC-AUC by {delta('B', 'LightGBM (B-env) − LightGBM (no heat variables)')}{heat_note}
-under leave-one-city-out: the model without any heat variable reaches ROC-AUC
-{f(row('B', 'No heat variables, LightGBM').roc_auc)}, against {f(row('B', 'LightGBM (B-env)').roc_auc)}
-with them. Nearly all of the poverty model's skill comes from vegetation, elevation and built
-form, the same inputs that predict high SUHI in Task A (ROC-AUC
-{f(row('A', 'LightGBM (A-noLST)').roc_auc)}).
-
-Figure: [`results/baselines.png`](results/baselines.png).
-"""
-    report.write_text(text, HERE / "README.md")
 
 
 if __name__ == "__main__":

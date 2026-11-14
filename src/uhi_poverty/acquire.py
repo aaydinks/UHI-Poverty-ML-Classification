@@ -27,9 +27,20 @@ from . import geo, paths
 
 log = logging.getLogger("uhi_poverty.acquire")
 
-MENDELEY_SHA256 = "7c0c39af227923dc1aaf5948bc43c79e6be7284d20c5c8e7a3107748e4a25585"
-MENDELEY_BYTES = 45_925_109
+# S1: the SUHI database, Mendeley Data x9mv4krnm2 version 3. The SHA-256 is the one Mendeley
+# publishes for the file.
 MENDELEY_URL = "https://data.mendeley.com/datasets/x9mv4krnm2/3"
+SUHI_URL = ("https://data.mendeley.com/public-files/datasets/x9mv4krnm2/files/"
+            "54876bc0-ebda-48c6-bcdc-0bbf8e7b485f/file_downloaded")
+SUHI_SHA256 = "7c0c39af227923dc1aaf5948bc43c79e6be7284d20c5c8e7a3107748e4a25585"
+SUHI_BYTES = 45_925_109
+# S3: HUD's Low Poverty Index (AFFHT0006), the CSV export of HUD Open Data item
+# 3419cb4c7aa144b2bc54671f58b580f4, layer 20.
+LPI_URL = ("https://hudgis-hud.opendata.arcgis.com/api/download/v1/items/"
+           "3419cb4c7aa144b2bc54671f58b580f4/csv?layers=20")
+LPI_PAGE = "https://hudgis-hud.opendata.arcgis.com/datasets/HUD::low-poverty-index"
+LPI_SHA256 = "64f4dc2f297faa721056f465546e116268d5fd879daec4c8b551c328108421e6"
+LPI_BYTES = 8_761_721
 
 ACS_URL = "https://api.census.gov/data/2019/acs/acs5"
 ACS_VARS = ["B17001_001E", "B17001_001M", "B17001_002E", "B17001_002M", "B01003_001E"]
@@ -39,13 +50,6 @@ GAZ19_URL = ("https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2019_Gaz
 SVI_URL = "https://svi.cdc.gov/Documents/Data/2018/csv/states/SVI_2018_US.csv"
 
 PUBLIC_DOMAIN = "U.S. Government work (public domain)"
-
-# Source CSVs as they sit on the author's machine.
-LOCAL_SOURCES = {
-    "S1": ("US Urban Heat Island Data.csv", paths.SUHI_CSV),
-    "S3": ("Low Poverty Index.csv", paths.LPI_CSV),
-}
-
 
 class AcquisitionError(RuntimeError):
     pass
@@ -139,25 +143,14 @@ def previous_dates() -> dict[tuple[str, str], str]:
 # --------------------------------------------------------------------------- sources
 
 
-def acquire_local(source_id: str, source_dir: Path) -> Path:
-    name, dest = LOCAL_SOURCES[source_id]
-    src = source_dir / name
-    if not dest.exists():
-        if not src.exists():
-            raise AcquisitionError(f"{source_id}: {paths.rel(src)} not found")
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dest)
-        log.info("%s copied from %s", source_id, paths.rel(src))
+def acquire_verified(source_id: str, url: str, dest: Path, sha: str, n_bytes: int) -> Path:
+    """Download a source file once and check it against its pinned size and SHA-256."""
+    acquire_url(url, dest)
+    digest = sha256(dest)
+    if digest != sha or dest.stat().st_size != n_bytes:
+        raise AcquisitionError(f"{source_id}: {paths.rel(dest)} has SHA-256 {digest}, expected {sha}")
+    log.info("%s matches its pinned SHA-256", source_id)
     return dest
-
-
-def verify_suhi(path: Path) -> None:
-    digest = sha256(path)
-    if digest != MENDELEY_SHA256 or path.stat().st_size != MENDELEY_BYTES:
-        raise AcquisitionError(
-            f"S1 hash mismatch: {digest} (expected Mendeley {MENDELEY_SHA256})"
-        )
-    log.info("S1 hash matches Mendeley x9mv4krnm2 v3")
 
 
 def acquire_acs(states: list[str], key: str) -> list[Path]:
@@ -196,8 +189,7 @@ def acquire_url(url: str, dest: Path) -> Path:
 # --------------------------------------------------------------------------- main
 
 
-def run(poverty_source: str = "acs", source_dir: Path | None = None) -> pd.DataFrame:
-    source_dir = source_dir or paths.SOURCE_DIR
+def run(poverty_source: str = "acs") -> pd.DataFrame:
     dates = previous_dates()
     rows: list[dict] = []
 
@@ -206,11 +198,9 @@ def run(poverty_source: str = "acs", source_dir: Path | None = None) -> pd.DataF
         row["retrieved"] = dates.get((row["file"], row["sha256"]), row["retrieved"])
         rows.append(row)
 
-    s1 = acquire_local("S1", source_dir)
-    verify_suhi(s1)
+    s1 = acquire_verified("S1", SUHI_URL, paths.SUHI_CSV, SUHI_SHA256, SUHI_BYTES)
     add("S1", "SUHI database (Chakraborty et al., 2020), Census_UHI_US_Urbanized_recalculated.csv",
-        f"{MENDELEY_URL} (local copy {paths.rel(source_dir / LOCAL_SOURCES['S1'][0])})", s1,
-        "CC BY 4.0")
+        MENDELEY_URL, s1, "CC BY 4.0")
 
     jurisdictions = sorted(geo.STATES)
     if poverty_source == "acs":
@@ -229,10 +219,8 @@ def run(poverty_source: str = "acs", source_dir: Path | None = None) -> pd.DataF
         add("S2-fallback", "CDC/ATSDR SVI 2018 (ACS 2014-2018 EP_POV)", SVI_URL, path,
             PUBLIC_DOMAIN)
 
-    s3 = acquire_local("S3", source_dir)
-    add("S3", "HUD AFFH Low Poverty Index, AFFHT0006",
-        f"HUD Open Data (local copy {paths.rel(source_dir / LOCAL_SOURCES['S3'][0])})", s3,
-        PUBLIC_DOMAIN)
+    s3 = acquire_verified("S3", LPI_URL, paths.LPI_CSV, LPI_SHA256, LPI_BYTES)
+    add("S3", "HUD AFFH Low Poverty Index, AFFHT0006", LPI_PAGE, s3, PUBLIC_DOMAIN)
 
     for fips in jurisdictions:
         url = f"{GENZ}/cb_2019_{fips}_tract_500k.zip"
@@ -256,11 +244,10 @@ def run(poverty_source: str = "acs", source_dir: Path | None = None) -> pd.DataF
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--poverty-source", choices=["acs", "svi2018"], default="acs")
-    parser.add_argument("--source-dir", type=Path, default=None)
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     logging.getLogger("urllib3").setLevel(logging.WARNING)
-    run(args.poverty_source, args.source_dir)
+    run(args.poverty_source)
 
 
 if __name__ == "__main__":

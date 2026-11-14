@@ -1,4 +1,4 @@
-"""Section 4.2: how much a random split flatters the models, and why.
+"""Section 4.2: random 5-fold against held-out validation, and spatial dependence.
 
 1. Optimism: random 5-fold against UA-grouped 5-fold, leave-one-state-out, the
    20 largest UAs held out, and leave-one-city-out. Δ = random − held-out, with
@@ -113,101 +113,15 @@ def main() -> None:
     df = validation.frame("primary")
     nbrs, dist = spatial.knn(df["lat"], df["lon"], k=K)
     t = optimism(df)
-    report.write_table(t, OUT / "optimism", digits=3,
-                       title="Optimism of random 5-fold over held-out schemes (Δ = random − held-out)",
-                       note="Paired on the tracts each held-out scheme scores; 95 % UA "
-                            "cluster-bootstrap CI, B = 1,000.")
+    report.write_table(t, OUT / "optimism")
     mi = morans(df, nbrs)
-    report.write_table(mi, OUT / "morans_i", digits=4,
-                       title=f"Moran's I, k = {K} nearest neighbours (row-standardised)",
-                       note=f"Median distance to the 8th neighbour: {np.median(dist[:, -1]):.2f} km.")
+    report.write_table(mi, OUT / "morans_i")
     ns = neighbour_share(df, nbrs)
-    report.write_table(ns, OUT / "train_neighbour_share", digits=3,
-                       title="Share of validation tracts with a nearest neighbour in training")
+    report.write_table(ns, OUT / "train_neighbour_share")
     report.write_json({"k": K, "median_km_to_kth_neighbour": float(np.median(dist[:, -1])),
                        "n": len(df)}, OUT / "knn.json")
     plot_optimism(t)
     plot_neighbours(ns)
-    write_readme()
-
-
-def write_readme() -> None:
-    t = pd.read_csv(OUT / "optimism.csv")
-    mi = pd.read_csv(OUT / "morans_i.csv")
-    ns = pd.read_csv(OUT / "train_neighbour_share.csv")
-    f = report.fmt_num
-
-    def d(task, model, scheme, metric="roc_auc"):
-        r = t[(t.task == task) & (t.model == model) & (t.held_out_scheme == scheme)
-              & (t.metric == metric)].iloc[0]
-        return r
-
-    rows = []
-    for task in TASKS:
-        for model in LEARNED:
-            cells = []
-            for scheme in HELD_OUT:
-                r = d(task, model, scheme)
-                cells.append(f"{f(r.delta)} [{f(r.ci_low)}, {f(r.ci_high)}]")
-            rr = d(task, model, "loco")
-            rows.append(f"| {task} | {models.MODEL_LABELS[model]} | {f(rr.random5)} | "
-                        + " | ".join(cells) + " |")
-    header = ("| Task | Model | Random 5-fold ROC-AUC | "
-              + " | ".join(f"Δ vs {validation.SCHEME_LABELS[s]}" for s in HELD_OUT)
-              + " |\n|---|---|---:|" + "---:|" * len(HELD_OUT))
-    mrows = "\n".join(f"| {r.description} | {f(r.I)} | {report.fmt_p(r.p_value)} |"
-                      for r in mi.itertuples())
-    na = ns[ns.task == "A"].set_index("scheme")["share_with_train_neighbour"]
-    lg = d("A", "lgbm", "loco")
-    lb = d("B", "lgbm", "loco")
-    text = f"""# 4.2 Holding out complete states and major urban areas
-
-## Purpose
-
-This section holds out whole states and major urban areas, and measures how much random
-cross-validation overstates performance when tracts are spatially dependent.
-
-## Method
-
-- **Optimism table.** For each task and learned model, the random 5-fold out-of-fold predictions
-  are compared with UA-grouped 5-fold, leave-one-state-out (UA-buffered), each of the 20 largest
-  UAs held out, and leave-one-city-out. Δ = random − held-out is computed on the same tracts,
-  with a paired UA cluster-bootstrap 95 % CI (B = 1,000, the same UA draws for both).
-- **Spatial dependence.** Moran's I with row-standardised weights on each tract's 8 nearest
-  neighbours (great-circle distance between Gazetteer centroids), with a 999-permutation
-  p-value; and, for every scheme, the share of validation tracts that have at least one of their
-  8 nearest neighbours in the training fold.
-
-## Results
-
-**Optimism in ROC-AUC** ([`results/optimism.md`](results/optimism.md) also has MCC and F1):
-
-{header}
-{chr(10).join(rows)}
-
-For Task A, LightGBM's ROC-AUC falls from {f(lg.random5)} under random folds to
-{f(lg.held_out)} when the city is held out; for Task B it falls from {f(lb.random5)} to
-{f(lb.held_out)}.
-
-**Spatial dependence** ([`results/morans_i.md`](results/morans_i.md)):
-
-| Variable | Moran's I (k = 8) | Permutation p |
-|---|---:|---:|
-{mrows}
-
-Under random 5-fold, {report.fmt_pct(na['random5'])} of validation tracts have a nearest
-neighbour in training; under leave-one-city-out the share is {report.fmt_pct(na['loco'])}, and
-under the UA-buffered state hold-out {report.fmt_pct(na['state'])}
-([`results/train_neighbour_share.md`](results/train_neighbour_share.md)).
-
-Figures: [`results/optimism_auc.png`](results/optimism_auc.png),
-[`results/train_neighbour_share.png`](results/train_neighbour_share.png).
-
-The outcomes and the predictors are strongly autocorrelated, and a random split leaves nearly
-every validation tract beside a training tract. That is why held-out validation is reported
-throughout, with leave-one-city-out as the headline.
-"""
-    report.write_text(text, HERE / "README.md")
 
 
 if __name__ == "__main__":

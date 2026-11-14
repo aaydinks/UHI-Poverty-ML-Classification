@@ -181,125 +181,31 @@ def cross_check(t: pd.DataFrame) -> pd.DataFrame:
     return check
 
 
-def sanity(t: pd.DataFrame) -> dict:
-    """Pipeline sanity checks; stops on failure, returns the values the README cites."""
+def sanity(t: pd.DataFrame) -> None:
+    """Pipeline sanity checks; stops on failure."""
     w = t.pivot_table(index=["task", "label"], columns="metric", values="estimate")
     for task in ("A", "B"):
         prev = w.loc[task, "prevalence"]
-        report.require(prev.max() - prev.min() < 1e-12, f"{task}: prevalence differs by model")
+        report.check(prev.max() - prev.min() < 1e-12, f"{task}: prevalence differs by model")
     # balanced accuracy is the mean of recall and specificity
-    report.require(np.allclose(w["balanced_accuracy"], (w["recall"] + w["specificity"]) / 2),
+    report.check(np.allclose(w["balanced_accuracy"], (w["recall"] + w["specificity"]) / 2),
                    "balanced accuracy != mean of recall and specificity")
     # F1 is the harmonic mean of precision and recall
     pr = w[["precision", "recall"]]
-    report.require(np.allclose(w["f1"], 2 * pr.prod(axis=1) / pr.sum(axis=1)),
+    report.check(np.allclose(w["f1"], 2 * pr.prod(axis=1) / pr.sum(axis=1)),
                    "F1 != harmonic mean of precision and recall")
     # every interval contains its estimate (the majority class has a degenerate ROC-AUC)
-    report.require(((t.ci_low <= t.estimate + 1e-12) & (t.estimate <= t.ci_high + 1e-12)).all(),
+    report.check(((t.ci_low <= t.estimate + 1e-12) & (t.estimate <= t.ci_high + 1e-12)).all(),
                    "an estimate lies outside its interval")
     lst = w.loc[("A", "Logistic regression, A-lst (LST reference)")]
     lst_g = w.loc[("A", "LightGBM, A-lst (LST reference)")]
     best_a = w.loc["A"].drop(index=[i for i in w.loc["A"].index if "A-" in i])["roc_auc"]
-    report.require(min(lst["roc_auc"], lst_g["roc_auc"]) > 0.99,
+    report.check(min(lst["roc_auc"], lst_g["roc_auc"]) > 0.99,
                    "the LST reference should be near-perfect (its inputs contain the target)")
-    report.require(best_a.max() < min(lst["roc_auc"], lst_g["roc_auc"]),
+    report.check(best_a.max() < min(lst["roc_auc"], lst_g["roc_auc"]),
                    "a model without LST input should not beat the LST reference")
-    return {"lst_lr": lst, "lst_lgbm": lst_g, "best_a_name": best_a.idxmax(),
-            "best_a_auc": best_a.max()}
 
 
-# --------------------------------------------------------------------------- README
-
-
-def wide(t: pd.DataFrame, task: str) -> str:
-    sub = t[t.task == task]
-    lines = ["| Model | " + " | ".join(METRIC_LABELS[m] for m in METRICS) + " |",
-             "|---|" + "---:|" * len(METRICS)]
-    for g, glabel in GROUPS.items():
-        rows = sub[sub.group == g]
-        if rows.empty:
-            continue
-        lines.append(f"| **{glabel}** |" + " |" * len(METRICS))
-        for label in dict.fromkeys(rows.label):
-            r = rows[rows.label == label].set_index("metric")
-            lines.append(f"| {label} | " + " | ".join(
-                report.fmt_ci(r.loc[m, "estimate"], r.loc[m, "ci_low"], r.loc[m, "ci_high"])
-                for m in METRICS) + " |")
-    return "\n".join(lines)
-
-
-def write_readme(t: pd.DataFrame, check: pd.DataFrame, s: dict) -> None:
-    f = report.fmt_num
-    n = int(t.n.iloc[0])
-    n_models = t.groupby("task").label.nunique().to_dict()
-    checks = "\n".join(f"| {r.source} | {r.n_compared} | {r.max_abs_diff:.1e} |"
-                       for r in check.itertuples())
-    text = f"""# 4.7 Every model, one metric panel
-
-## Purpose
-
-Reports the same complete set of metrics for every model in the repository, so that any two
-can be compared directly: class prevalence, accuracy, balanced accuracy, precision, recall,
-specificity, F1, ROC-AUC and PR-AUC, each with an uncertainty interval.
-
-## Method
-
-`all_models.py` reads the cached leave-one-city-out predictions of every model
-({n_models['A']} for Task A, {n_models['B']} for Task B; {n:,} tracts in 486 urbanized
-areas, each city predicted by a model that never saw it) and scores them all with the same
-function (`metrics.bootstrap_panel`). Nothing is refitted.
-
-- **Intervals.** 95 % percentile intervals from a cluster bootstrap that resamples urbanized
-  areas (B = 1,000, seed 37), the same draws as every other section, so intervals respect
-  the nesting of tracts in cities.
-- **Thresholds.** Fixed-setting models classify at τ = 0.5. The tuned models of section 4.6
-  classify at τ_acc, the threshold that maximised accuracy on the training cities. The SVM's
-  class is decision function ≥ 0, and its ROC-AUC and PR-AUC use the decision function.
-  ROC-AUC and PR-AUC do not depend on the threshold.
-- **Prevalence** is the share of positive tracts; it is the same for every model of a task,
-  and PR-AUC has a no-skill floor at that value. The majority class has no ranking, so its
-  ROC-AUC is 0.5 and its PR-AUC equals prevalence by definition.
-- **LST reference (`A-lst`).** {features.CONFIG_NOTES['A-lst']}. The `High_UHI` label is the
-  difference of two of these columns (`LST_urb_day_CT − LST_rur_day`, section 3.1), so this
-  model is an upper reference for what LST input can do, not a usable predictor of heat.
-  `A-lst-only` is the single urban-LST column.
-
-## Results
-
-**Task A, `High_UHI`** (estimate [95 % CI]):
-
-{wide(t, "A")}
-
-**Task B, `High_Pov`** (estimate [95 % CI]):
-
-{wide(t, "B")}
-
-The LST reference is almost perfect: ROC-AUC {f(s['lst_lr']['roc_auc'])} for logistic
-regression and {f(s['lst_lgbm']['roc_auc'])} for LightGBM, accuracy
-{f(s['lst_lr']['accuracy'])} and {f(s['lst_lgbm']['accuracy'])}. This is expected, because
-the label is a linear function of two of its inputs. The best Task A model without any LST or
-SUHI input reaches ROC-AUC {f(s['best_a_auc'])} ({s['best_a_name']}).
-
-All values, long format: [`results/all_models.csv`](results/all_models.csv); wide:
-[`results/all_models.md`](results/all_models.md).
-
-## Checks
-
-The script stops unless all of these hold:
-
-- every model of a task is scored on the same {n:,} tracts with the same labels, so
-  prevalence is identical across models;
-- balanced accuracy equals the mean of recall and specificity, F1 the harmonic mean of
-  precision and recall, and every interval contains its estimate;
-- the LST reference beats every model without LST input, and is near-perfect;
-- every number that another section also reports is identical here
-  ([`results/cross_check.csv`](results/cross_check.csv)):
-
-| Source | Estimates and bounds compared | Largest absolute difference |
-|---|---:|---:|
-{checks}
-"""
-    report.write_text(text, HERE / "README.md")
 
 
 def main() -> None:
@@ -308,12 +214,7 @@ def main() -> None:
     t.to_csv(OUT / "all_models.csv", index=False)
     check = cross_check(t)
     check.to_csv(OUT / "cross_check.csv", index=False)
-    s = sanity(t)
-    md = ["# Every model, leave-one-city-out (estimate [95 % UA cluster-bootstrap CI])\n"]
-    for task in ("A", "B"):
-        md += [f"\n## Task {task}\n", wide(t, task)]
-    report.write_text("\n".join(md) + "\n", OUT / "all_models.md")
-    write_readme(t, check, s)
+    sanity(t)
     print(check.to_string(index=False))
 
 
