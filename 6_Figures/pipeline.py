@@ -1,10 +1,10 @@
 """The pipeline diagram.
 
-A top-to-bottom flow in six stages (data, sample, outcomes, models, validation,
-results) and two lanes: prediction, where Task A (high UHI) and Task B (high
-poverty) share the models and leave-one-city-out validation, and association,
-the chi-squared analysis of the same two median labels. Dashed elements are
-secondary: the tuned models and the HUD Low Poverty Index.
+A flowchart in two columns. Left: the four data sources, data synthesis, the
+median-split targets of Task A (high UHI) and Task B (high poverty), the
+predictor sets and the chi-squared association analysis. Right: the machine
+learning models, leave-one-city-out validation, the evaluation metrics and SHAP
+interpretation. The dashed box inside the models is the secondary tuned models.
 
 Drawn at print size (7 in wide). Every number in the diagram is read from the
 built sample or the shared modules and written with its source to
@@ -15,34 +15,28 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+from matplotlib.patches import Arc, Ellipse, FancyArrowPatch, FancyBboxPatch, Rectangle
 
 from uhi_poverty import features, metrics, models, paths, plotting, report
 
 OUT = paths.results_dir(__file__)
 
-WIDTH, HEIGHT = 7.0, 6.23  # inches; the axes use inches, so font sizes are print sizes
+WIDTH, HEIGHT = 7.0, 4.92  # inches; the axes use inches, so font sizes are print sizes
+SERIF = ["Times New Roman", "Times", "DejaVu Serif"]
+LINE = "#000000"
+INNER_FC, INNER_EC = "#f5f5f5", "#666666"
 
-# lanes (x) and stages (y), in inches
-GUTTER = 0.78
-LANE_A = (0.92, 2.86)
-LANE_B = (3.00, 4.94)
-LANE_C = (5.22, 6.98)
-PRED = (LANE_A[0], LANE_B[1])
-STAGES = [  # name, top, bottom
-    ("Data", 0.42, 1.00),
-    ("Sample", 1.28, 1.80),
-    ("Outcomes", 2.08, 2.86),
-    ("Models", 3.14, 4.02),
-    ("Validation", 4.30, 5.12),
-    ("Results", 5.40, 6.16),
-]
+# fill and edge of each stage
+BLUE = ("#dae8fc", "#6c8ebf")
+GREEN = ("#d5e8d4", "#82b366")
+YELLOW = ("#fff2cc", "#d6b656")
+ROSE = ("#f8cecc", "#b85450")
+PURPLE = ("#e1d5e7", "#9673a6")
+TEAL = ("#b0e3e6", "#0e8088")
+ORANGE = ("#ffe6cc", "#d79b00")
+LIME = ("#cdeb8b", "#36393d")
 
-WHITE = "#ffffff"
-EDGE = "#9a9890"
-ACCENT = plotting.BLUE
-ACCENT_FILL = "#eef4fc"
-TITLE_FS, BODY_FS, SMALL_FS = 7.6, 6.9, 6.4
+TITLE_FS, BODY_FS = 8.6, 7.6
 
 PAPER_METRICS = ["accuracy", "balanced_accuracy", "precision", "recall", "specificity", "f1",
                  "roc_auc", "pr_auc"]
@@ -50,52 +44,84 @@ PAPER_METRICS = ["accuracy", "balanced_accuracy", "precision", "recall", "specif
 
 # --------------------------------------------------------------------------- primitives
 
-def font() -> list[str]:
-    return list(plt.rcParams["font.sans-serif"])
+def text(ax, x, y, s, fs=BODY_FS, weight="normal", ha="center", va="center", **kw) -> None:
+    ax.text(x, y, s, fontsize=fs, fontweight=weight, ha=ha, va=va, color=LINE,
+            fontfamily=SERIF, linespacing=1.25, zorder=6, **kw)
 
 
-def text(ax, x, y, s, fs=BODY_FS, color=plotting.INK_2, weight="normal", ha="center",
-         va="center", **kw) -> None:
-    ax.text(x, y, s, fontsize=fs, color=color, fontweight=weight, ha=ha, va=va,
-            fontfamily=font(), linespacing=1.3, zorder=4, **kw)
-
-
-def node(ax, x0, y0, x1, y1, title=None, body=None, *, fill=WHITE, edge=EDGE, lw=0.6,
-         ls="-", title_color=plotting.INK, body_color=plotting.INK_2, title_fs=TITLE_FS,
-         body_fs=BODY_FS) -> None:
-    """A box with a bold title over grey body text, both centred."""
+def rect(ax, x0, y0, x1, y1, colors, *, radius=0.04, lw=0.8, ls="-", shadow=True,
+         z=2) -> None:
+    fc, ec = colors
+    if shadow:
+        ax.add_patch(FancyBboxPatch((x0 + 0.035, y0 + 0.035), x1 - x0, y1 - y0,
+                                    boxstyle=f"round,pad=0,rounding_size={radius}",
+                                    fc="#000000", ec="none", alpha=0.12, zorder=z - 0.5))
     ax.add_patch(FancyBboxPatch((x0, y0), x1 - x0, y1 - y0,
-                                boxstyle="round,pad=0,rounding_size=0.05", fc=fill, ec=edge,
-                                lw=lw, ls=ls, zorder=2))
-    xm, ym = (x0 + x1) / 2, (y0 + y1) / 2
-    if title and body:
-        n = body.count("\n") + 1
-        line = body_fs / 72 * 1.3
-        top = ym - (TITLE_FS / 72 * 1.25 + n * line) / 2
-        text(ax, xm, top, title, fs=title_fs, color=title_color, weight="bold", va="top")
-        text(ax, xm, top + title_fs / 72 * 1.35, body, fs=body_fs, color=body_color, va="top")
-    elif title:
-        text(ax, xm, ym, title, fs=title_fs, color=title_color, weight="bold")
-    elif body:
-        text(ax, xm, ym, body, fs=body_fs, color=body_color)
+                                boxstyle=f"round,pad=0,rounding_size={radius}", fc=fc, ec=ec,
+                                lw=lw, ls=ls, zorder=z))
 
 
-def arrow(ax, points, ls="-", color=plotting.INK_2) -> None:
-    """A polyline through `points` with an arrowhead at the last point."""
+def container(ax, x0, y0, x1, y1, colors, title, header=0.27) -> float:
+    """A stage box with its title in a header band; returns the y below the band."""
+    rect(ax, x0, y0, x1, y1, colors)
+    ax.plot([x0, x1], [y0 + header] * 2, color=colors[1], lw=0.8, zorder=3)
+    text(ax, (x0 + x1) / 2, y0 + header / 2 + 0.01, title, fs=TITLE_FS, weight="bold")
+    return y0 + header
+
+
+def inner(ax, x0, y0, x1, y1, label, fs=BODY_FS, weight="normal", ls="-") -> None:
+    rect(ax, x0, y0, x1, y1, (INNER_FC, INNER_EC), radius=0.05, lw=0.7, ls=ls, shadow=False,
+         z=4)
+    text(ax, (x0 + x1) / 2, (y0 + y1) / 2, label, fs=fs, weight=weight)
+
+
+def bullets(ax, x, y, items, fs=BODY_FS, step=0.165) -> None:
+    for k, item in enumerate(items):
+        text(ax, x, y + k * step, "•", fs=fs, ha="left")
+        text(ax, x + 0.11, y + k * step, item, fs=fs, ha="left")
+
+
+def arrow(ax, points) -> None:
+    """A black polyline through `points` with a filled head at the last point."""
     for (x0, y0), (x1, y1) in zip(points[:-2], points[1:-1], strict=True):
-        ax.plot([x0, x1], [y0, y1], color=color, lw=0.7, ls=ls, solid_capstyle="butt",
-                zorder=1)
-    ax.add_patch(FancyArrowPatch(points[-2], points[-1], arrowstyle="-|>", mutation_scale=6.5,
-                                 color=color, lw=0.7, ls=ls, shrinkA=0, shrinkB=0.5,
-                                 zorder=1))
+        ax.plot([x0, x1], [y0, y1], color=LINE, lw=0.9, solid_capstyle="butt", zorder=1)
+    ax.add_patch(FancyArrowPatch(points[-2], points[-1], arrowstyle="-|>", mutation_scale=8,
+                                 color=LINE, lw=0.9, shrinkA=0, shrinkB=0, zorder=5))
 
 
-def down(ax, x, y0, y1, **kw) -> None:
-    arrow(ax, [(x, y0), (x, y1)], **kw)
+def cylinder(ax, x0, y0, w, h, label, colors=ROSE) -> None:
+    """A dashed database cylinder with a centred label."""
+    fc, ec = colors
+    e = 0.11  # height of the end ellipses
+    kw = {"ec": ec, "lw": 0.8, "ls": (0, (3, 2))}
+    ax.add_patch(Rectangle((x0, y0 + e / 2), w, h - e, fc=fc, ec="none", zorder=2))
+    ax.add_patch(Ellipse((x0 + w / 2, y0 + h - e / 2), w, e, fc=fc, ec="none", zorder=2))
+    ax.add_patch(Arc((x0 + w / 2, y0 + h - e / 2), w, e, theta1=0, theta2=180, zorder=3,
+                     **kw))
+    ax.plot([x0, x0], [y0 + e / 2, y0 + h - e / 2], color=ec, lw=0.8, ls=(0, (3, 2)),
+            zorder=3)
+    ax.plot([x0 + w, x0 + w], [y0 + e / 2, y0 + h - e / 2], color=ec, lw=0.8,
+            ls=(0, (3, 2)), zorder=3)
+    ax.add_patch(Ellipse((x0 + w / 2, y0 + e / 2), w, e, fc=fc, zorder=3, **kw))
+    text(ax, x0 + w / 2, y0 + h / 2 + e / 4, label, fs=7.4, weight="bold")
 
 
-def stage(name) -> tuple[float, float]:
-    return next((t, b) for s, t, b in STAGES if s == name)
+def median_icon(ax, x0, y0, w, h) -> None:
+    """A small histogram cut at its median, like a thumbnail of the target split."""
+    rect(ax, x0, y0, x0 + w, y0 + h, ("#ffffff", INNER_EC), radius=0.03, lw=0.6,
+         shadow=False, z=4)
+    heights = [0.15, 0.32, 0.6, 0.88, 1.0, 0.8, 0.55, 0.34, 0.2, 0.1]
+    pad, base = 0.07, y0 + h - 0.08
+    bw = (w - 2 * pad) / len(heights)
+    for k, v in enumerate(heights):
+        on = k >= 4
+        ax.add_patch(Rectangle((x0 + pad + k * bw, base - v * (h - 0.24)), bw * 0.86,
+                               v * (h - 0.24), fc="#e3863b" if on else "#7ea6d8", ec="none",
+                               zorder=5))
+    xm = x0 + pad + 4 * bw - bw * 0.07
+    ax.plot([xm, xm], [y0 + 0.08, base], color=LINE, lw=0.7, ls=(0, (2, 1.5)), zorder=6)
+    ax.plot([x0 + pad, x0 + w - pad], [base, base], color=LINE, lw=0.6, zorder=6)
+    text(ax, xm, y0 + 0.07, "median", fs=5.6, style="italic", va="center")
 
 
 # --------------------------------------------------------------------------- content
@@ -143,7 +169,6 @@ def facts(v: dict) -> pd.DataFrame:
          "uhi_poverty.metrics.B_DEFAULT"),
         ("ACS vintage", "2015–2019", "2015–2019", "data/README.md (S2)"),
         ("Gazetteer vintage", 2019, "2019", "data/README.md (S4, S6)"),
-        ("SUHI database reference year", 2020, "2020", "data/README.md (S1)"),
     ]
     return pd.DataFrame(rows, columns=["element", "value", "shown_as", "source"])
 
@@ -154,159 +179,132 @@ def draw(fig, v: dict) -> None:
     ax.set_ylim(HEIGHT, 0)
     ax.axis("off")
 
-    # lane headers and the divider between the two analyses
-    for (x0, x1), label in ((PRED, "Prediction"), (LANE_C, "Association")):
-        text(ax, (x0 + x1) / 2, 0.14, label, fs=8.6, color=plotting.INK, weight="bold")
-        ax.plot([x0, x1], [0.27, 0.27], color=plotting.INK, lw=0.8, zorder=1)
-    xdiv = (LANE_B[1] + LANE_C[0]) / 2
-    ax.plot([xdiv, xdiv], [0.42, HEIGHT - 0.06], color=plotting.GRID, lw=0.8, zorder=0)
+    L0, L1 = 0.08, 3.28  # left column
+    R0, R1 = 3.72, 6.92  # right column
 
-    # stage gutter
-    for k, (name, top, bottom) in enumerate(STAGES, start=1):
-        ym = (top + bottom) / 2
-        ax.add_patch(plt.Circle((0.14, ym), 0.085, fc=plotting.INK, ec="none", zorder=3))
-        text(ax, 0.14, ym, str(k), fs=6.8, color=WHITE, weight="bold")
-        text(ax, 0.28, ym, name, fs=7.4, color=plotting.INK, ha="left")
+    # ---- data sources
+    names = ["SUHI\nDatabase", "Census\nGazetteer", "ACS\n2015–2019", "HUD Low\nPoverty\nIndex"]
+    cw, cgap, ctop, ch = 0.7, 0.1, 0.04, 0.64
+    cx0 = (L0 + L1) / 2 - (4 * cw + 3 * cgap) / 2
+    for k, name in enumerate(names):
+        cylinder(ax, cx0 + k * (cw + cgap), ctop, cw, ch, name)
 
-    # 1 Data
-    top, bottom = stage("Data")
-    w = (PRED[1] - PRED[0] - 2 * 0.14) / 3
-    sources = [
-        ("SUHI database", "Chakraborty et al. (2020)\nLST, vegetation, elevation"),
-        ("Census Gazetteer 2019", "tract area and water share\n2010 tract boundaries"),
-        ("ACS 2015–2019", "5-year estimates\npoverty rate (B17001)"),
-    ]
-    src_x = []
-    for k, (title, body) in enumerate(sources):
-        x0 = PRED[0] + k * (w + 0.14)
-        node(ax, x0, top, x0 + w, bottom, title, body)
-        src_x.append(x0 + w / 2)
-    node(ax, LANE_C[0], top, LANE_C[1], bottom, "HUD Low Poverty Index",
-         "robustness outcome only", ls=(0, (3, 2)))
-
-    # 2 Sample
-    top2, bottom2 = stage("Sample")
-    sx0, sx1 = 1.62, 4.24
-    node(ax, sx0, top2, sx1, bottom2, "Analysis sample",
-         f"{v['n_tracts']:,} census tracts in {v['n_uas']} urbanized areas (cities)\n"
-         "50 states and DC, joined on the 2010 tract ID",
-         fill=ACCENT_FILL, edge=ACCENT, lw=0.8)
-    ymerge = (bottom + top2) / 2
-    for x in src_x:
-        ax.plot([x, x], [bottom, ymerge], color=plotting.INK_2, lw=0.7, zorder=1)
-    ax.plot([src_x[0], src_x[-1]], [ymerge, ymerge], color=plotting.INK_2, lw=0.7, zorder=1)
-    down(ax, (sx0 + sx1) / 2, ymerge, top2)
-
-    # 3 Outcomes
-    top3, bottom3 = stage("Outcomes")
-    tasks = [
-        (LANE_A, "Task A: high UHI",
-         f"annual daytime UHI ≥ {v['uhi_cut']:.2f} °C (median)\n"
-         f"{v['n_features_A']} predictors, no temperature variable"),
-        (LANE_B, "Task B: high poverty",
-         f"poverty rate ≥ {v['pov_cut']:.1%} (median)\n"
-         f"{v['n_features_B']} predictors, including LST and UHI"),
-    ]
-    ysplit = (bottom2 + top3) / 2
-    ax.plot([(sx0 + sx1) / 2] * 2, [bottom2, ysplit], color=plotting.INK_2, lw=0.7, zorder=1)
-    ax.plot([sum(LANE_A) / 2, sum(LANE_B) / 2], [ysplit, ysplit], color=plotting.INK_2, lw=0.7,
+    # ---- data synthesis (a process box: double side bars)
+    s0, s1 = 0.94, 1.98
+    rect(ax, L0, s0, L1, s1, BLUE)
+    for x in (L0 + 0.13, L1 - 0.13):
+        ax.plot([x, x], [s0, s1], color=BLUE[1], lw=0.8, zorder=3)
+    text(ax, L0 + 0.25, s0 + 0.17, "Data Synthesis:", fs=TITLE_FS, weight="bold", ha="left")
+    bullets(ax, L0 + 0.45, s0 + 0.39, [
+        "Join the four sources on the 2010 tract ID",
+        "Remove non-urban tracts and missing values",
+        "Remove tracts with fewer than 50 people",
+        f"{v['n_tracts']:,} tracts in {v['n_uas']} urbanized areas",
+    ])
+    ybus = (ctop + ch + s0) / 2
+    for k in range(4):
+        xc = cx0 + k * (cw + cgap) + cw / 2
+        ax.plot([xc, xc], [ctop + ch, ybus], color=LINE, lw=0.9, zorder=1)
+    ax.plot([cx0 + cw / 2, cx0 + 3 * (cw + cgap) + cw / 2], [ybus, ybus], color=LINE, lw=0.9,
             zorder=1)
-    for (x0, x1), title, body in tasks:
-        node(ax, x0, top3, x1, bottom3, title, body)
-        down(ax, (x0 + x1) / 2, ysplit, top3)
+    arrow(ax, [((L0 + L1) / 2, ybus), ((L0 + L1) / 2, s0)])
 
-    cx = sum(LANE_C) / 2
-    node(ax, LANE_C[0], top3, LANE_C[1], bottom3, "High UHI × high poverty",
-         "2 × 2 table of the same\ntwo median labels")
-    arrow(ax, [(sx1, (top2 + bottom2) / 2), (cx - 0.25, (top2 + bottom2) / 2),
-               (cx - 0.25, top3)])
-    down(ax, cx + 0.25, bottom, top3, ls=(0, (3, 2)), color=plotting.MUTED)
+    # ---- target definition
+    t0, t1 = 2.22, 3.22
+    y = container(ax, L0, t0, L1, t1, GREEN, "Target Definition (National Medians)")
+    median_icon(ax, L0 + 0.1, y + 0.12, 0.82, t1 - y - 0.22)
+    bx0 = L0 + 1.04
+    bw = (L1 - 0.1 - bx0 - 0.08) / 2
+    inner(ax, bx0, y + 0.12, bx0 + bw, t1 - 0.1,
+          f"Task A:\nHigh UHI\n≥ {v['uhi_cut']:.2f} °C", weight="normal")
+    inner(ax, bx0 + bw + 0.08, y + 0.12, L1 - 0.1, t1 - 0.1,
+          f"Task B:\nHigh Poverty\n≥ {v['pov_cut']:.1%}")
+    arrow(ax, [((L0 + L1) / 2, s1), ((L0 + L1) / 2, t0)])
 
-    # 4 Models
-    top4, bottom4 = stage("Models")
-    hx0, hx1 = PRED[0], 3.70
-    ax.add_patch(FancyBboxPatch((hx0, top4), hx1 - hx0, bottom4 - top4,
-                                boxstyle="round,pad=0,rounding_size=0.05", fc=WHITE, ec=EDGE,
-                                lw=0.6, zorder=2))
-    text(ax, (hx0 + hx1) / 2, top4 + 0.14, "Headline models", fs=TITLE_FS, color=plotting.INK,
-         weight="bold")
-    text(ax, (hx0 + hx1) / 2, top4 + 0.30, f"settings fixed in advance, threshold {v['tau']}",
-         fs=BODY_FS)
-    pills = ["LightGBM\n(main model)", "Logistic\nregression", "Majority-class\nbaseline"]
-    pw = (hx1 - hx0 - 0.2 - 2 * 0.08) / 3
-    for k, label in enumerate(pills):
-        x0 = hx0 + 0.1 + k * (pw + 0.08)
-        node(ax, x0, top4 + 0.44, x0 + pw, bottom4 - 0.09, body=label, body_fs=BODY_FS,
-             fill=ACCENT_FILL if k == 0 else "#f4f3f0",
-             edge=ACCENT if k == 0 else EDGE, body_color=plotting.INK)
-    tx0 = 3.84
-    node(ax, tx0, top4, PRED[1], bottom4, "Tuned models",
-         "secondary analysis\nOptuna search,\nnested by city;\nsoft-voting ensemble",
-         ls=(0, (3, 2)), body_fs=SMALL_FS)
-    ymerge4 = (bottom3 + top4) / 2
-    for x0, x1 in (LANE_A, LANE_B):
-        ax.plot([(x0 + x1) / 2] * 2, [bottom3, ymerge4], color=plotting.INK_2, lw=0.7, zorder=1)
-    ax.plot([sum(LANE_A) / 2, sum(LANE_B) / 2], [ymerge4, ymerge4], color=plotting.INK_2,
-            lw=0.7, zorder=1)
-    down(ax, (hx0 + hx1) / 2, ymerge4, top4)
-    arrow(ax, [(sum(LANE_B) / 2, ymerge4), ((tx0 + PRED[1]) / 2, ymerge4),
-               ((tx0 + PRED[1]) / 2, top4)], ls=(0, (3, 2)), color=plotting.MUTED)
+    # ---- predictor sets (left) and association (right), bottom of the left column
+    b0, b1 = 3.48, 4.66
+    pm = 1.62
+    rect(ax, L0, b0 + 0.2, pm, b1, YELLOW)
+    rect(ax, L0, b0, L0 + 0.98, b0 + 0.3, YELLOW, radius=0.02)
+    text(ax, L0 + 0.49, b0 + 0.15, "Predictors", fs=TITLE_FS, weight="bold")
+    text(ax, (L0 + pm) / 2, (b0 + 0.3 + b1) / 2,
+         f"Task A: {v['n_features_A']} predictors\n(no temperature data)\n\n"
+         f"Task B: {v['n_features_B']} predictors\n(all variables)", fs=BODY_FS)
+    a0 = pm + 0.14
+    y = container(ax, a0, b0, L1, b1, ROSE, "Association Analysis")
+    bullets(ax, a0 + 0.09, y + 0.15, [
+        "χ² test of independence",
+        "Odds ratio, Cramér's V",
+        "95% CI by city resampling",
+        "Within-city odds ratio",
+        "Alternative cut-offs",
+    ], step=0.163)
+    ysplit = (t1 + b0) / 2
+    ax.plot([(L0 + L1) / 2] * 2, [t1, ysplit], color=LINE, lw=0.9, zorder=1)
+    ax.plot([(L0 + pm) / 2, (a0 + L1) / 2], [ysplit, ysplit], color=LINE, lw=0.9, zorder=1)
+    arrow(ax, [((L0 + pm) / 2, ysplit), ((L0 + pm) / 2, b0)])
+    arrow(ax, [((a0 + L1) / 2, ysplit), ((a0 + L1) / 2, b0)])
 
-    node(ax, LANE_C[0], top4, LANE_C[1], bottom4, "χ² test of independence",
-         "odds ratio and\nCramér's V as effect sizes")
-    down(ax, cx, bottom3, top4)
+    # ---- connector from the predictors to the models (down, across, up, across, down)
+    m0, m1 = 0.3, 1.72
+    mx = (R0 + R1) / 2
+    xgap = (L1 + R0) / 2
+    arrow(ax, [((L0 + pm) / 2, b1), ((L0 + pm) / 2, HEIGHT - 0.12), (xgap, HEIGHT - 0.12),
+               (xgap, 0.13), (mx, 0.13), (mx, m0)])
 
-    # 5 Validation
-    top5, bottom5 = stage("Validation")
-    node(ax, PRED[0], top5, PRED[1], bottom5)
-    text(ax, PRED[0] + 0.14, top5 + 0.15, "Leave-one-city-out", fs=TITLE_FS,
-         color=plotting.INK, weight="bold", ha="left")
-    # one row of cities, one held out
-    n_cells, cell, gap = 10, 0.13, 0.035
-    gx0, gy = PRED[0] + 0.14, top5 + 0.30
-    held = 3
-    for k in range(n_cells):
-        x = gx0 + k * (cell + gap)
-        if k == 7:
-            text(ax, x + cell / 2, gy + cell / 2, "…", fs=7, color=plotting.INK_2)
-            continue
-        on = k == held
-        ax.add_patch(FancyBboxPatch((x, gy), cell, cell, boxstyle="round,pad=0,rounding_size=0.02",
-                                    fc=ACCENT if on else "#e4e3de", ec="none", zorder=3))
-    hx = gx0 + held * (cell + gap) + cell / 2
-    text(ax, hx, gy + cell + 0.11, "test city", fs=SMALL_FS, color=ACCENT, weight="bold")
-    gx1 = gx0 + n_cells * (cell + gap) - gap
-    text(ax, gx1 + 0.2, gy + cell / 2 + 0.02,
-         f"each of the {v['n_uas']} cities is held out in turn,\n"
-         f"predicted by a model fitted on\nthe other {v['n_uas'] - 1} cities",
-         fs=BODY_FS, ha="left")
-    text(ax, PRED[0] + 0.14, bottom5 - 0.12,
-         "every fitted step (imputation, scaling, tuning, threshold) sees the training cities only",
-         fs=SMALL_FS, ha="left", style="italic")
-    down(ax, (hx0 + hx1) / 2, bottom4, top5)
-    down(ax, (tx0 + PRED[1]) / 2, bottom4, top5, ls=(0, (3, 2)), color=plotting.MUTED)
+    # ---- machine learning models
+    y = container(ax, R0, m0, R1, m1, PURPLE,
+                  f"Machine Learning Models (Task A, Task B; τ = {v['tau']})")
+    iw = (R1 - R0 - 0.2 - 2 * 0.1) / 3
+    for k, name in enumerate(["LightGBM", "Logistic\nRegression", "Majority\nClass"]):
+        x0 = R0 + 0.1 + k * (iw + 0.1)
+        inner(ax, x0, y + 0.12, x0 + iw, y + 0.6, name, fs=8.0)
+    inner(ax, R0 + 0.1, y + 0.72, R1 - 0.1, m1 - 0.1,
+          "Tuned (secondary): XGBoost, LightGBM, CatBoost,\nSoft-voting Ensemble", fs=7.2,
+          ls=(0, (3, 2)))
 
-    node(ax, LANE_C[0], top5, LANE_C[1], bottom5, "Tracts clustered by city",
-         f"95% CI from {v['bootstrap_B']:,} city resamples;\nodds ratio within cities\n(Mantel–Haenszel)")
-    down(ax, cx, bottom4, top5)
+    # ---- leave-one-city-out validation
+    v0, v1 = 2.0, 3.0
+    y = container(ax, R0, v0, R1, v1, TEAL, "Leave-One-City-Out Validation")
+    w3 = (R1 - R0 - 0.2 - 2 * 0.28) / 3
+    labels = [f"Train:\n{v['n_uas'] - 1} cities", "Test:\n1 held-out city",
+              f"Repeat for\nall {v['n_uas']} cities"]
+    for k, label in enumerate(labels):
+        x0 = R0 + 0.1 + k * (w3 + 0.28)
+        inner(ax, x0, y + 0.12, x0 + w3, v1 - 0.1, label)
+        if k:
+            arrow(ax, [(x0 - 0.24, (y + 0.12 + v1 - 0.1) / 2), (x0 - 0.02, (y + 0.12 + v1 - 0.1) / 2)])
+    arrow(ax, [(mx, m1), (mx, v0)])
 
-    # 6 Results
-    top6, bottom6 = stage("Results")
-    node(ax, LANE_A[0], top6, LANE_A[1], bottom6, "Performance",
-         f"{v['n_metrics']} metrics (accuracy, F1, ROC-AUC, …)\n"
-         f"on all {v['n_tracts']:,} held-out tracts;\n"
-         f"95% CI from {v['bootstrap_B']:,} city resamples")
-    node(ax, LANE_B[0], top6, LANE_B[1], bottom6, "Interpretation",
-         "SHAP values of the LightGBM models,\nout of fold, summed over\ngroups of related variables")
-    for x0, x1 in (LANE_A, LANE_B):
-        down(ax, (x0 + x1) / 2, bottom5, top6)
-    node(ax, LANE_C[0], top6, LANE_C[1], bottom6, "Sensitivity",
-         "other cut-offs, the Low Poverty\nIndex, and without the\nlargest cities")
-    down(ax, cx, bottom5, top6)
+    # ---- results
+    r0, r1 = 3.32, 4.66
+    e1 = R0 + 1.68
+    y = container(ax, R0, r0, e1, r1, ORANGE, "Evaluation Metrics")
+    bullets(ax, R0 + 0.1, y + 0.17, [
+        "Accuracy, Balanced acc.",
+        "Precision, Recall",
+        "Specificity, F1",
+        "ROC-AUC, PR-AUC",
+        "95% CI by city resampling",
+    ], step=0.17)
+    s0r = e1 + 0.14
+    y = container(ax, s0r, r0, R1, r1, GREEN, "Interpretation")
+    bullets(ax, s0r + 0.1, y + 0.17, [
+        "SHAP (LightGBM)",
+        "Out of fold, by city",
+        "Grouped variables",
+        "Rank stable over 15 refits",
+    ], step=0.17)
+    ysplit = (v1 + r0) / 2
+    ax.plot([mx, mx], [v1, ysplit], color=LINE, lw=0.9, zorder=1)
+    ax.plot([(R0 + e1) / 2, (s0r + R1) / 2], [ysplit, ysplit], color=LINE, lw=0.9, zorder=1)
+    arrow(ax, [((R0 + e1) / 2, ysplit), ((R0 + e1) / 2, r0)])
+    arrow(ax, [((s0r + R1) / 2, ysplit), ((s0r + R1) / 2, r0)])
 
 
 def main() -> None:
     plotting.apply_style()
+    plt.rcParams["figure.facecolor"] = plt.rcParams["savefig.facecolor"] = "#ffffff"
     v = values()
     facts(v).to_csv(OUT / "pipeline.csv", index=False)
     fig = plt.figure(figsize=(WIDTH, HEIGHT))
