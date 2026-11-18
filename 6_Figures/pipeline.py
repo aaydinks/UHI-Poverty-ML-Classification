@@ -21,7 +21,7 @@ from uhi_poverty import features, metrics, models, paths, plotting, report
 
 OUT = paths.results_dir(__file__)
 
-WIDTH, HEIGHT = 7.0, 4.92  # inches; the axes use inches, so font sizes are print sizes
+WIDTH, HEIGHT = 7.0, 4.74  # inches; the axes use inches, so font sizes are print sizes
 SERIF = ["Times New Roman", "Times", "DejaVu Serif"]
 LINE = "#000000"
 INNER_FC, INNER_EC = "#f5f5f5", "#666666"
@@ -245,12 +245,11 @@ def draw(fig, v: dict) -> None:
     arrow(ax, [((L0 + pm) / 2, ysplit), ((L0 + pm) / 2, b0)])
     arrow(ax, [((a0 + L1) / 2, ysplit), ((a0 + L1) / 2, b0)])
 
-    # ---- connector from the predictors to the models (down, across, up, across, down)
+    # ---- dotted separator between the two columns
     m0, m1 = 0.3, 1.72
     mx = (R0 + R1) / 2
     xgap = (L1 + R0) / 2
-    arrow(ax, [((L0 + pm) / 2, b1), ((L0 + pm) / 2, HEIGHT - 0.12), (xgap, HEIGHT - 0.12),
-               (xgap, 0.13), (mx, 0.13), (mx, m0)])
+    ax.plot([xgap, xgap], [0.04, b1 + 0.04], color=LINE, lw=1.0, ls=(0, (1, 2)), zorder=1)
 
     # ---- machine learning models
     y = container(ax, R0, m0, R1, m1, PURPLE,
